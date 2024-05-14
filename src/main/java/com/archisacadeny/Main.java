@@ -11,7 +11,7 @@ public class Main {
         DataBaseConnectorConfig.setConnection();
 
         Person person = new Person();
-        person.setEmail("muhammet@gamil.com");
+        person.setEmail("example@ggmail.com");
         person.setFullName("Muhammet gorkemli");
         person.setPassword("qwoiekasdhkjas");
 
