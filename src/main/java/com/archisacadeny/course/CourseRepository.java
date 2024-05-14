@@ -37,6 +37,7 @@ public class CourseRepository {
                     "course_number VARCHAR(255)," +
                     "course_instructor VARCHAR(255)," +
                     "enrolled_students  VARCHAR(255))";
+                    // enrolled students array mi olacak ?
 
             //change enrolled students type
             System.out.println(query);
