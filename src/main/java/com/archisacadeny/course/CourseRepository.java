@@ -15,7 +15,7 @@ public class CourseRepository {
                     "id SERIAL PRIMARY KEY," +
                     "name VARCHAR(255)," +
                     "number VARCHAR(255)," +
-                    "instructor_id VARCHAR(255))"
+                    "instructor_id VARCHAR(255))";
                     //"enrolled_students TEXT [])";
                     // Course classinda enrolled_students nasil array olarak eklenilecek ?
                    // Array Students datatype i olarak mi girilecek ?
