@@ -1,12 +1,17 @@
 package com.archisacadeny.student;
 
 
+import java.util.List;
+
 public class Student {
     private long id;
     private String fullName;
     private String email;
     private String password;
-    private String enrolledCourse;
+    private String department;
+    private int studentNumber;
+    private String gender;
+    private List<String> enrolledCourse;
 
 
     public long getId() {
@@ -41,9 +46,35 @@ public class Student {
         this.password = password;
     }
 
-    public String getEnrolledCourse(){return enrolledCourse;}
+    public List getEnrolledCourse(){
+        return enrolledCourse;
+    }
 
-    public void setEnrolledCourse(String enrolledCourse){this.enrolledCourse = enrolledCourse;}
+    public void setEnrolledCourse(List<String> enrolledCourse) {
+        this.enrolledCourse = enrolledCourse;
+    }
 
+    public String getDepartment(){
+        return department;
+    }
 
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public int getStudentNumber() {
+        return studentNumber;
+    }
+
+    public void setStudentNumber(int studentNumber) {
+        this.studentNumber = studentNumber;
+    }
 }
