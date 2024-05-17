@@ -10,6 +10,5 @@ public class Main {
         DataBaseConnectorConfig.setConnection();
         PersonRepository.createPersonTable();
         CourseRepository.createCourseTable();
-        CourseRepository.addCourse("zaza","zd","fasd","dasd");
     }
 }
