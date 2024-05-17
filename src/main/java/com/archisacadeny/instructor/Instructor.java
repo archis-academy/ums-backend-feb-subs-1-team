@@ -8,61 +8,29 @@ import java.util.List;
 public class Instructor {
 
     private long id;
-    private String instructorName;
-    private String instructorNumber;
-    private String instructorEmail;
-    private String instructorPassword;
+    private String name;
+    private String number;
+    private String email;
+    private String password;
     private List<Course> courses;
 
-    public Instructor() {
-        this.courses = new ArrayList<>();
-    }
+    public Instructor() {this.courses = new ArrayList<>();}
 
-    public long getId() {
-        return id;
-    }
+    public long getId() {return id;}
+    public void setId(long id) {this.id = id;}
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
 
-    public String getInstructorName() {
-        return instructorName;
-    }
+    public String getNumber() {return number;}
+    public void setNumber(String number) {this.number = number;}
 
-    public void setInstructorName(String instructorName) {
-        this.instructorName = instructorName;
-    }
+    public String getEmail() {return email;}
+    public void setEmail(String email) {this.email = email;}
 
-    public String getInstructorNumber() {
-        return instructorNumber;
-    }
+    public String getPassword() {return password;}
+    public void setPassword(String password) {this.password = password;}
 
-    public void setInstructorNumber(String instructorNumber) {
-        this.instructorNumber = instructorNumber;
-    }
-
-    public String getInstructorEmail() {
-        return instructorEmail;
-    }
-
-    public void setInstructorEmail(String instructorEmail) {
-        this.instructorEmail = instructorEmail;
-    }
-
-    public String getInstructorPassword() {
-        return instructorPassword;
-    }
-
-    public void setInstructorPassword(String instructorPassword) {
-        this.instructorPassword = instructorPassword;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
-    }
+    public List<Course> getCourses() {return courses;}
+    public void setCourses(List<Course> courses) {this.courses = courses;}
 }
