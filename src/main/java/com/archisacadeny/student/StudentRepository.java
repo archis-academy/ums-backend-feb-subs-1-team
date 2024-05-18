@@ -12,14 +12,13 @@ public class StudentRepository {
         {
             // SQL query for creating students table
             String query = "CREATE TABLE IF NOT EXISTS students(" +
-                    "studentId INTEGER PRIMARY KEY," +
-                    "firstName VARCHAR(255)," +
-                    "secondName VARCHAR(255)," +
+                    "id INTEGER PRIMARY KEY," +
+                    "fullName VARCHAR(255)," +
                     "gender  VARCHAR(255),"+
-                    "courseId  LONG," +
+                    "courseId  INTEGER," +
                     "identityNo VARCHAR(255),"+
                     "unvEnrollmentDate VARCHAR(255),"+
-                    "yearOfStudy LONG,"+
+                    "yearOfStudy INTEGER,"+
                     "totalCreditCount INTEGER)";
 
             statement.execute(query);

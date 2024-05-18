@@ -11,12 +11,10 @@ public class CourseRepository {
         {
             // SQL query for creating courses table
             String query = "CREATE TABLE IF NOT EXISTS courses(" +
-                    "courseId INTEGER PRIMARY KEY," +
-                    "courseTitle VARCHAR(255)," +
-                    "creditHours INTEGER," +
-                    "gradeScale INTEGER," +
-                    "department VARCHAR(255)," +
-                    "instructorId LONG,)";
+                    "id INTEGER PRIMARY KEY," +
+                    "courseName VARCHAR(255)," +
+                    "enrolledStudents INT[],"+
+                    "instructorId INTEGER)";
 
             statement.execute(query);
             System.out.println("Courses table has been created in the database..");

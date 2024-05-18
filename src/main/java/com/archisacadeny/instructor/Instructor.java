@@ -2,35 +2,26 @@ package com.archisacadeny.instructor;
 
 public class Instructor {
 
-    private long instructorID;
-    private String firstName;
-    private String secondName;
+    private long id;
+    private String fullName;
     private String gender;
     private int courseId;
     private String department;
 
-    public long getInstructorID() {
-        return instructorID;
+    public long getId() {
+        return id;
     }
 
-    public void setInstructorID(long instructorID) {
-        this.instructorID = instructorID;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getGender() {

@@ -1,9 +1,8 @@
 package com.archisacadeny.student;
 
 public class Student {
-    private long studentID;
-    private String firstName;
-    private String secondName;
+    private long id;
+    private String fullName;
     private String gender;
     private long courseID;
     private String identityNo;
@@ -11,28 +10,20 @@ public class Student {
     private long yearsOfStudy;
     private int totalCreditCount;
 
-    public long getStudentID() {
-        return studentID;
+    public long getId() {
+        return id;
     }
 
-    public void setStudentID(long studentID) {
-        this.studentID = studentID;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getGender() {

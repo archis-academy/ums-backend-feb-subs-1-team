@@ -1,53 +1,38 @@
 package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConfig;
+import com.archisacadeny.student.Student;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Course {
-    private long courseId;
-    private String courseTitle;
-    private int    creditHours;
-    private float   gradeScale;
-    private String  department;
+    private long id;
+    private String courseName;
     private long instructorId;
 
-    public long getCourseId() {
-        return courseId;
+    private ArrayList<Student> enrolledStudents;
+
+    public void displayEnrolledStudents() {
+        System.out.println("Enrolled students in " + courseName + ":");
+        for (Student student : enrolledStudents) {
+            System.out.println(student.getFullName() + " (ID: " + student.getId() + ")");
+        }
+    }
+    public long getId() {
+        return id;
     }
 
-    public void setCourseId(long courseId) {
-        this.courseId = courseId;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getCourseTitle() {
-        return courseTitle;
+    public String getCourseName() {
+        return courseName;
     }
 
-    public void setCourseTitle(String courseTitle) {
-        this.courseTitle = courseTitle;
-    }
-
-    public int getCreditHours() {
-        return creditHours;
-    }
-
-    public void setCreditHours(int creditHours) {
-        this.creditHours = creditHours;
-    }
-
-    public float getGradeScale() {
-        return gradeScale;
-    }
-
-    public void setGradeScale(float gradeScale) {
-        this.gradeScale = gradeScale;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public long getInstructorId() {
@@ -56,5 +41,13 @@ public class Course {
 
     public void setInstructorId(long instructorId) {
         this.instructorId = instructorId;
+    }
+
+    public void setEnrolledStudents(ArrayList<Student> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
+    }
+
+    public void setEnrolledStudents(List<Student> enrolledStudents) {
+        this.enrolledStudents = (ArrayList<Student>) enrolledStudents;
     }
 }

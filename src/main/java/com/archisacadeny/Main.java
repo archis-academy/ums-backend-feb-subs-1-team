@@ -13,7 +13,5 @@ public class Main {
         DataBaseConnectorConfig.setConnection();
         PersonRepository.createPersonTable();
         CourseRepository.createCourseTable();
-        InstructorRepository.createInstructorTable();
-        StudentRepository.createStudentTable();
-    }
+        }
 }
