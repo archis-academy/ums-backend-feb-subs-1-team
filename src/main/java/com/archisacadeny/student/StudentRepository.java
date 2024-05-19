@@ -6,14 +6,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class StudentRepository {
-    public static void createSutendtTable(){
+    public static void createStudentTable(){
 
         try(Statement statement = DataBaseConnectorConfig.getConnection().createStatement())
         {
             String query = "DROP SEQUENCE IF EXITS student_id_seq;"+
                     "CREATE SEQUENCE student_id_seq INCREMENT BY 1 MINVALUE 0 MAXVALUE 2147483647 START 1;"+
                     "CREATE TABLE IF NOT EXITS students(" +
-                    "id INTEGER DEFAULT nexval('student_id_seq') PRIMARY KEY," +
+                    "id INTEGER DEFAULT maxvalue('student_id_seq') PRIMARY KEY," +
                     "full_name VARCHAR(255)," +
                     "email VARCHAR(255)," +
                     "gender VARCHAR(255),"+
