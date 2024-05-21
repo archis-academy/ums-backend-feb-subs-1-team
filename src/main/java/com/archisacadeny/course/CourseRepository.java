@@ -23,6 +23,7 @@ public class CourseRepository {
                     CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES "public"."instructors"(id)
                     )
             """;
+            // enrolledStudents text [] ?, nasil array olusturulucak ?
             statement.execute(query);
             System.out.println("Courses table has been created in the database..");
 
@@ -30,7 +31,6 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
     }
-//             use this      "CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES public.instructors(id))";
 
     public static Course save(Course course){
         String query = "INSERT INTO courses(name,number,instructor_id) VALUES(?,?,?)"; //,enrolled_students
