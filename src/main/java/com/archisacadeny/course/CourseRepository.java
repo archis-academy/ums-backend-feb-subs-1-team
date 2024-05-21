@@ -12,17 +12,17 @@ public class CourseRepository {
         try(Statement statement = DataBaseConnectorConfig.getConnection().createStatement())
         {
             // SQL query for creating persons table
-            String query = "DROP SEQUENCE IF EXISTS course_id_seq;" +
-                    "CREATE SEQUENCE course_id_seq INCREMENT BY 1 MINVALUE 0 MAXVALUE 2147483647 START 1;"+
-                    "CREATE TABLE IF NOT EXISTS courses(" +
-                    "id INTEGER DEFAULT nextval('course_id_seq') PRIMARY KEY," +
-                    "name VARCHAR(255)," +
-                    "number VARCHAR(255)," +
-                    "instructor_id VARCHAR(255))";
-                    //"enrolled_students TEXT [])";
-                    // Course classinda enrolled_students nasil array olarak eklenilecek ?
-                   // Array Students datatype i olarak mi girilecek ?
-
+            String query = """
+                    DROP SEQUENCE IF EXISTS course_id_seq;
+                    CREATE SEQUENCE course_id_seq INCREMENT BY 1 MINVALUE 0 MAXVALUE 2147483647 START 1;
+                    CREATE TABLE IF NOT EXISTS courses(
+                    "id" INTEGER DEFAULT nextval('course_id_seq') PRIMARY KEY NOT NULL,
+                    "name" VARCHAR(255) NOT NULL,
+                    "number" VARCHAR(255) NOT NULL,
+                    "instructor_id" INTEGER,
+                    CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES "public"."instructors"(id)
+                    )
+            """;
             statement.execute(query);
             System.out.println("Courses table has been created in the database..");
 
@@ -30,14 +30,16 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
     }
+//             use this      "CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES public.instructors(id))";
 
     public static Course save(Course course){
         String query = "INSERT INTO courses(name,number,instructor_id) VALUES(?,?,?)"; //,enrolled_students
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
-            statement.setString(3,course.getInstructorId());
+            statement.setLong(3,course.getInstructor().getId());
             //statement.setArray(4,course.getEnrolledStudents());
+
 
             statement.execute();
             System.out.println("Course has been saved successfully with name: "+course.getCourseName());
