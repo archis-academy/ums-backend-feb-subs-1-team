@@ -26,21 +26,27 @@ public class Student {
         this.enrolledCourses = enrolledCourses;
     }
     public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
     public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
     public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 
     public List<Course> getEnrolledCourses(int i) { return enrolledCourses; }
+    public void setEnrolledCourses(List<Course> enrolledCourses) { this.enrolledCourses = enrolledCourses; }
 
     public String getIdentityNo() { return identityNo; }
+    public void setIdentityNo(String identityNo) { this.identityNo = identityNo; }
 
     public LocalDate getEnrollmentDate() { return enrollmentDate; }
+    public void setEnrollmentDate(LocalDate enrollmentDate) { this.enrollmentDate = enrollmentDate; }
 
     public int getYearOfStudy() { return yearOfStudy; }
+    public void setYearOfStudy(int yearOfStudy) { this.yearOfStudy = yearOfStudy; }
 
     public int getTotalCreditCount() { return totalCreditCount; }
+    public void setTotalCreditCount(int totalCreditCount) { this.totalCreditCount = totalCreditCount; }
 
-    public void setEnrolledCourses(List<Course> enrolledCourses) {
-    }
 }
