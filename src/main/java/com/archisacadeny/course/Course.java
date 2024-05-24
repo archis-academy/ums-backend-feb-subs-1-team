@@ -11,16 +11,16 @@ public class Course {
     private long id;
     private String courseName;
     private Instructor instructor;
-    private long creditHours;
+    private long creditAmount;
     private long totalStudent;
     private List<Student> enrolledStudent;
     private String department;
 
-    public Course(long id, String courseName, Instructor instructor, long creditHours, long totalStudent, List<Student> enrolledStudent, String department) {
+    public Course(long id, String courseName, Instructor instructor, long creditAmount, long totalStudent, List<Student> enrolledStudent, String department) {
         this.id = id;
         this.courseName = courseName;
         this.instructor = instructor;
-        this.creditHours = creditHours;
+        this.creditAmount = creditAmount;
         this.totalStudent = totalStudent;
         this.enrolledStudent = enrolledStudent;
         this.department = department;
@@ -50,12 +50,12 @@ public class Course {
         this.instructor = instructor;
     }
 
-    public long getCreditHours() {
-        return creditHours;
+    public long getCreditAmount() {
+        return creditAmount;
     }
 
-    public void setCreditHours(long creditHours) {
-        this.creditHours = creditHours;
+    public void setCreditAmount(long creditAmount) {
+        this.creditAmount = creditAmount;
     }
 
     public long getTotalStudent() {
