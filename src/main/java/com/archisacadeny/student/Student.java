@@ -2,7 +2,7 @@ package com.archisacadeny.student;
 
 import com.archisacadeny.course.Course;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class Student {
@@ -10,12 +10,12 @@ public class Student {
     private String fullName;
     private String gender;
     private String identityNo;
-    private LocalDate enrollmentDate;
+    private Timestamp enrollmentDate;
     private List<Course> enrolledCourses;
     private int yearOfStudy;
     private int totalCreditCount;
 
-    public Student(long id, String fullName, String gender, String identityNo, LocalDate enrollmentDate, int yearOfStudy, int totalCreditCount) {
+    public Student(long id, String fullName, String gender, String identityNo, Timestamp enrollmentDate, int yearOfStudy, int totalCreditCount) {
         this.id = id;
         this.fullName = fullName;
         this.gender = gender;
@@ -40,8 +40,8 @@ public class Student {
     public String getIdentityNo() { return identityNo; }
     public void setIdentityNo(String identityNo) { this.identityNo = identityNo; }
 
-    public LocalDate getEnrollmentDate() { return enrollmentDate; }
-    public void setEnrollmentDate(LocalDate enrollmentDate) { this.enrollmentDate = enrollmentDate; }
+    public Timestamp getEnrollmentDate() { return enrollmentDate; }
+    public void setEnrollmentDate(Timestamp enrollmentDate) { this.enrollmentDate = enrollmentDate; }
 
     public int getYearOfStudy() { return yearOfStudy; }
     public void setYearOfStudy(int yearOfStudy) { this.yearOfStudy = yearOfStudy; }
