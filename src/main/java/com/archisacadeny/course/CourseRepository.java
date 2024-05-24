@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 public class CourseRepository {
 
+
     public static void createCourseTable(){
         try(Statement statement = DataBaseConnectorConfig.getConnection().createStatement())
         {
@@ -23,7 +24,6 @@ public class CourseRepository {
                     CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES "public"."instructors"(id)
                     )
             """;
-            // enrolledStudents text [] ?, nasil array olusturulucak ?
             statement.execute(query);
             System.out.println("Courses table has been created in the database..");
 
@@ -38,7 +38,6 @@ public class CourseRepository {
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
             statement.setLong(3,course.getInstructor().getId());
-            //statement.setArray(4,course.getEnrolledStudents());
 
 
             statement.execute();
@@ -49,5 +48,17 @@ public class CourseRepository {
         }
         return course;
     }
+
+}
+    public static void deleteCourse(long courseId) {
+        String query = "DELETE FROM \"courses\"" +
+                "WHERE id = '"+courseId+"'";
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
