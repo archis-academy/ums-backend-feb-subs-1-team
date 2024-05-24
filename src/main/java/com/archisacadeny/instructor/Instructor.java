@@ -1,12 +1,14 @@
 package com.archisacadeny.instructor;
 
+import java.awt.*;
+
 public class Instructor {
 
     private long id;
     private String fullName;
     private String gender;
-    private int courseId;
     private String department;
+    private List courses;
 
     public long getId() {
         return id;
@@ -32,19 +34,19 @@ public class Instructor {
         this.gender = gender;
     }
 
-    public int getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
-
     public String getDepartment() {
         return department;
     }
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public List getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List courses) {
+        this.courses = courses;
     }
 }

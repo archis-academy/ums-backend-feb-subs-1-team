@@ -14,7 +14,6 @@ public class InstructorRepository {
                     "id INTEGER PRIMARY KEY," +
                     "fullName VARCHAR(255)," +
                     "gender VARCHAR(255), " +
-                    "courseId INTEGER," +
                     "department VARCHAR(255))";
 
             statement.execute(query);

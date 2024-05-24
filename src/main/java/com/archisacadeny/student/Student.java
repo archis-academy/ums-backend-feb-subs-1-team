@@ -1,10 +1,14 @@
 package com.archisacadeny.student;
 
+import com.archisacadeny.course.Course;
+
+import java.util.List;
+
 public class Student {
     private long id;
     private String fullName;
     private String gender;
-    private long courseID;
+    private List<Course> enrolledCourses;
     private String identityNo;
     private String unvEnrollmentDate;
     private long yearsOfStudy;
