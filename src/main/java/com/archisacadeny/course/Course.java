@@ -11,6 +11,20 @@ public class Course {
     private long id;
     private String courseName;
     private Instructor instructor;
+    private long creditHours;
+    private long totalStudent;
+    private List<Student> enrolledStudent;
+    private String department;
+
+    public Course(long id, String courseName, Instructor instructor, long creditHours, long totalStudent, List<Student> enrolledStudent, String department) {
+        this.id = id;
+        this.courseName = courseName;
+        this.instructor = instructor;
+        this.creditHours = creditHours;
+        this.totalStudent = totalStudent;
+        this.enrolledStudent = enrolledStudent;
+        this.department = department;
+    }
 
     public long getId() {
         return id;
@@ -34,5 +48,37 @@ public class Course {
 
     public void setInstructor(Instructor instructor) {
         this.instructor = instructor;
+    }
+
+    public long getCreditHours() {
+        return creditHours;
+    }
+
+    public void setCreditHours(long creditHours) {
+        this.creditHours = creditHours;
+    }
+
+    public long getTotalStudent() {
+        return totalStudent;
+    }
+
+    public void setTotalStudent(long totalStudent) {
+        this.totalStudent = totalStudent;
+    }
+
+    public List<Student> getEnrolledStudent() {
+        return enrolledStudent;
+    }
+
+    public void setEnrolledStudent(List<Student> enrolledStudent) {
+        this.enrolledStudent = enrolledStudent;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 }
