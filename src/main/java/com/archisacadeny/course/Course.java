@@ -4,7 +4,10 @@ import com.archisacadeny.config.DataBaseConfig;
 import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 
+<<<<<<< Updated upstream
 import java.util.ArrayList;
+=======
+>>>>>>> Stashed changes
 import java.util.List;
 
 public class Course {
