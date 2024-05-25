@@ -18,7 +18,7 @@ public class StudentRepository {
                     "email VARCHAR(255)," +
                     "gender VARCHAR(255),"+
                     "password VARCHAR(255)," +
-                    "student_number INTEGER,"+
+                    "student_number VARCHAR(255),"+
                     "department VARCHAR(255),"+
                     "gender VARCHAR(255),"+
                     "enrolled_course VARCHAR(255))";

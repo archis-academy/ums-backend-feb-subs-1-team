@@ -11,7 +11,7 @@ public class Student {
     private String email;
     private String password;
     private String department;
-    private int studentNumber;
+    private String studentNumber;
     private String gender;
     private List<Course> enrolledCourse;
 
