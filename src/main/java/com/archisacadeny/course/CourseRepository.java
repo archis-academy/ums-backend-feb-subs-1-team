@@ -21,6 +21,9 @@ public class CourseRepository {
                     "name" VARCHAR(255) NOT NULL,
                     "number" VARCHAR(255) NOT NULL,
                     "instructor_id" INTEGER,
+                    "creditHours" INTEGER,
+                    "department" VARCHAR(255),
+                    "maxStudents" INTEGER,
                     CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES "public"."instructors"(id)
                     )
             """;
@@ -33,12 +36,14 @@ public class CourseRepository {
     }
 
     public static Course save(Course course){
-        String query = "INSERT INTO courses(name,number,instructor_id) VALUES(?,?,?)"; //,enrolled_students
+        String query = "INSERT INTO courses(name,number,instructor_id,creditHours,department,maxStudents) VALUES(?,?,?,?,?,?)";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
             statement.setLong(3,course.getInstructor().getId());
-
+            statement.setLong(4,course.getCreditHours());
+            statement.setString(5,course.getDepartmentName());
+            statement.setLong(6,course.getMaxStudents());
 
             statement.execute();
             System.out.println("Course has been saved successfully with name: "+course.getCourseName());
