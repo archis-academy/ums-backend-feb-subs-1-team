@@ -15,7 +15,7 @@ public class CourseRepository {
                     "id" INTEGER DEFAULT nextval('course_id_seq') PRIMARY KEY NOT NULL,
                     "name" VARCHAR(255) NOT NULL,
                     "number" VARCHAR(255) NOT NULL,
-                    "credit_hours" INTEGER,
+                    "credits" INTEGER,
                     "department" VARCHAR(255),
                     "max_students" INTEGER,
                     "instructor_id" INTEGER,
@@ -31,11 +31,11 @@ public class CourseRepository {
     }
 
     public static Course save(Course course){
-        String query = "INSERT INTO courses(name,number,credit_hours,department,max_students,instructor_id) VALUES(?,?,?,?,?,?)";
+        String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id) VALUES(?,?,?,?,?,?)";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
-            statement.setInt(3,course.getCreditHours());
+            statement.setInt(3,course.getCredits());
             statement.setString(4,course.getDepartment());
             statement.setLong(5,course.getMaxStudents());
             statement.setLong(6,course.getInstructor().getId());
