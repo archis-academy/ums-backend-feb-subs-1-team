@@ -14,7 +14,7 @@ public class InstructorRepository {
             String InstructorTableQuery= "DROP SEQUENCE IF EXISTS instructor_id_seq;" +
                     "CREATE SEQUENCE instructor_id_seq INCREMENT BY 1 MINVALUE 0 MAXVALUE 2147483647 START 1;"+
                     "CREATE TABLE IF NOT EXISTS instructors(" +
-                    "instructorId; INTEGER DEFAULT nextval('instructor_id_seq') PRIMARY KEY," +
+                    "instructor_id; INTEGER DEFAULT nextval('instructor_id_seq') PRIMARY KEY," +
                     "full_name VARCHAR(255),"+
                     "number VARCHAR(255),"+
                     "email VARCHAR(255),"+
