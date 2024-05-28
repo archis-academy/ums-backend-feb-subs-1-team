@@ -23,19 +23,16 @@ public class CourseRepository {
                         " number = '%2$s'," +
                         " instructor_id = '%3$s' " +
                         " creditHours = '%4$s' " +
-                        " totalStudent = '%5$s' "+
-                        " enrolledStudent = '%6$s' "+
-                        " department = '%7$s' "+
-                        " maxStudents = '%8$s'"+
+                        " enrolledStudent = '%5$s' "+
+                        " department = '%6$s' "+
+                        " maxStudents = '%7$s'"+
 
                         "WHERE number= '"+courseNumber+"'",
                 course.getCourseName(),
                 course.getCourseNumber(),
                 course.getInstructor().getId(),
                 course.getCreditHours(),
-                course.getTotalStudent(),
-                course.getEnrolledStudent(),
-                course.getEnrolledStudent(),
+                course.getEnrolledStudents(),
                 course.getDepartment(),
                 course.getMaxStudents()
                 );
