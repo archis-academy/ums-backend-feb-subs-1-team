@@ -22,9 +22,9 @@ public class CourseRepository {
                 "UPDATE courses SET name= '%1$s'," +
                         " number = '%2$s'," +
                         " instructor_id = '%3$s' " +
-                        " creditHours = '%4$s' " +
+                        " credits = '%4$s' " +
                         " department = '%5$s' "+
-                        " maxStudents = '%6$s'"+
+                        " max_students = '%6$s'"+
 
                         "WHERE number= '"+courseNumber+"'",
                 course.getCourseName(),
