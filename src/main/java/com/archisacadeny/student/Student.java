@@ -72,7 +72,7 @@ public class Student {
         this.gender = gender;
     }
 
-    public int getStudentNumber() {
+    public String getStudentNumber() {
         return studentNumber;
     }
 
