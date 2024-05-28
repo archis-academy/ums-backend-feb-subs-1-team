@@ -2,17 +2,12 @@ package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class CourseRepository {
-
-
     public static void createCourseTable(){
         try(Statement statement = DataBaseConnectorConfig.getConnection().createStatement())
         {
-            // SQL query for creating persons table
             String query = """
                     DROP SEQUENCE IF EXISTS course_id_seq;
                     CREATE SEQUENCE course_id_seq INCREMENT BY 1 MINVALUE 0 MAXVALUE 2147483647 START 1;
@@ -43,7 +38,7 @@ public class CourseRepository {
             statement.setInt(3,course.getCreditHours());
             statement.setString(4,course.getDepartment());
             statement.setLong(5,course.getMaxStudents());
-            statement.setLong(6,course.getInstructorId());
+            statement.setLong(6,course.getInstructor().getId());
 
             statement.execute();
             System.out.println("Course has been saved successfully with name: "+course.getCourseName());
@@ -53,7 +48,6 @@ public class CourseRepository {
         }
         return course;
     }
-
 
     public static void deleteCourse(long courseId) {
         String query = "DELETE FROM \"courses\"" +
