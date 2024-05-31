@@ -23,11 +23,14 @@ public class CourseRepository {
         boolean result = false;
         int count = 0;
 
-        String query = "SELECT COUNT(*) FROM \"course_student_mapper\"" +
-                "WHERE course_id = '" + courseId +"'";
-        // kac ogrenci bu kursda
+        String query = "SELECT COUNT(*), max_students FROM \"course_student_mapper\"" +
+                " LEFT JOIN \"courses\" ON course.id = courseId"+ // DOGRU MU ?
+                 "WHERE course_id = '" + courseId +"'";
 
 
+
+//  String query = "SELECT COUNT(*) FROM \"course_student_mapper\"" +
+//                "WHERE course_id = '" + courseId +"'";
 
 //        String query2 = "SELECT max_students FROM \"courses\"" +
 //                "WHERE course_id = '" + courseId +"'";
@@ -45,9 +48,6 @@ public class CourseRepository {
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
-
-        // 2 query calistira bilirmiyim ?
-        // course table indan courseID ile course un max_student i na nasil erisirim ?
 
         return result;
     }
