@@ -8,14 +8,14 @@ import java.util.List;
 public class Student {
     private long id;
     private String fullName;
-    private String gender;
+    private char gender;
     private String identityNo;
     private Timestamp enrollmentDate;
     private List<Course> enrolledCourses;
     private int yearOfStudy;
     private int totalCreditCount;
 
-    public Student(long id, String fullName, String gender, String identityNo, Timestamp enrollmentDate, int yearOfStudy, int totalCreditCount) {
+    public Student(long id, String fullName, char gender, String identityNo, Timestamp enrollmentDate, int yearOfStudy, int totalCreditCount) {
         this.id = id;
         this.fullName = fullName;
         this.gender = gender;
@@ -31,10 +31,11 @@ public class Student {
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public String getGender() { return gender; }
-    public void setGender(String gender) { this.gender = gender; }
+    public char getGender() { return gender; }
+    public void setGender(char gender) { this.gender = gender; }
 
-    public List<Course> getEnrolledCourses(int i) { return enrolledCourses; }
+    public List<Course> getEnrolledCourses() { return enrolledCourses; }
+
     public void setEnrolledCourses(List<Course> enrolledCourses) { this.enrolledCourses = enrolledCourses; }
 
     public String getIdentityNo() { return identityNo; }
