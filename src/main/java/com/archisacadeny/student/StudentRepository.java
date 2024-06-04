@@ -11,14 +11,13 @@ public class StudentRepository {
             String query = "DROP SEQUENCE IF EXISTS student_id_seq;" +
                     "CREATE SEQUENCE student_id_seq INCREMENT BY 1 MINVALUE 0 MAXVALUE 2147483647 START 1;" +
                     "CREATE TABLE IF NOT EXISTS students(" +
-                    "Id INTEGER DEFAULT nextval('student_id_seq') PRIMARY KEY," +
-                    "FullName VARCHAR(255) NOT NULL," +
-                    "Gender CHAR NOT NULL," +
-                    "IdentityNo VARCHAR(11) UNIQUE NOT NULL," +
-                    "EnrollmentDate DATE NOT NULL," +
-                    "YearOfStudy INTEGER NOT NULL," +
-                    "EnrolledCourses INTEGER[]," +
-                    "TotalCreditCount INTEGER DEFAULT 0" +
+                    "id INTEGER DEFAULT nextval('student_id_seq') PRIMARY KEY," +
+                    "full_name VARCHAR(255) NOT NULL," +
+                    "gender String NOT NULL," +
+                    "identity_no VARCHAR(11) UNIQUE NOT NULL," +
+                    "enrollment_date DATE NOT NULL," +
+                    "year_of_study INTEGER NOT NULL," +
+                    "total_credit_count INTEGER DEFAULT 0" +
                     ");";
 
             statement.execute(query);
@@ -30,7 +29,7 @@ public class StudentRepository {
     }
 
     public void deleteStudent(int studentId){
-        String query = "DELETE FROM students WHERE Id = ?";
+        String query = "DELETE FROM students WHERE id = ?";
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.setLong(1, studentId);
             int affectedRows = statement.executeUpdate();
