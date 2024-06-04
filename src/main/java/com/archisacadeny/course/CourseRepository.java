@@ -23,7 +23,7 @@ public class CourseRepository {
         boolean result = false;
         int count = 0;
 
-        String query = "SELECT courses.id, courses.name , courses.max_students, COUNT(course_student_mapper.course_id), FROM courses" +
+        String query = "SELECT courses.id, courses.name , courses.max_students, COUNT(course_student_mapper.course_id) as student_count FROM courses" +
                         " LEFT JOIN course_student_mapper ON  course_student_mapper.course_id = courses.id" +
                        "";// "WHERE courses.id = "+courseId; Nasil filtreleye bilirim tek result icin ?
 
