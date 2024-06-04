@@ -2,10 +2,7 @@ package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class CourseRepository {
     public static void deleteCourse(long courseId) {
@@ -19,36 +16,47 @@ public class CourseRepository {
     }
 
     public static boolean isCourseFull(long courseId) {
+        int studentCount = 0;
+        int maxStudents = 0;
 
-        boolean result = false;
-        int count = 0;
-
-        String query = "SELECT courses.id, courses.name , courses.max_students, COUNT(course_student_mapper.course_id) as student_count FROM courses" +
-                        " LEFT JOIN course_student_mapper ON  course_student_mapper.course_id = courses.id" +
-                       "";// "WHERE courses.id = "+courseId; Nasil filtreleye bilirim tek result icin ?
-
-
-
-//  String query = "SELECT COUNT(*) FROM \"course_student_mapper\"" +
-//                "WHERE course_id = '" + courseId +"'";
-
-//        String query2 = "SELECT max_students FROM \"courses\"" +
-//                "WHERE course_id = '" + courseId +"'";
-//        // ogrenci limiti kac ?
+        String query = "SELECT \"courses\".id, name , max_students, COUNT(course_student_mapper.course_id) as n_of_students FROM \"courses\"" +
+                "LEFT JOIN \"course_student_mapper\" ON  course_student_mapper.course_id = \"courses\".\"id\""+
+                "WHERE courses.id = '"+courseId + "' GROUP BY courses.id  ";
 
 
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
             ResultSet rs = statement.getResultSet();
-            System.out.println(rs);
             while (rs.next()) {
-                System.out.println(rs.getString("count"));
-                count = Integer.parseInt(rs.getString("count"));
+                studentCount = rs.getInt("n_of_students");
+                maxStudents = rs.getInt("max_students");
+                System.out.println(studentCount + "A"+maxStudents);
             }
+            printResultSet(rs);
+            //PRINTLENMIYOR, rs.next() bittikten sonra.
+
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
 
-        return result;
+        if( studentCount == maxStudents){
+            return true;
+        }else{
+            return false;
+        }
     }
+
+    public static void printResultSet(ResultSet rs) throws SQLException
+    {
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int columnsNumber = rsmd.getColumnCount();
+        while (rs.next()) {
+            for (int i = 1; i <= columnsNumber; i++) {
+                if (i > 1) System.out.print(" | ");
+                System.out.print(rs.getString(i));
+            }
+            System.out.println("");
+        }
+    }
+
 }
