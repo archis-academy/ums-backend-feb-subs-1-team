@@ -13,7 +13,7 @@ public class StudentRepository {
                     "CREATE TABLE IF NOT EXISTS students(" +
                     "id INTEGER DEFAULT nextval('student_id_seq') PRIMARY KEY," +
                     "full_name VARCHAR(255) NOT NULL," +
-                    "gender String NOT NULL," +
+                    "gender VARCHAR NOT NULL," +
                     "identity_no VARCHAR(11) UNIQUE NOT NULL," +
                     "enrollment_date DATE NOT NULL," +
                     "year_of_study INTEGER NOT NULL," +
