@@ -5,6 +5,10 @@ import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 import java.util.List;
 import java.util.ArrayList;
+import com.archisacadeny.config.DataBaseConnectorConfig;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 
 public class Course {
     private long id;
@@ -90,4 +94,8 @@ public class Course {
     public void setMaxStudents(int maxStudents) {
         this.maxStudents = maxStudents;
     }
+
 }
+
+
+
