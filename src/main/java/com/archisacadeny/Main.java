@@ -1,7 +1,6 @@
 package com.archisacadeny;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
-import com.archisacadeny.courseStudentMapper.CourseStudentMapperRepository;
 import com.archisacadeny.person.PersonRepository;
 
 public class Main {
