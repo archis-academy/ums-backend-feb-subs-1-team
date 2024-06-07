@@ -84,4 +84,28 @@ public class CourseRepository {
         }
     }
 
+    public static double getTotalCreditAmount(long studentId) {
+        double count = 0.0;
+        String query = "SELECT  student_id , credits  FROM \"course_student_mapper\"" +
+                "LEFT JOIN \"courses\"  ON  course_student_mapper.course_id = \"courses\".\"id\""+
+                "WHERE student_id = '"+studentId + "'";
+
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                count += rs.getInt("credits");
+            }
+            System.out.println(count);
+//            printResultSet(rs);
+            //PRINTLENMIYOR, rs.next() bittikten sonra.
+
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return count;
+    }
+
+
+
 }
