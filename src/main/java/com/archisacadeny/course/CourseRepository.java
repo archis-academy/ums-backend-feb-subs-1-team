@@ -152,6 +152,27 @@ public class CourseRepository {
         return count;
     }
 
+    public static int getCourseWithMostStudents() {
+        // RETURNS COURSE ID FOR NOW
+        int courseId = -1;
+        String query = "SELECT DISTINCT course_id , COUNT(course_id) as student_count FROM \"course_student_mapper\" " +
+                "GROUP BY course_id " +
+                "ORDER BY student_count DESC LIMIT 1 ";
+
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                courseId = rs.getInt("course_id");
+            }
+//            printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return courseId;
+    }
+
+
 
 
 }
