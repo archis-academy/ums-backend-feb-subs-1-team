@@ -34,7 +34,8 @@ public class Student {
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }
 
-    public List<Course> getEnrolledCourses(int i) { return enrolledCourses; }
+    public List<Course> getEnrolledCourses() { return enrolledCourses; }
+
     public void setEnrolledCourses(List<Course> enrolledCourses) { this.enrolledCourses = enrolledCourses; }
 
     public String getIdentityNo() { return identityNo; }
