@@ -30,7 +30,7 @@ public class CourseRepository {
         }
     }
 
-    public static Course save(Course course){
+   /* public static Course save(Course course){
         String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id) VALUES(?,?,?,?,?,?)";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
@@ -47,7 +47,7 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return course;
-    }
+    }*/
 
     public static void deleteCourse(long courseId) {
         String query = "DELETE FROM \"courses\"" +
@@ -105,7 +105,7 @@ public class CourseRepository {
     }
 
 
-    public static void update(String courseNumber, Course course ){
+ /*   public static void update(String courseNumber, Course course ){
         String query = String.format(
                 "UPDATE courses SET name= '%1$s'," +
                         " number = '%2$s'," +
@@ -128,7 +128,7 @@ public class CourseRepository {
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     public static double getTotalCreditAmount(long studentId) {
         double count = 0.0;
