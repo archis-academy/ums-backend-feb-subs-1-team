@@ -121,7 +121,7 @@ public class CourseRepository {
                 course.getCreditHours(),
                 course.getDepartment(),
                 course.getMaxStudents()
-                );
+        );
         System.out.println(query);
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
@@ -183,3 +183,4 @@ public class CourseRepository {
 
 
 }
+
