@@ -172,6 +172,36 @@ public class CourseRepository {
         return courseId;
     }
 
+    public static int[] getStudentEnrolledCourses(int studentId) {
+        // RETURNS COURSE ID s FOR NOW
+        String query = "SELECT course_id FROM \"course_student_mapper\" " +
+                "WHERE student_id = '" + studentId + "'" +
+                "GROUP BY course_id ";
+
+        int[] ids;
+        int count = 0;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+
+            rs.last();
+            int numRows = rs.getRow();
+            ids = new int[numRows];
+            rs.beforeFirst();
+
+            while (rs.next()) {
+                ids[count] = rs.getInt("course_id");
+                count++;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return ids;
+    }
+
+
 
 
 
