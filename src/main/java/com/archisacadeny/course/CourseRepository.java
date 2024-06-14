@@ -35,7 +35,7 @@ public class CourseRepository {
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
-            statement.setInt(3,course.getCredits());
+            statement.setLong(3,course.getCredits());
             statement.setString(4,course.getDepartment());
             statement.setLong(5,course.getMaxStudents());
             statement.setLong(6,course.getInstructor().getId());
@@ -48,6 +48,7 @@ public class CourseRepository {
         }
         return course;
     }
+
 
     public static void deleteCourse(long courseId) {
         String query = "DELETE FROM \"courses\"" +
@@ -118,7 +119,7 @@ public class CourseRepository {
                 course.getCourseName(),
                 course.getCourseNumber(),
                 course.getInstructor().getId(),
-                course.getCreditHours(),
+                course.getCredits(),
                 course.getDepartment(),
                 course.getMaxStudents()
                 );
@@ -171,8 +172,5 @@ public class CourseRepository {
         }
         return courseId;
     }
-
-
-
 
 }
