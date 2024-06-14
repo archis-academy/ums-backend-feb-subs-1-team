@@ -29,6 +29,7 @@ public class StudentRepository {
         }
     }
 
+
     public void deleteStudent(int studentId) {
         String query = "DELETE FROM students WHERE id = ?";
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
@@ -64,5 +65,37 @@ public class StudentRepository {
         }
 
         return student;
+    }
+
+    public Student viewStudentDetails(long id) {
+        String query = "SELECT id FROM students";
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+
+                String fullName = resultSet.getString("full_name");
+                String gender = resultSet.getString("gender");
+                String identityNo = resultSet.getString("identity_no");
+                Timestamp enrollmentDate = resultSet.getTimestamp("enrollment_date");
+                int yearsOfStudy = resultSet.getInt(6);
+                int totalCreditCount = resultSet.getInt(7);
+
+                System.out.println("Full Name:" + fullName +
+                        "Gender:" + gender +
+                        "Identity No:" + identityNo +
+                        "Enrollment Date:" + enrollmentDate +
+                        "Years Of Study:" + yearsOfStudy +
+                        "Total Credits Count:" + totalCreditCount);
+
+            }
+
+            resultSet.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 }
