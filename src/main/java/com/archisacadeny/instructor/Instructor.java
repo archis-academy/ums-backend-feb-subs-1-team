@@ -8,14 +8,10 @@ import java.util.List;
 
 public class Instructor extends Person {
 
-    private long instructorId;
     private String number;
     private List<Course> courses;
 
     public Instructor() {this.courses = new ArrayList<>();}
-
-    public long getId() {return instructorId;}
-    public void setId(long id) {this.instructorId = id;}
 
     public String getNumber() {return number;}
     public void setNumber(String number) {this.number = number;}
