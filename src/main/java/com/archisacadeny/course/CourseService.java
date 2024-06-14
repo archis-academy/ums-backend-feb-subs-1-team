@@ -20,7 +20,7 @@ public class CourseService {
         int[] courseIds = courseRepository.getStudentEnrolledCourses(studentId);
         ArrayList<Course> courses = new ArrayList<>();
         for(int i = 0;i< courseIds.length;i++){
-            courses.add(courseRepository.getCourse(courseIds[i]))
+            courses.add(courseRepository.getCourse(courseIds[i]));
         }
     }
 
