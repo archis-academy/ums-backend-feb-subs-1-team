@@ -17,6 +17,22 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
+    public void deleteCourse(long courseId){
+        courseRepository.deleteCourse(courseId);
+    }
+
+    public Boolean isCourseFull(long courseId){
+        return courseRepository.isCourseFull(courseId);
+    }
+
+    public void update(String courseNumber, Course course ){
+        courseRepository.update(courseNumber,course);
+    }
+
+    public Double getTotalCreditAmount(long studentId){
+        return courseRepository.getTotalCreditAmount(studentId);
+    }
+
     public List<Course> getStudentEnrolledCourses(int studentId){
         int[] courseIds = courseRepository.getStudentEnrolledCourses(studentId);
         ArrayList<Course> courses = new ArrayList<>();
@@ -24,6 +40,11 @@ public class CourseService {
             courses.add(courseRepository.getCourseById(courseIds[i]));
         }
         return courses;
+    }
+    public Course getCourseWithMostStudents(){
+        return CourseRepository.getCourseById(CourseRepository.getCourseWithMostStudents());
+        // CourseRepositorydeki getCourseById yi burada mi kullanmam gerek yoksa
+        // getCourseWithMostStudents() methodunun icinde mi ?
     }
 
 }
