@@ -33,20 +33,15 @@ public class InstructorRepository {
 
     public Instructor save (Instructor instructor){
         String query = "INSERT INTO instructors (full_name,number,email,password) VALUES(?,?,?,?)";
-//        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-//            statement.setString(1, instructor.getFullName());
-//            statement.setString(2, instructor.getNumber());
-//            statement.setString(3, instructor.getEmail());
-//            statement.setString(4, instructor.getPassword());
-//
-//            statement.execute();
-//            System.out.println("Instructor saved successfully with name: "+instructor.getFullName());
+       try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+           statement.setString(1, instructor.getFullName());
+           statement.setString(2, instructor.getNumber());
+           statement.setString(3, instructor.getEmail());
+           statement.setString(4, instructor.getPassword());
 
-        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-
-            System.out.println("Instructor saved successfully with name: "+instructor.getFullName());
-
-        } catch(SQLException e){
+           statement.execute();
+           System.out.println("Instructor saved successfully with name: " + instructor.getFullName());
+       }catch(SQLException e){
             throw new RuntimeException(e);
         }
         return instructor;
