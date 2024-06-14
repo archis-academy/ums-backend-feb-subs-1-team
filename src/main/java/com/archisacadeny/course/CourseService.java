@@ -4,6 +4,7 @@ package com.archisacadeny.course;
 import com.archisacadeny.instructor.Instructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CourseService {
     private final CourseRepository courseRepository;
@@ -16,12 +17,13 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public Course getStudentEnrolledCourses(int studentId){
+    public List<Course> getStudentEnrolledCourses(int studentId){
         int[] courseIds = courseRepository.getStudentEnrolledCourses(studentId);
         ArrayList<Course> courses = new ArrayList<>();
         for(int i = 0;i< courseIds.length;i++){
             courses.add(courseRepository.getCourse(courseIds[i]));
         }
+        return courses;
     }
 
 }
