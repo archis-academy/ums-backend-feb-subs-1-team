@@ -1,5 +1,7 @@
 package com.archisacadeny.instructor;
 
+import java.util.List;
+
 public class InstructorService {
     private final InstructorRepository instructorRepository;
 
@@ -8,6 +10,13 @@ public class InstructorService {
     }
 
     public Instructor createInstructor(Instructor instructor) {
+        if(instructor== null){
+            throw new RuntimeException("instructor is null");
+        }
         return instructorRepository.save(instructor);
+    }
+
+    public List<Instructor> listAllInstructors() {
+        return instructorRepository.listAllInstructors();
     }
 }
