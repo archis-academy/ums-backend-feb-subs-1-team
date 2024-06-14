@@ -180,7 +180,7 @@ public class CourseRepository {
 
         int[] ids;
         int count = 0;
-
+        //a
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
