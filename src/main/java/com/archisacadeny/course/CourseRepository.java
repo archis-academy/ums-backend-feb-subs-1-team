@@ -1,8 +1,11 @@
 package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.student.Student;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CourseRepository {
     public static void createCourseTable(){
@@ -199,6 +202,35 @@ public class CourseRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return ids;
+    }
+
+    public static int[] getCourseEnrolledStudents(long courseId){
+        String query = "SELECT student_id FROM \"course_student_mapper\" " +
+                "WHERE course_id = '" + courseId + "'" +
+                "GROUP BY student_id ";
+        int[] ids;
+        int count = 0;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+
+            rs.last();
+            int numRows = rs.getRow();
+            ids = new int[numRows];
+            rs.beforeFirst();
+
+            while (rs.next()) {
+                ids[count] = rs.getInt("student_id");
+                count++;
+            }
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         return ids;
     }
 
