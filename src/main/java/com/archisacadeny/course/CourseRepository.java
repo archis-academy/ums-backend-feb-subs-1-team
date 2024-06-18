@@ -251,7 +251,7 @@ public class CourseRepository {
             while (rs.next()) {
                 course = new Course(courseId,
                         rs.getString("name")
-                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id") )
                         ,rs.getLong("credits")
                         ,rs.getString("number")
                         , getCourseEnrolledStudents(courseId)

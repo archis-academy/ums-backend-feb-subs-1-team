@@ -34,22 +34,22 @@ public class CourseService {
         return courseRepository.getTotalCreditAmount(studentId);
     }
 
-//    public List<Course> getStudentEnrolledCourses(int studentId){
-//        int[] courseIds = courseRepository.getStudentEnrolledCourses(studentId);
-//        ArrayList<Course> courses = new ArrayList<>();
-//        for(int i = 0;i< courseIds.length;i++){
-//            courses.add(courseRepository.getCourseById(courseIds[i]));
-//        }
-//        return courses;
-//    }
+    public List<Course> getStudentEnrolledCourses(int studentId){
+        int[] courseIds = courseRepository.getStudentEnrolledCourses(studentId);
+        ArrayList<Course> courses = new ArrayList<>();
+        for(int i = 0;i< courseIds.length;i++){
+            courses.add(courseRepository.getCourseById(courseIds[i]));
+        }
+        return courses;
+    }
 
-//    public List<Student> getCourseEnrolledStudents(int studentId){}
+    public List<Student> getCourseEnrolledStudents(int studentId){
+        return courseRepository.getCourseEnrolledStudents(studentId);
+    }
 
-//    public Course getCourseWithMostStudents(){
-//        return CourseRepository.getCourseById(CourseRepository.getCourseWithMostStudents());
-//        // CourseRepositorydeki getCourseById yi burada mi kullanmam gerek yoksa
-//        // getCourseWithMostStudents() methodunun icinde mi ?
-//    }
+    public Course getCourseWithMostStudents(){
+        return courseRepository.getCourseById(CourseRepository.getCourseWithMostStudents());
+    }
 
 
 }
