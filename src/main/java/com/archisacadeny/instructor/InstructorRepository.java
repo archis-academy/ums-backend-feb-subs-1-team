@@ -31,7 +31,7 @@ public class InstructorRepository {
         }
     }
 
-    public Instructor save (Instructor instructor){
+    public static Instructor save (Instructor instructor){
         String query = "INSERT INTO instructors (full_name,number,email,password) VALUES(?,?,?,?)";
        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
            statement.setString(1, instructor.getFullName());
@@ -66,6 +66,24 @@ public class InstructorRepository {
             throw new RuntimeException(e);
         }
         return instructors;
+    }
+
+    public static Instructor getInstructorById(long instructorId){
+        String query = "SELECT * FROM instructors WHERE id="+instructorId;
+        Instructor instructor = new Instructor();
+        try(Statement statement= DataBaseConnectorConfig.getConnection().createStatement();
+            ResultSet resultSet = statement.executeQuery(query)) {
+            while(resultSet.next()) {
+                instructor.setId(resultSet.getLong("id"));
+                instructor.setFullName(resultSet.getString("full_name"));
+                instructor.setNumber(resultSet.getString("number"));
+                instructor.setEmail(resultSet.getString("email"));
+                instructor.setPassword(resultSet.getString("password"));
+            }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return instructor;
     }
 
 }

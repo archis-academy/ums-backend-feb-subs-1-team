@@ -6,6 +6,13 @@ public class Person {
     private String email;
     private String password;
 
+    public Person(long id,String fullName,String email,String password){
+        this.id = id;
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+    }
+
     public long getId() {
         return id;
     }

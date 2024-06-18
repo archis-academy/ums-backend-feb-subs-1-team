@@ -16,11 +16,11 @@ public class Course {
     private String department;
     private int maxStudents;
 
-    public Course(long id, String courseName, Instructor instructor, long creditHours, String courseNumber, List<Student> enrolledStudents, java.lang.String department, int maxStudents) {
+    public Course(long id, String courseName, Instructor instructor, long credits, String courseNumber, List<Student> enrolledStudents, java.lang.String department, int maxStudents) {
         this.id = id;
         this.courseName = courseName;
         this.instructor = instructor;
-        this.credit = creditHours;
+        this.credit = credits;
         this.courseNumber = courseNumber;
         this.enrolledStudents = enrolledStudents;
         this.department = department;
@@ -60,8 +60,8 @@ public class Course {
         return credit;
     }
 
-    public void setCreditHours(long creditHours) {
-        this.credit = creditHours;
+    public void setCredits(long credit) {
+        this.credit = credit;
     }
 
     public String getCourseNumber() {

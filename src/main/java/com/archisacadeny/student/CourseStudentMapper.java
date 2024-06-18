@@ -33,7 +33,8 @@ public class CourseStudentMapper {
     }
 
     public static void saveToCourseStudentMapper(int studentID,int courseId){
-        String query = "INSERT INTO course_student_mapper(student_id,course_id) VALUES(?,?)";
+        String query = "INSERT INTO course_student_mapper(student_id,course_id) VALUES(?,?) ";
+        // ON CONFLICT (student_id,course_id) DO NOTHING"; TODO How to prevent adding duplicates
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setInt(1,studentID);
             statement.setInt(2,courseId);
