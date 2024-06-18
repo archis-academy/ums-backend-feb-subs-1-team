@@ -50,4 +50,12 @@ public class Student {
     public int getTotalCreditCount() { return totalCreditCount; }
     public void setTotalCreditCount(int totalCreditCount) { this.totalCreditCount = totalCreditCount; }
 
+    @Override
+    public String toString(){
+        return "ID:" + this.getId() +"\n"+
+                " Student Name: " + this.getFullName()+"\n"+
+                " Student Gender: " + this.getGender()+"\n"+
+                " Student Number: " + this.getIdentityNo()+"\n";
+    }
+
 }

@@ -21,7 +21,7 @@ public class CourseStudentMapper {
                             course_id INTEGER NOT NULL,
                             student_id INTEGER NOT NULL,
                     CONSTRAINT fk_course_id FOREIGN KEY (course_id) REFERENCES "public"."courses"(id),
-                    CONSTRAINT fk_student_id FOREIGN KEY (student_id) REFERENCES "public"."persons"(id)
+                    CONSTRAINT fk_student_id FOREIGN KEY (student_id) REFERENCES "public"."students"(id)
                     );
                     """;
             statement.execute(query);

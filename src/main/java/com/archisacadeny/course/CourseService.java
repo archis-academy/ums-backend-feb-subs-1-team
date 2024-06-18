@@ -2,6 +2,7 @@ package com.archisacadeny.course;
 
 
 import com.archisacadeny.instructor.Instructor;
+import com.archisacadeny.student.Student;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,19 +34,23 @@ public class CourseService {
         return courseRepository.getTotalCreditAmount(studentId);
     }
 
-    public List<Course> getStudentEnrolledCourses(int studentId){
-        int[] courseIds = courseRepository.getStudentEnrolledCourses(studentId);
-        ArrayList<Course> courses = new ArrayList<>();
-        for(int i = 0;i< courseIds.length;i++){
-            courses.add(courseRepository.getCourseById(courseIds[i]));
-        }
-        return courses;
-    }
-    public Course getCourseWithMostStudents(){
-        return CourseRepository.getCourseById(CourseRepository.getCourseWithMostStudents());
-        // CourseRepositorydeki getCourseById yi burada mi kullanmam gerek yoksa
-        // getCourseWithMostStudents() methodunun icinde mi ?
-    }
+//    public List<Course> getStudentEnrolledCourses(int studentId){
+//        int[] courseIds = courseRepository.getStudentEnrolledCourses(studentId);
+//        ArrayList<Course> courses = new ArrayList<>();
+//        for(int i = 0;i< courseIds.length;i++){
+//            courses.add(courseRepository.getCourseById(courseIds[i]));
+//        }
+//        return courses;
+//    }
+
+//    public List<Student> getCourseEnrolledStudents(int studentId){}
+
+//    public Course getCourseWithMostStudents(){
+//        return CourseRepository.getCourseById(CourseRepository.getCourseWithMostStudents());
+//        // CourseRepositorydeki getCourseById yi burada mi kullanmam gerek yoksa
+//        // getCourseWithMostStudents() methodunun icinde mi ?
+//    }
+
 
 }
 

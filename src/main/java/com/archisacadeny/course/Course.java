@@ -27,6 +27,15 @@ public class Course {
         this.maxStudents = maxStudents;
     }
 
+    @Override
+    public String toString(){
+        return  "ID:" + this.getId() +"\n"+
+                " Course Name: " + this.getCourseName()+"\n"+
+                " Course Instructor: " + this.getInstructor().getFullName()+"\n"+
+                " Course Credit: " + this.getCredit()+"\n"+
+                " Course Max Students: " + this.getMaxStudents()+"\n";
+    }
+
     public Course() {
 
     }

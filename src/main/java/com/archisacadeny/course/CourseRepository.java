@@ -2,6 +2,8 @@ package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.student.Student;
+import com.archisacadeny.instructor.InstructorRepository;
+import com.archisacadeny.student.CourseStudentMapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -205,33 +207,63 @@ public class CourseRepository {
         return ids;
     }
 
-    public static int[] getCourseEnrolledStudents(long courseId){
-        String query = "SELECT student_id FROM \"course_student_mapper\" " +
-                "WHERE course_id = '" + courseId + "'" +
-                "GROUP BY student_id ";
-        int[] ids;
-        int count = 0;
+    //BU METHODU getCouseById methodunda kullanacagimiz icin id leri degil LISt<Students> dondurmesi gerekir.
+    public static List<Student> getCourseEnrolledStudents(long courseId){
+        ArrayList<Student> student = new ArrayList<>();
+
+        String query = "SELECT course_id, student_id, full_name,gender,identity_no,enrollment_date,year_of_study, total_credit_count FROM \"course_student_mapper\" " +
+                "LEFT JOIN \"students\" ON course_student_mapper.student_id = \"students\".\"id\""+
+                "WHERE course_id = '" + courseId + "'" ;
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
 
-            rs.last();
-            int numRows = rs.getRow();
-            ids = new int[numRows];
-            rs.beforeFirst();
+//            rs.last();
+//            int numRows = rs.getRow();
+//            ids = new int[numRows];
+//            rs.beforeFirst();
 
             while (rs.next()) {
-                ids[count] = rs.getInt("student_id");
-                count++;
+                 student.add(new Student(rs.getInt("student_id"),
+                         rs.getString("full_name"),
+                         rs.getString("gender"),
+                         rs.getString("identity_no"),
+                         rs.getTimestamp("enrollment_date"),
+                         rs.getInt("year_of_study"),
+                         rs.getInt("total_credit_count")));
             }
 //            printResultSet(rs);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return ids;
+        return student;
     }
+
+    public static Course getCourseById(long courseId){
+        String query = "SELECT * FROM courses WHERE id = "+courseId;
+        Course course = null;
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                course = new Course(courseId,
+                        rs.getString("name")
+                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        ,rs.getLong("credits")
+                        ,rs.getString("number")
+                        , getCourseEnrolledStudents(courseId)
+                        ,rs.getString("department")
+                        ,rs.getInt("max_students"));
+            }
+            //printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return course;
+    }
+
 
 }

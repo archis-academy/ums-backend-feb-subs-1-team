@@ -45,7 +45,7 @@ public class StudentRepository {
         }
     }
 
-    public Student createStudent(Student student) {
+    public static Student createStudent(Student student) {
         String query = "INSERT INTO students (full_name, gender, identity_no, enrollment_date, year_of_study, total_credit_count) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
