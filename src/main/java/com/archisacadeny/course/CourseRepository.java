@@ -3,6 +3,8 @@ package com.archisacadeny.course;
 import com.archisacadeny.config.DataBaseConnectorConfig;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CourseRepository {
     public static void createCourseTable(){
@@ -172,5 +174,25 @@ public class CourseRepository {
         }
         return courseId;
     }
+
+    public static List<Course> getAllCourses() {
+        ArrayList<Course> courses = new ArrayList<>();
+        String query = "SELECT * FROM \"courses\" ";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+
+            while (rs.next()) {
+                courses.add(getCourseById(rs.getInt("id")));
+            }
+///            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return student;
+    }
+
 
 }
