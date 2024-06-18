@@ -47,6 +47,19 @@ public class InstructorRepository {
         return instructor;
     }
 
+    public Instructor createInstructor(long id, String instructorNumber, String fullName, String email, String password, List<Course> taughtCourses){ //buradaki List<Course> kısmındaki course'ta hata alıyorum nden
+
+        Instructor instructor = new Instructor();
+        instructor.setId(id);
+        instructor.setNumber(instructorNumber);
+        instructor.setFullName(fullName);
+        instructor.setEmail(email);
+        instructor.setPassword(password);
+        instructor.setCourses(taughtCourses);
+
+        return save(instructor);
+    }
+
 
     public List<Instructor> listAllInstructors(){
         List<Instructor> instructors = new ArrayList<>();
