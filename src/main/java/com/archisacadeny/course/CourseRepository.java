@@ -36,7 +36,7 @@ public class CourseRepository {
     }
 
     public static Course save(Course course){
-        String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id) VALUES(?,?,?,?,?,?) ";
+        String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id) VALUES(?,?,?,?,?,?)";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
@@ -240,5 +240,4 @@ public class CourseRepository {
 
         return student;
     }
-
 }
