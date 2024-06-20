@@ -31,9 +31,11 @@ public class Course {
     public String toString(){
         return  "ID:" + this.getId() +"\n"+
                 " Course Name: " + this.getCourseName()+"\n"+
+                " Course Number: " + this.getCourseNumber()+"\n"+
+                " Course Department: " + this.getDepartment()+"\n"+
                 " Course Instructor: " + this.getInstructor().getFullName()+"\n"+
                 " Course Credit: " + this.getCredit()+"\n"+
-                " Course Max Students: " + this.getMaxStudents()+"\n";
+                " Course Max Student Limit: " + this.getMaxStudents()+"\n";
     }
 
     public Course() {
