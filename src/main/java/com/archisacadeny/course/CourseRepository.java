@@ -68,6 +68,8 @@ public class CourseRepository {
 
     public static boolean isCourseFull(long courseId) {
 //       TODO ******* HOW TO REMOVE DUPLICATE VALUES ????
+        // DUPLICATE VALUES IN COURSE STUDENT MAPPER RESULTS IN WRONG RESULTS.
+        // IN THIS METHOD AND GETTOTALCREDITAMOUNT
         int studentCount = 0;
         int maxStudents = 0;
 
@@ -220,11 +222,6 @@ public class CourseRepository {
             statement.execute();
             ResultSet rs = statement.getResultSet();
 
-//            rs.last();
-//            int numRows = rs.getRow();
-//            ids = new int[numRows];
-//            rs.beforeFirst();
-
             while (rs.next()) {
                  student.add(new Student(rs.getInt("student_id"),
                          rs.getString("full_name"),
@@ -233,6 +230,8 @@ public class CourseRepository {
                          rs.getTimestamp("enrollment_date"),
                          rs.getInt("year_of_study"),
                          rs.getInt("total_credit_count")));
+                 // COURSE STUDENT MAPPER DA BIR EKLEME YAPTIGIMIZDA STUDENTIN TOTAL CREDIT COUNT U GUNCELLEMEMIZ GEREKIYOR.
+                 // TODO
             }
 //            printResultSet(rs);
         } catch (SQLException e) {
