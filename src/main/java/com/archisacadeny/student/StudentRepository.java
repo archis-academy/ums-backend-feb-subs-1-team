@@ -65,4 +65,30 @@ public class StudentRepository {
 
         return student;
     }
+
+    public Student updateStudentInfo(Student student) {
+        String query = "UPDATE students SET full_name = ?, gender = ?, identity_no = ?, enrollment_date = ? WHERE id = ?";
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+
+            statement.setString(1, student.getFullName());
+            statement.setString(2, student.getGender());
+            statement.setString(3, student.getIdentityNo());
+            statement.setTimestamp(4, student.getEnrollmentDate());
+            statement.setLong(5, student.getId());
+
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("The Student you have reach by id has been update" + student.getId());
+            } else {
+                System.out.println("Update has failed!! The Student has not been found!!" + student.getId());
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return student;
+
+
+    }
 }

@@ -25,6 +25,10 @@ public class Student {
         this.totalCreditCount = totalCreditCount;
         this.enrolledCourses = enrolledCourses;
     }
+    public Student(){
+
+    }
+
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
