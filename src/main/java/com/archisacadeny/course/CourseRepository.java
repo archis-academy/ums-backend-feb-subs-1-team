@@ -1,6 +1,8 @@
 package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.instructor.InstructorRepository;
+import com.archisacadeny.student.CourseStudentMapper;
 
 import java.sql.*;
 
@@ -172,5 +174,29 @@ public class CourseRepository {
         }
         return courseId;
     }
+
+    public static Course getCourseById(long courseId){
+        String query = "SELECT * FROM courses WHERE id = "+courseId;
+        Course course = null;
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                course = new Course(courseId,
+                        rs.getString("name")
+                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        ,rs.getLong("credits")
+                        ,rs.getString("number")
+                        , getCourseEnrolledStudents(courseId)
+                        ,rs.getString("department")
+                        ,rs.getInt("max_students"));
+            }
+            //printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return course;
+    }
+
 
 }
