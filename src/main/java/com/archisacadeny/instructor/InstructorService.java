@@ -34,4 +34,16 @@ public class InstructorService {
     public void deleteInstructor(long instructorId) {
         instructorRepository.deleteInstructor(instructorId);
     }
+
+    public Instructor createInstructor(long id, String instructorNumber, String fullName, String email, String password){
+
+        Instructor instructor = new Instructor();
+        instructor.setId(id);
+        instructor.setNumber(instructorNumber);
+        instructor.setFullName(fullName);
+        instructor.setEmail(email);
+        instructor.setPassword(password);
+
+        return instructorRepository.save(instructor);
+    }
 }
