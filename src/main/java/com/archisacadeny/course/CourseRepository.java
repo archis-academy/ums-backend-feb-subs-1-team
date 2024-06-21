@@ -175,7 +175,7 @@ public class CourseRepository {
         return courseId;
     }
 
-    public static List<Course> getAllCourses() {
+    public List<Course> getAllCourses() {
         ArrayList<Course> courses = new ArrayList<>();
         String query = "SELECT * FROM \"courses\" ";
 
@@ -184,15 +184,22 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
 
             while (rs.next()) {
-                courses.add(getCourseById(rs.getInt("id")));
+                courses.add(new Course(rs.getInt("id"),
+                        rs.getString("name")
+                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        ,rs.getLong("credits")
+                        ,rs.getString("number")
+                        , getCourseEnrolledStudents(courseId)
+                        ,rs.getString("department")
+                        ,rs.getInt("max_students")));
+                //DERSTE LOOPLARDA QUERY CALISTIRAN METHOD KULLANMAYIN DEMISTINIZ
+                // FAKAT KURSA KAYITLI OGRENCILERI QUERY CALISTIRMADAN EKLEYEMEM, NASIL YAPA BILIRIM ?
+                // TODO
             }
-///            printResultSet(rs);
+            //printResultSet(rs);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        return student;
+        return courses;
     }
-
-
 }
