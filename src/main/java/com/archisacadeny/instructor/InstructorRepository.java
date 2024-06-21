@@ -48,7 +48,7 @@ public class InstructorRepository {
     }
 
 
-    public static void deleteInstructor(long instructorId){
+    public void deleteInstructor(long instructorId){
         String query = "DELETE FROM instructors WHERE id = ?";
         try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setLong(1,instructorId);
@@ -79,20 +79,20 @@ public class InstructorRepository {
         return instructor;
     }
 
-    //Read Method
+    //Read Method: This method retrieves the instructor's information with the given `instructorId` from the database and assigns it to an `Instructor` object.
+    //Don't forget to check if the object is null!!
     public Instructor getInstructorById(long instructorId){
         String query = "SELECT * FROM instructors WHERE id = ?";
+        Instructor instructor = new Instructor();
         try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.setLong(1,instructorId);
             try(ResultSet resultSet = statement.executeQuery() ){
                 if( resultSet.next() ){
-                    Instructor instructor = new Instructor();
                     instructor.setId(resultSet.getLong("id"));
                     instructor.setFullName(resultSet.getString("full_name"));
                     instructor.setNumber(resultSet.getString("number"));
                     instructor.setEmail(resultSet.getString("email"));
                     instructor.setPassword(resultSet.getString("password"));
-                    return instructor;
                 } else{
                     throw new RuntimeException("Instructor not found with id: " + instructorId);
                 }
@@ -100,6 +100,7 @@ public class InstructorRepository {
         } catch(SQLException e){
             throw new RuntimeException(e);
         }
+        return instructor;
     }
 
 
