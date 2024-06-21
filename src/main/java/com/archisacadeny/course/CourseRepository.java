@@ -173,4 +173,9 @@ public class CourseRepository {
         return courseId;
     }
 
+    public static double calculateAverageGradeForCourse(int courseId) {
+
+        return 0;
+    }
+
 }
