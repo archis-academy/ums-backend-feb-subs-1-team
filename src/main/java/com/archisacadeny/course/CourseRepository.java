@@ -194,8 +194,6 @@ public class CourseRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        //Math.round((grade/num) * 100.0) / 100.0;
-        // do this calculation in the service class
         return values;
     }
 
