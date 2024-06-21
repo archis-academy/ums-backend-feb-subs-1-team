@@ -6,6 +6,7 @@ import com.archisacadeny.student.Student;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CourseService {
     private final CourseRepository courseRepository;
@@ -50,8 +51,14 @@ public class CourseService {
     public Course getCourseWithMostStudents(){
         return courseRepository.getCourseById(CourseRepository.getCourseWithMostStudents());
     }
-
-
+    public double calculateAverageGradeForCourse(int course_id){
+        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
+        double grade = values.get("sum_grade");
+        double num = values.get("num_of_students");
+        double average = Math.round((grade/num) * 100.0) / 100.0;
+        System.out.println("Average grade of students in this course: " +average);
+        return  average;
+    }
 }
 
 
