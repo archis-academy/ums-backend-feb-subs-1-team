@@ -35,7 +35,7 @@ public class CourseRepository {
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
-            statement.setInt(3,course.getCredits());
+            statement.setLong(3,course.getCredits());
             statement.setString(4,course.getDepartment());
             statement.setLong(5,course.getMaxStudents());
             statement.setLong(6,course.getInstructor().getId());
@@ -48,6 +48,7 @@ public class CourseRepository {
         }
         return course;
     }*/
+
 
     public static void deleteCourse(long courseId) {
         String query = "DELETE FROM \"courses\"" +
@@ -118,7 +119,7 @@ public class CourseRepository {
                 course.getCourseName(),
                 course.getCourseNumber(),
                 course.getInstructor().getId(),
-                course.getCreditHours(),
+                course.getCredits(),
                 course.getDepartment(),
                 course.getMaxStudents()
                 );
@@ -152,6 +153,24 @@ public class CourseRepository {
         return count;
     }
 
+    public static int getCourseWithMostStudents() {
+        // RETURNS COURSE ID FOR NOW
+        int courseId = -1;
+        String query = "SELECT DISTINCT course_id , COUNT(course_id) as student_count FROM \"course_student_mapper\" " +
+                "GROUP BY course_id " +
+                "ORDER BY student_count DESC LIMIT 1 ";
 
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                courseId = rs.getInt("course_id");
+            }
+//            printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return courseId;
+    }
 
 }
