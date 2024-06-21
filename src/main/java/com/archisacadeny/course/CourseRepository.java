@@ -3,6 +3,8 @@ package com.archisacadeny.course;
 import com.archisacadeny.config.DataBaseConnectorConfig;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CourseRepository {
     public static void createCourseTable(){
@@ -173,9 +175,9 @@ public class CourseRepository {
         return courseId;
     }
 
-    public static double calculateAverageGradeForCourse(int courseId) {
-        double grade = 0;
-        double num = 0;
+    public Map calculateAverageGradeForCourse(int courseId) {
+        Map<String, Double> values
+                = new HashMap<>();
 
         String query = "SELECT SUM(grade) as sum, COUNT(grade) as num  FROM \"course_student_mapper\" " +
                 "WHERE course_id = '" + courseId + "'" ;
@@ -186,13 +188,15 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
 
             while (rs.next()) {
-                grade = rs.getDouble("sum");
-                num = rs.getInt("num");
+                values.put("sum_grade",rs.getDouble("sum"));
+                values.put("num_of_students", (double) rs.getInt("num"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return Math.round((grade/num) * 100.0) / 100.0;
+        //Math.round((grade/num) * 100.0) / 100.0;
+        // do this calculation in the service class
+        return values;
     }
 
 
