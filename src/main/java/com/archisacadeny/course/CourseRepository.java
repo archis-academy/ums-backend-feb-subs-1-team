@@ -175,8 +175,9 @@ public class CourseRepository {
 
     public static double calculateAverageGradeForCourse(int courseId) {
         double grade = 0;
+        double num = 0;
 
-        String query = "SELECT SUM(grade) as sum FROM \"course_student_mapper\" " +
+        String query = "SELECT SUM(grade) as sum, COUNT(grade) as num  FROM \"course_student_mapper\" " +
                 "WHERE course_id = '" + courseId + "'" ;
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -186,11 +187,15 @@ public class CourseRepository {
 
             while (rs.next()) {
                 grade = rs.getDouble("sum");
+                num = rs.getInt("num");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return grade;
+        return Math.round((grade/num) * 100.0) / 100.0;
     }
+
+
+
 
 }
