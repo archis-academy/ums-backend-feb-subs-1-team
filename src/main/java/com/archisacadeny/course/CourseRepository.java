@@ -174,8 +174,23 @@ public class CourseRepository {
     }
 
     public static double calculateAverageGradeForCourse(int courseId) {
+        double grade = 0;
 
-        return 0;
+        String query = "SELECT SUM(grade) as sum FROM \"course_student_mapper\" " +
+                "WHERE course_id = '" + courseId + "'" ;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+
+            while (rs.next()) {
+                grade = rs.getInt("sum");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return grade;
     }
 
 }
