@@ -185,7 +185,7 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
 
             while (rs.next()) {
-                grade = rs.getInt("sum");
+                grade = rs.getDouble("sum");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
