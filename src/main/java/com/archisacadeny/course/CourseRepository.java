@@ -230,8 +230,7 @@ public class CourseRepository {
                          rs.getTimestamp("enrollment_date"),
                          rs.getInt("year_of_study"),
                          rs.getInt("total_credit_count")));
-                 // COURSE STUDENT MAPPER DA BIR EKLEME YAPTIGIMIZDA STUDENTIN TOTAL CREDIT COUNT U GUNCELLEMEMIZ GEREKIYOR.
-                 // TODO
+                 // TODO   COURSE STUDENT MAPPERDA BIR EKLEME YAPTIGIMIZDA STUDENTIN TOTAL CREDIT COUNT U GUNCELLEMEMIZ GEREKIYOR. nasil
             }
 //            printResultSet(rs);
         } catch (SQLException e) {
