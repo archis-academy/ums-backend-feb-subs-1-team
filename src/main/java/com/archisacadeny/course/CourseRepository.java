@@ -139,7 +139,7 @@ public class CourseRepository {
         }
     }
 
-    public static double getTotalCreditAmount(long studentId) {
+    public  double getTotalCreditAmount(long studentId) {
         double count = 0.0;
         String query = "SELECT  student_id , credits  FROM \"course_student_mapper\"" +
                 "LEFT JOIN \"courses\"  ON  course_student_mapper.course_id = \"courses\".\"id\""+
@@ -161,7 +161,7 @@ public class CourseRepository {
         return count;
     }
 
-    public static int getCourseWithMostStudents() {
+    public  int getCourseWithMostStudents() {
         int courseId = -1;
         String query = "SELECT DISTINCT course_id , COUNT(course_id) as student_count FROM \"course_student_mapper\" " +
                 "GROUP BY course_id " +
@@ -180,7 +180,7 @@ public class CourseRepository {
         return courseId;
     }
 
-    public static int[] getStudentEnrolledCourses(int studentId) {
+    public  int[] getStudentEnrolledCourses(int studentId) {
         // RETURNS COURSE ID s FOR NOW
         String query = "SELECT course_id FROM \"course_student_mapper\" " +
                 "WHERE student_id = '" + studentId + "'" +
@@ -210,7 +210,7 @@ public class CourseRepository {
     }
 
     //BU METHODU getCouseById methodunda kullanacagimiz icin id leri degil LISt<Students> dondurmesi gerekir.
-    public static List<Student> getCourseEnrolledStudents(long courseId){
+    public  List<Student> getCourseEnrolledStudents(long courseId){
         ArrayList<Student> student = new ArrayList<>();
 
         String query = "SELECT course_id, student_id, full_name,gender,identity_no,enrollment_date,year_of_study, total_credit_count FROM \"course_student_mapper\" " +
