@@ -1,6 +1,8 @@
 package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.instructor.InstructorRepository;
+import com.archisacadeny.student.CourseStudentMapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -175,7 +177,7 @@ public class CourseRepository {
         return courseId;
     }
 
-    public List<Course> getAllCourses() {
+public List<Course> getAllCourses() {
         ArrayList<Course> courses = new ArrayList<>();
         String query = "SELECT * FROM \"courses\" ";
 
@@ -202,5 +204,27 @@ public class CourseRepository {
         }
         return courses;
     }
-
+  
+  public static Course getCourseById(long courseId){
+        String query = "SELECT * FROM courses WHERE id = "+courseId;
+        Course course = null;
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                course = new Course(courseId,
+                        rs.getString("name")
+                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        ,rs.getLong("credits")
+                        ,rs.getString("number")
+                        , getCourseEnrolledStudents(courseId)
+                        ,rs.getString("department")
+                        ,rs.getInt("max_students"));
+            }
+            //printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return course;
+    }
 }
