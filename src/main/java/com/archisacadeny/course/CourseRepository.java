@@ -35,7 +35,7 @@ public class CourseRepository {
         }
     }
 
-    public static Course save(Course course){
+    public Course save(Course course){
         String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id) VALUES(?,?,?,?,?,?)";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
@@ -55,7 +55,7 @@ public class CourseRepository {
     }
 
 
-    public static void deleteCourse(long courseId) {
+    public void deleteCourse(long courseId) {
         String query = "DELETE FROM \"courses\"" +
                 "WHERE id = '"+courseId+"'";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
@@ -66,7 +66,7 @@ public class CourseRepository {
     }
 
 
-    public static boolean isCourseFull(long courseId) {
+    public boolean isCourseFull(long courseId) {
 //       TODO ******* HOW TO REMOVE DUPLICATE VALUES ????
         // DUPLICATE VALUES IN COURSE STUDENT MAPPER RESULTS IN WRONG RESULTS.
         // IN THIS METHOD AND GETTOTALCREDITAMOUNT
@@ -100,7 +100,7 @@ public class CourseRepository {
         }
     }
 
-    public static void printResultSet(ResultSet rs) throws SQLException
+    public void printResultSet(ResultSet rs) throws SQLException
     {
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnsNumber = rsmd.getColumnCount();
@@ -114,7 +114,7 @@ public class CourseRepository {
     }
 
 
-    public static void update(String courseNumber, Course course ){
+    public void update(String courseNumber, Course course ){
         String query = String.format(
                 "UPDATE courses SET name= '%1$s'," +
                         " number = '%2$s'," +
@@ -180,38 +180,38 @@ public class CourseRepository {
         return courseId;
     }
 
-    public  int[] getStudentEnrolledCourses(int studentId) {
+    public List<Course> getStudentEnrolledCourses(int studentId) {
         // RETURNS COURSE ID s FOR NOW
-        String query = "SELECT course_id FROM \"course_student_mapper\" " +
-                "WHERE student_id = '" + studentId + "'" +
-                "GROUP BY course_id ";
+        String query = "SELECT course_id, name, instructor_id, credits, number,department,max_students FROM \"course_student_mapper\" " +
+                "LEFT JOIN \"courses\" ON course_student_mapper.course_id = \"courses\".\"id\""+
+                "WHERE student_id = '" + studentId + "'" ;
 
-        int[] ids;
-        int count = 0;
+        ArrayList<Course> courses = new ArrayList<>();
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
 
-            rs.last();
-            int numRows = rs.getRow();
-            ids = new int[numRows];
-            rs.beforeFirst();
-
             while (rs.next()) {
-                ids[count] = rs.getInt("course_id");
-                count++;
+                courses.add(new Course(rs.getInt("course_id")
+                        , rs.getString("name")
+                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        ,rs.getLong("credits")
+                        ,rs.getString("number")
+                        , getCourseEnrolledStudents(rs.getInt("course_id"))
+                        ,rs.getString("department")
+                        ,rs.getInt("max_students")));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return ids;
+        return courses;
     }
 
     //BU METHODU getCouseById methodunda kullanacagimiz icin id leri degil LISt<Students> dondurmesi gerekir.
     public  List<Student> getCourseEnrolledStudents(long courseId){
-        ArrayList<Student> student = new ArrayList<>();
+        ArrayList<Student> students = new ArrayList<>();
 
         String query = "SELECT course_id, student_id, full_name,gender,identity_no,enrollment_date,year_of_study, total_credit_count FROM \"course_student_mapper\" " +
                 "LEFT JOIN \"students\" ON course_student_mapper.student_id = \"students\".\"id\""+
@@ -223,7 +223,7 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
 
             while (rs.next()) {
-                 student.add(new Student(rs.getInt("student_id"),
+                 students.add(new Student(rs.getInt("student_id"),
                          rs.getString("full_name"),
                          rs.getString("gender"),
                          rs.getString("identity_no"),
@@ -237,6 +237,6 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
 
-        return student;
+        return students;
     }
 }

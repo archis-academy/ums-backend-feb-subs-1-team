@@ -36,12 +36,7 @@ public class CourseService {
     }
 
     public List<Course> getStudentEnrolledCourses(int studentId){
-        int[] courseIds = courseRepository.getStudentEnrolledCourses(studentId);
-        ArrayList<Course> courses = new ArrayList<>();
-        for(int i = 0;i< courseIds.length;i++){
-            courses.add(courseRepository.getCourseById(courseIds[i]));
-        }
-        return courses;
+       return courseRepository.getStudentEnrolledCourses(studentId);
     }
 
     public List<Student> getCourseEnrolledStudents(int studentId){
