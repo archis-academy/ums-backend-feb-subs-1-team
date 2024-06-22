@@ -189,7 +189,7 @@ public class CourseRepository {
                         , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
                         ,rs.getLong("credits")
                         ,rs.getString("number")
-                        , getCourseEnrolledStudents(courseId)
+                        , getCourseEnrolledStudents(rs.getInt("id"))
                         ,rs.getString("department")
                         ,rs.getInt("max_students")));
                 //DERSTE LOOPLARDA QUERY CALISTIRAN METHOD KULLANMAYIN DEMISTINIZ
@@ -202,4 +202,5 @@ public class CourseRepository {
         }
         return courses;
     }
+
 }
