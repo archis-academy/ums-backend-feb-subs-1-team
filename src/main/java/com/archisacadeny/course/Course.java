@@ -16,6 +16,7 @@ public class Course {
     private String department;
     private int maxStudents;
 
+
     public Course(long id, String courseName, Instructor instructor, long credits, String courseNumber, List<Student> enrolledStudents, java.lang.String department, int maxStudents) {
         this.id = id;
         this.courseName = courseName;
