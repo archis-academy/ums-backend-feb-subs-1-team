@@ -41,4 +41,5 @@ public class CourseStudentMapper {
             throw new RuntimeException(e);
         }
     }
+
 }
