@@ -50,6 +50,7 @@ public class CourseService {
 
     public Course getCourseWithMostStudents(){
         return courseRepository.getCourseById(CourseRepository.getCourseWithMostStudents());
+        // tek id donduren methodlarda getCourseById() kullanmam dogru mu TODO
     }
     public double calculateAverageGradeForCourse(int course_id){
         Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
@@ -58,6 +59,10 @@ public class CourseService {
         double average = Math.round((grade/num) * 100.0) / 100.0;
         System.out.println("Average grade of students in this course: " +average);
         return  average;
+    }
+
+    public List<Course> getAllCourses(){
+        return courseRepository.getAllCourses();
     }
 }
 
