@@ -5,6 +5,8 @@ import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.student.CourseStudentMapper;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CourseRepository {
     public static void createCourseTable(){
@@ -198,5 +200,26 @@ public class CourseRepository {
         return course;
     }
 
+    public Map calculateCourseStatistics(int courseId) {
+        Map<String, Double> values = new HashMap<>();
 
+        String query = "SELECT SUM(grade) as sum, COUNT(grade) as num, MIN(grade) as min, MAX(grade) as max  FROM \"course_student_mapper\" " +
+                "WHERE course_id = '" + courseId + "'" ;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+//            printResultSet(rs);
+            while (rs.next()) {
+                values.put("sum_grade",rs.getDouble("sum"));
+                values.put("num_of_students", (double) rs.getInt("num"));
+                values.put("min_grade", rs.getDouble("min"));
+                values.put("max_grade", rs.getDouble("max"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
 }
