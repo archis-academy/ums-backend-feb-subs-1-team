@@ -56,6 +56,17 @@ public class CourseService {
         return  average;
     }
 
+    public CourseStatistics calculateCourseStatistics(int course_id){
+        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
+        double grade = values.get("sum_grade");
+        double num = values.get("num_of_students");
+        double average = Math.round((grade/num) * 100.0) / 100.0;
+        double min = values.get("min_grade");
+        double max = values.get("max_grade");
+        System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
+        return new CourseStatistics(course_id,average,max,min);
+    }
+
     public List<Course> getAllCourses(){
         return courseRepository.getAllCourses();
     }
