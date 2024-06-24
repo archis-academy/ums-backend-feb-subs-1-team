@@ -44,7 +44,7 @@ public class CourseService {
     }
 
     public Course getCourseWithMostStudents(){
-        return courseRepository.getCourseById(CourseRepository.getCourseWithMostStudents());
+        return courseRepository.getCourseById(courseRepository.getCourseWithMostStudents());
         // tek id donduren methodlarda getCourseById() kullanmam dogru mu TODO
     }
     public double calculateAverageGradeForCourse(int course_id){
