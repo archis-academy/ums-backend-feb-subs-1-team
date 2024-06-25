@@ -34,7 +34,18 @@ public class InstructorService {
         return instructorRepository.save(instructor);
     }
 
-    public List<Course> viewInstructorTaughtCourses(long instructorId) {
-        return courseRepository.getCoursesByInstructorId(instructorId); //burada courseRepository kısmında hata alıyorum niye anlamadım
+    public void viewInstructorTaughtCourses(long instructorId) {
+        List<Course> courses = CourseRepository.getCoursesByInstructorId(instructorId); //burada hata alıyorum repository yazan yerde
+
+        for (Course course : courses) {
+            System.out.println("Course Name: " + course.getCourseName());
+            System.out.println("Course Number: " + course.getCourseNumber());
+            System.out.println("Credits: " + course.getCredits());
+            System.out.println("Department: " + course.getDepartment());
+            System.out.println("Max Students: " + course.getMaxStudents());
+            System.out.println("Instructor: " + course.getInstructor().getFullName());
+            System.out.println();
+        }
+
     }
 }
