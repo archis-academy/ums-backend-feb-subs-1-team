@@ -80,7 +80,7 @@ public class StudentRepository {
             if (rowsAffected > 0) {
                 System.out.println("The Student you have reach by id has been update" + student.getId());
             } else {
-                System.out.println("Update has failed!! The Student has not been found!!" + student.getId());
+                throw new RuntimeException("Update has failed!! The Student has not been found!!" + student.getId());
             }
 
         } catch (SQLException e) {
