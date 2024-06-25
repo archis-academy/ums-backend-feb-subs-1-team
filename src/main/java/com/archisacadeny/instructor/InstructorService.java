@@ -1,5 +1,7 @@
 package com.archisacadeny.instructor;
 
+import com.archisacadeny.course.Course;
+
 import java.util.List;
 
 public class InstructorService {
@@ -30,5 +32,9 @@ public class InstructorService {
         instructor.setPassword(password);
 
         return instructorRepository.save(instructor);
+    }
+
+    public List<Course> viewInstructorTaughtCourses(long instructorId) {
+        return courseRepository.getCoursesByInstructorId(instructorId); //burada courseRepository kısmında hata alıyorum niye anlamadım
     }
 }
