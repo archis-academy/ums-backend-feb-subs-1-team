@@ -3,6 +3,7 @@ package com.archisacadeny.course;
 import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.student.CourseStudentMapper;
+import com.archisacadeny.student.Student;
 
 import java.sql.*;
 
@@ -196,6 +197,26 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return course;
+    }
+
+    public static double calculateAverageSuccessGradeForInstructorCourses(int instructorId) {
+        double averageOfCourses = -1;
+        String query = "SELECT SUM(grade) AS total, COUNT(grade) AS courseCount, courses.instructor_id AS instructor  FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId+
+                " GROUP BY instructor";
+
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                averageOfCourses = Math.round((rs.getDouble("total") / rs.getInt("courseCount"))* 100.0) / 100.0;
+                //servise eklenecek
+            }
+            printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return averageOfCourses;
     }
 
 
