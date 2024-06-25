@@ -25,6 +25,7 @@ public class Student {
         this.totalCreditCount = totalCreditCount;
         this.enrolledCourses = enrolledCourses;
     }
+
     public Student(){
 
     }
