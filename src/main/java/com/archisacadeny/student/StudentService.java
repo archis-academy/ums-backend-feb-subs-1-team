@@ -9,4 +9,7 @@ public class StudentService {
     public Student createStudent(Student student){
         return studentRepository.createStudent(student);
     }
+    public Student updateStudentInfo(Student student){
+        return studentRepository.updateStudentInfo(student);
+    }
 }
