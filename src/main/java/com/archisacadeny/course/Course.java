@@ -30,7 +30,6 @@ public class Course {
     public Course() {
 
     }
-
     public long getId() {
         return id;
     }

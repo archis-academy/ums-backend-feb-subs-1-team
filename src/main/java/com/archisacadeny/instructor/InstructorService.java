@@ -25,6 +25,21 @@ public class InstructorService {
         return instructorRepository.listAllInstructors();
     }
 
+    public Instructor getInstructorById(long instructorId){
+        return instructorRepository.getInstructorById(instructorId);
+    }
+
+    public Instructor updateInstructor(Instructor instructor) {
+        if(instructor == null){
+            throw new RuntimeException("instructor is null");
+        }
+        return instructorRepository.updateInstructor(instructor);
+    }
+
+    public void deleteInstructor(long instructorId) {
+        instructorRepository.deleteInstructor(instructorId);
+    }
+
     public Instructor createInstructor(long id, String instructorNumber, String fullName, String email, String password){
 
         Instructor instructor = new Instructor();
@@ -39,7 +54,7 @@ public class InstructorService {
 
     public void viewInstructorTaughtCourses(long instructorId) {
         Instructor instructor = null ;
-        List<Course> courses = courseRepository.getCoursesByInstructorId(instructorId); //burada hata alıyorum repository yazan yerde
+        List<Course> courses = courseRepository.getCoursesByInstructorId(instructorId);
 
         for (Course course : courses) {
             System.out.println("Course Name: " + course.getCourseName());
