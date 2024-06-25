@@ -3,7 +3,7 @@ package com.archisacadeny;
 import com.archisacadeny.config.DataBaseConfig;
 import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.course.Course;
-//import com.archisacadeny.course.CourseRepository;
+import com.archisacadeny.course.CourseRepository;
 import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.instructor.InstructorService;
