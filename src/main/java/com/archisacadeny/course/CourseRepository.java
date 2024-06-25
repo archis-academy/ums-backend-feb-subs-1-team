@@ -199,7 +199,7 @@ public class CourseRepository {
         return course;
     }
 
-    public static double calculateAverageSuccessGradeForInstructorCourses(int instructorId) {
+    public double calculateAverageSuccessGradeForInstructorCourses(int instructorId) {
         double averageOfCourses = -1;
         String query = "SELECT SUM(grade) AS total, COUNT(grade) AS courseCount, courses.instructor_id AS instructor  FROM course_student_mapper " +
                 "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId+
