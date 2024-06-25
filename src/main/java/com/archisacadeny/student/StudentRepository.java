@@ -4,8 +4,6 @@ import com.archisacadeny.config.DataBaseConnectorConfig;
 import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StudentRepository {
 
@@ -70,12 +68,11 @@ public class StudentRepository {
 
     public StudentReport generateStudentAchievementReport(int studentId) {
         String query = """
-        SELECT s.Id, s.FullName, c.Id AS CourseId, c.CourseName, e.Grade
+        SELECT s.id, s.full_name, csm.course_id, csm.grade
         FROM students s
-        JOIN enrolled_courses e ON s.Id = e.studentId
-        JOIN courses c ON e.courseId = c.Id
-        WHERE s.Id = ?
-        """;
+        JOIN course_student_mapper csm ON s.id = csm.student_id
+        WHERE s.id = ?;
+    """;
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.setInt(1, studentId);
@@ -85,29 +82,22 @@ public class StudentRepository {
                     throw new IllegalArgumentException("Student with ID " + studentId + " not found.");
                 }
 
-                long studentIdFromDb = resultSet.getLong("Id");
-                String studentName = resultSet.getString("FullName");
-
-                List<CourseGrade> courseGrades = new ArrayList<>();
-                int totalGradePoints = 0;
+                long studentIdFromDb = resultSet.getLong("id");
+                String studentName = resultSet.getString("full_name");
+                double totalWeightedGradePoints = 0.0;
                 int totalCredits = 0;
-                double gpa = 0.0;
 
                 do {
-                    long courseId = resultSet.getLong("CourseId");
-                    String courseName = resultSet.getString("CourseName");
-                    int grade = resultSet.getInt("Grade");
+                    long courseId = resultSet.getLong("course_id");
+                    int grade = resultSet.getInt("grade");
                     int courseCredit = getCourseCredit(courseId);
-
-                    courseGrades.add(new CourseGrade(courseId, courseName, grade));
-                    totalGradePoints += grade * courseCredit;
+                    totalWeightedGradePoints += grade * courseCredit;
                     totalCredits += courseCredit;
-
                 } while (resultSet.next());
-                gpa = totalCredits > 0 ? (double) totalGradePoints / totalCredits : 0.0;
 
-                return new StudentReport(studentIdFromDb, studentName,  gpa, courseGrades);
+                double gpa = totalCredits > 0 ? totalWeightedGradePoints / totalCredits : 0.0;
 
+                return new StudentReport(studentIdFromDb, studentName, gpa);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error generating student achievement report", e);
