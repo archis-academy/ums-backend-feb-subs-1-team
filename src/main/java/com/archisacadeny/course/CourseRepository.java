@@ -175,49 +175,61 @@ public class CourseRepository {
         return courseId;
     }
 
-//    public static Course getCourseById(long courseId){
-//        String query = "SELECT * FROM courses WHERE id = "+courseId;
-//        Course course = null;
-//        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-//            statement.execute();
-//            ResultSet rs = statement.getResultSet();
-//            while (rs.next()) {
-//                course = new Course(courseId,
-//                        rs.getString("name")
-//                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
-//                        ,rs.getLong("credits")
-//                        ,rs.getString("number")
-//                        , getCourseEnrolledStudents(courseId)
-//                        ,rs.getString("department")
-//                        ,rs.getInt("max_students"));
-//            }
-//            //printResultSet(rs);
-//        }catch(SQLException e){
-//            throw new RuntimeException(e);
-//        }
-//        return course;
-//    }
-//
+    public static Course getCourseById(long courseId){
+        String query = "SELECT * FROM courses WHERE id = "+courseId;
+        Course course = null;
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                course = new Course(courseId,
+                        rs.getString("name")
+                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        ,rs.getLong("credits")
+                        ,rs.getString("number")
+                        , getCourseEnrolledStudents(courseId)
+                        ,rs.getString("department")
+                        ,rs.getInt("max_students"));
+            }
+            //printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return course;
+    }
+
     public static String calculateLetterGradeForStudent(int studentId, int courseId) {
-        String result = "FFF";
+        String letterGrade = "FFF";
+        double grade = -1;
 
         String query = "SELECT grade FROM course_student_mapper WHERE course_id = "+courseId+" AND student_id = "+studentId;
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
             ResultSet rs = statement.getResultSet();
-//            while (rs.next()) {
-//
-//            }
-            printResultSet(rs);
+            while(rs.next()) {
+                grade = rs.getDouble("grade");
+
+                if (CourseRepository.isBetween(grade, 0, 59)) {
+                    letterGrade = "F";
+                } else if (CourseRepository.isBetween(grade, 59, 69)) {
+                    letterGrade = "D";
+                } else if (CourseRepository.isBetween(grade, 69, 79)) {
+                    letterGrade = "C";
+                } else if (CourseRepository.isBetween(grade, 79, 89)) {
+                    letterGrade = "B";
+                } else if (CourseRepository.isBetween(grade, 89, 100)) {
+                    letterGrade = "A";
+                }else{letterGrade = "NaN";};
+            }
+//            printResultSet(rs);
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
-
-        return result;
+        return letterGrade;
     }
 
-
-
-
-
+    public static boolean isBetween(double value, int min, int max)
+    {
+        return((value >= min) && (value <= max));
+    }
 }
