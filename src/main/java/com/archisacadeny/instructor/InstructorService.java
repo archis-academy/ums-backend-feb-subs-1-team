@@ -1,14 +1,17 @@
 package com.archisacadeny.instructor;
 
 import com.archisacadeny.course.Course;
+import com.archisacadeny.course.CourseRepository;
 
 import java.util.List;
 
 public class InstructorService {
     private final InstructorRepository instructorRepository;
+    private final CourseRepository courseRepository;
 
-    public InstructorService(InstructorRepository instructorRepository) {
+    public InstructorService(InstructorRepository instructorRepository, CourseRepository courseRepository) {
         this.instructorRepository = instructorRepository;
+        this.courseRepository = courseRepository;
     }
 
     public Instructor createInstructor(Instructor instructor) {
@@ -35,7 +38,8 @@ public class InstructorService {
     }
 
     public void viewInstructorTaughtCourses(long instructorId) {
-        List<Course> courses = CourseRepository.getCoursesByInstructorId(instructorId); //burada hata alıyorum repository yazan yerde
+        Instructor instructor = null ;
+        List<Course> courses = courseRepository.getCoursesByInstructorId(instructorId); //burada hata alıyorum repository yazan yerde
 
         for (Course course : courses) {
             System.out.println("Course Name: " + course.getCourseName());

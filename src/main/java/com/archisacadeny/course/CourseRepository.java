@@ -5,6 +5,8 @@ import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.student.CourseStudentMapper;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CourseRepository {
     public static void createCourseTable(){
@@ -196,6 +198,30 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return course;
+    }
+
+    public List<Course> getCoursesByInstructorId(long instructorId){
+        List <Course> courses = new ArrayList<>();
+        String query= "SELECT * FROM courses WHERE instructor_id=?";
+
+        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1, instructorId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                while(resultSet.next()) {
+                    Course course = new Course();
+                    course.setId(resultSet.getLong("id"));
+                    course.setCourseName(resultSet.getString("name"));
+                    course.setCourseNumber(resultSet.getString("number"));
+                    course.setCredit(resultSet.getInt("credits"));
+                    course.setDepartment(resultSet.getString("department"));
+                    course.setMaxStudents(resultSet.getInt("max_students"));
+                    courses.add(course);
+                }
+            }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return courses;
     }
 
 
