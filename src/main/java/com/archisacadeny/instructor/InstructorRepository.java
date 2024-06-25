@@ -1,6 +1,8 @@
 package com.archisacadeny.instructor;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.course.Course;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,7 +33,7 @@ public class InstructorRepository {
         }
     }
 
-    public Instructor save (Instructor instructor){
+    public Instructor save(Instructor instructor){
         String query = "INSERT INTO instructors (full_name,number,email,password) VALUES(?,?,?,?)";
        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
            statement.setString(1, instructor.getFullName());
