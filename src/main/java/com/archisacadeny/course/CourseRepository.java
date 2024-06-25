@@ -198,7 +198,7 @@ public class CourseRepository {
         return course;
     }
 
-    public static String calculateLetterGradeForStudent(int studentId, int courseId) {
+    public String calculateLetterGradeForStudent(int studentId, int courseId) {
         String letterGrade = "FFF";
         double grade = -1;
 
@@ -209,15 +209,15 @@ public class CourseRepository {
             while(rs.next()) {
                 grade = rs.getDouble("grade");
 
-                if (CourseRepository.isBetween(grade, 0, 59)) {
+                if (isBetween(grade, 0, 59)) {
                     letterGrade = "F";
-                } else if (CourseRepository.isBetween(grade, 59, 69)) {
+                } else if (isBetween(grade, 59, 69)) {
                     letterGrade = "D";
-                } else if (CourseRepository.isBetween(grade, 69, 79)) {
+                } else if (isBetween(grade, 69, 79)) {
                     letterGrade = "C";
-                } else if (CourseRepository.isBetween(grade, 79, 89)) {
+                } else if (isBetween(grade, 79, 89)) {
                     letterGrade = "B";
-                } else if (CourseRepository.isBetween(grade, 89, 100)) {
+                } else if (isBetween(grade, 89, 100)) {
                     letterGrade = "A";
                 }else{letterGrade = "NaN";};
             }
@@ -228,7 +228,7 @@ public class CourseRepository {
         return letterGrade;
     }
 
-    public static boolean isBetween(double value, int min, int max)
+    public boolean isBetween(double value, int min, int max)
     {
         return((value >= min) && (value <= max));
     }
