@@ -3,6 +3,7 @@ package com.archisacadeny.course;
 import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.student.CourseStudentMapper;
+import com.archisacadeny.student.Student;
 
 import java.sql.*;
 
@@ -196,6 +197,26 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return course;
+    }
+
+
+    public Student findTopStudentInInstructorCourses(int instructorId) {
+        String query = "SELECT student_id, grade, courses.instructor_id FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId+
+                " ORDER BY grade DESC LIMIT 1 ";
+        Student student = null;
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+//            while (rs.next()) {
+//                //student = new Student()
+//                // Left join ile studenta dair ilgileri cekip Student olusturuyum mu yoksa findStudentById() methodu ile mi.
+//            }
+            printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return student;
     }
 
 
