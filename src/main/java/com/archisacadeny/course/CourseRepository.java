@@ -201,22 +201,20 @@ public class CourseRepository {
     }
 
     public CourseStatistics calculateCourseStatistics(int courseId) {
-//        Map<String, Double> values = new HashMap<>();
-
         String query = "SELECT SUM(grade) as sum, COUNT(grade) as num, MIN(grade) as min, MAX(grade) as max  FROM \"course_student_mapper\" " +
                 "WHERE course_id = '" + courseId + "'" ;
-        CourseStatistics stats = null;
+        CourseStatistics stats = new CourseStatistics();
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
             printResultSet(rs);
             while (rs.next()) {
-            stats = new CourseStatistics(courseId,
-                    rs.getDouble("min"),
-                    rs.getDouble("max"),
-                    rs.getDouble("sum"),
+            stats.setId(courseId);
+            stats.setAverageGrade(rs.getDouble("sum"),
                     rs.getInt("num"));
+            stats.setHighestGrade(rs.getDouble("max"));
+            stats.setLowestGrade(rs.getDouble("min"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -13,15 +13,6 @@ public class CourseStatistics {
         this.lowestGrade = lowestGrade;
     }
 
-    public CourseStatistics( long id,double min, double max, double sum, double num){
-        this.id = id;
-        this.highestGrade = max;
-        this.lowestGrade = min;
-        this.averageGrade = sum/num;
-    }
-
-
-
     public CourseStatistics(){
 
     }
@@ -38,9 +29,15 @@ public class CourseStatistics {
         return averageGrade;
     }
 
+
     public void setAverageGrade(double averageGrade) {
         this.averageGrade = averageGrade;
     }
+
+    public void setAverageGrade(double sum,int num) {
+        this.averageGrade = Math.round((sum/num) * 100.0) / 100.0;;
+    }
+
 
     public double getHighestGrade() {
         return highestGrade;
