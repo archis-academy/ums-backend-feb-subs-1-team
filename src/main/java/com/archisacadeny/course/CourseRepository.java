@@ -6,6 +6,8 @@ import com.archisacadeny.student.CourseStudentMapper;
 import com.archisacadeny.student.Student;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CourseRepository {
     public static void createCourseTable(){
@@ -199,8 +201,8 @@ public class CourseRepository {
         return course;
     }
 
-    public double calculateAverageSuccessGradeForInstructorCourses(int instructorId) {
-        double averageOfCourses = -1;
+    public Map<String, Double> calculateAverageSuccessGradeForInstructorCourses(int instructorId) {
+        Map<String,Double> values = new HashMap<>();
         String query = "SELECT SUM(grade) AS total, COUNT(grade) AS courseCount, courses.instructor_id AS instructor  FROM course_student_mapper " +
                 "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId+
                 " GROUP BY instructor";
@@ -209,14 +211,15 @@ public class CourseRepository {
             statement.execute();
             ResultSet rs = statement.getResultSet();
             while (rs.next()) {
-                averageOfCourses = Math.round((rs.getDouble("total") / rs.getInt("courseCount"))* 100.0) / 100.0;
-                //servise eklenecek
+                values.put("total",rs.getDouble("total"));
+                values.put("courseCount", (double) rs.getInt("courseCount"));
             }
             printResultSet(rs);
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
-        return averageOfCourses;
+        return values;
+        // service eklenecek TODO
     }
 
 
