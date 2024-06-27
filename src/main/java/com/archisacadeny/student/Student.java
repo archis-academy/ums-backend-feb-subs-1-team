@@ -26,6 +26,12 @@ public class Student {
         this.enrolledCourses = enrolledCourses;
     }
 
+    @Override
+    public String toString(){
+        return " "+id+"|"+fullName+"|"+gender+"|"+identityNo+"|"+enrollmentDate+"|"+yearOfStudy+"|"+totalCreditCount+"|"+enrolledCourses+"|";
+    }
+
+
     public Student(){}
 
     public long getId() { return id; }

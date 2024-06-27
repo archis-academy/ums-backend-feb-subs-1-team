@@ -199,9 +199,10 @@ public class CourseRepository {
 //        return course;
 //    }
 
-
     public static Student findTopStudentInInstructorCourses(int instructorId) {
-        String query = "SELECT student_id, grade, courses.instructor_id,  FROM course_student_mapper " +
+        String query = "SELECT student_id, grade, courses.instructor_id, " +
+                "students.id,students.full_name,students.gender,students.identity_no,students.enrollment_date," +
+                "students.year_of_study,students.total_credit_count FROM course_student_mapper " +
                 "INNER JOIN courses ON course_student_mapper.course_id = courses.id " +
                 "LEFT JOIN students  ON  course_student_mapper.student_id = \"students\".\"id\""+
                 "WHERE courses.instructor_id = "+instructorId+
@@ -211,16 +212,20 @@ public class CourseRepository {
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
             ResultSet rs = statement.getResultSet();
-//            while (rs.next()) {
-//                //student = new Student()
-//                // Left join ile studenta dair ilgileri cekip Student olusturuyum mu yoksa findStudentById() methodu ile mi.
-//            }
-            printResultSet(rs);
+            while (rs.next()) {
+                student.setId(rs.getInt("id"));
+                student.setFullName(rs.getString("full_name"));
+                student.setGender(rs.getString("gender"));
+                student.setEnrollmentDate(rs.getTimestamp("enrollment_date"));
+                student.setYearOfStudy(rs.getInt("year_of_study"));
+                student.setTotalCreditCount(rs.getInt("total_credit_count"));
+            }
+//            printResultSet(rs);
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
         return student;
-    }
+    }//servise eklenilecek
 
 
 }
