@@ -1,8 +1,10 @@
 package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.student.CourseStudentMapper;
+import com.archisacadeny.student.Student;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -188,10 +190,10 @@ public List<Course> getAllCourses() {
             while (rs.next()) {
                 courses.add(new Course(rs.getInt("id"),
                         rs.getString("name")
-                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        , new Instructor(rs.getLong("instructor_id"))
                         ,rs.getLong("credits")
                         ,rs.getString("number")
-                        , getCourseEnrolledStudents(rs.getInt("id"))
+                        , new ArrayList<>()
                         ,rs.getString("department")
                         ,rs.getInt("max_students")));
                 //DERSTE LOOPLARDA QUERY CALISTIRAN METHOD KULLANMAYIN DEMISTINIZ

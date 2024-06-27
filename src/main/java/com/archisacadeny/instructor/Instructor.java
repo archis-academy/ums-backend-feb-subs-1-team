@@ -13,6 +13,10 @@ public class Instructor extends Person {
 
     public Instructor() {this.courses = new ArrayList<>();}
 
+    public Instructor(long id){
+        setId(id);
+    }
+
     public String getNumber() {return number;}
     public void setNumber(String number) {this.number = number;}
 
