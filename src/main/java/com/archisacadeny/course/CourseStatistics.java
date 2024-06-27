@@ -13,6 +13,15 @@ public class CourseStatistics {
         this.lowestGrade = lowestGrade;
     }
 
+    public CourseStatistics( long id,double min, double max, double sum, double num){
+        this.id = id;
+        this.highestGrade = max;
+        this.lowestGrade = min;
+        this.averageGrade = sum/num;
+    }
+
+
+
     public CourseStatistics(){
 
     }
