@@ -176,35 +176,38 @@ public class CourseRepository {
         return courseId;
     }
 
-    public static Course getCourseById(long courseId){
-        String query = "SELECT * FROM courses WHERE id = "+courseId;
-        Course course = null;
-        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-            statement.execute();
-            ResultSet rs = statement.getResultSet();
-            while (rs.next()) {
-                course = new Course(courseId,
-                        rs.getString("name")
-                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
-                        ,rs.getLong("credits")
-                        ,rs.getString("number")
-                        , getCourseEnrolledStudents(courseId)
-                        ,rs.getString("department")
-                        ,rs.getInt("max_students"));
-            }
-            //printResultSet(rs);
-        }catch(SQLException e){
-            throw new RuntimeException(e);
-        }
-        return course;
-    }
+//    public static Course getCourseById(long courseId){
+//        String query = "SELECT * FROM courses WHERE id = "+courseId;
+//        Course course = null;
+//        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+//            statement.execute();
+//            ResultSet rs = statement.getResultSet();
+//            while (rs.next()) {
+//                course = new Course(courseId,
+//                        rs.getString("name")
+//                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+//                        ,rs.getLong("credits")
+//                        ,rs.getString("number")
+//                        , getCourseEnrolledStudents(courseId)
+//                        ,rs.getString("department")
+//                        ,rs.getInt("max_students"));
+//            }
+//            //printResultSet(rs);
+//        }catch(SQLException e){
+//            throw new RuntimeException(e);
+//        }
+//        return course;
+//    }
 
 
-    public Student findTopStudentInInstructorCourses(int instructorId) {
-        String query = "SELECT student_id, grade, courses.instructor_id FROM course_student_mapper " +
-                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId+
+    public static Student findTopStudentInInstructorCourses(int instructorId) {
+        String query = "SELECT student_id, grade, courses.instructor_id,  FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id " +
+                "LEFT JOIN students  ON  course_student_mapper.student_id = \"students\".\"id\""+
+                "WHERE courses.instructor_id = "+instructorId+
                 " ORDER BY grade DESC LIMIT 1 ";
-        Student student = null;
+        Student student = new Student();
+        // empty constructor*
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
             ResultSet rs = statement.getResultSet();
