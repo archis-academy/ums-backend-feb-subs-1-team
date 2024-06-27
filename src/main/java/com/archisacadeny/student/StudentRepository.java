@@ -67,15 +67,14 @@ public class StudentRepository {
         return student;
     }
 
-    public Student viewStudentDetails(long id) {
+    public Student viewStudentDetails(long studentid) {
         String query = "SELECT * FROM students WHERE id = ?";
         Student student = new Student();
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
-            statement.setLong(1, id);
+            statement.setLong(1, studentid);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-
                 student.setFullName(resultSet.getString("full_name"));
                 student.setGender(resultSet.getString("gender"));
                 student.setIdentityNo(resultSet.getString("identity_no"));
@@ -90,4 +89,33 @@ public class StudentRepository {
         }
         return student;
     }
+    public Student getStudentByID(Long studentId){
+        String query = "SELECT * FROM students WHERE id = ?";
+        Student student = new Student();
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.setLong(1,studentId);
+            try(ResultSet resultSet = statement.executeQuery()){
+                if (resultSet.next()){
+                    student.setId(resultSet.getLong("id"));
+                    student.setFullName(resultSet.getString("full_name"));
+                    student.setGender(resultSet.getString("gender"));
+                    student.setEnrollmentDate(resultSet.getTimestamp("enrollment_date"));
+                    student.setIdentityNo(resultSet.getString("identity_no"));
+                    student.setYearOfStudy(resultSet.getInt("year_of_study"));
+                    student.setTotalCreditCount(resultSet.getInt("total_credit_count"));
+                }else {
+                    throw new RuntimeException("Student can not be found!!" + studentId);
+                }
+
+
+            }
+
+
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return student;
+    }
+
 }
