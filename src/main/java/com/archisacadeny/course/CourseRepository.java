@@ -179,7 +179,7 @@ public class CourseRepository {
         return courseId;
     }
 
-  public static Course getCourseById(long courseId){
+    public Course getCourseById(long courseId){
         String query = "SELECT * FROM courses WHERE id = "+courseId;
         Course course = null;
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
