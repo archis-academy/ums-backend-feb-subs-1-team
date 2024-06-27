@@ -12,7 +12,7 @@ public class Instructor extends Person {
     private List<Course> courses;
 
     public Instructor() {
-        super(1,"b","","");
+        super();
         this.courses = new ArrayList<>();}
 
     public Instructor(long id,String fullName,String email,String password,String num,List<Course> course){

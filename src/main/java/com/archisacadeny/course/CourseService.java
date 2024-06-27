@@ -24,28 +24,39 @@ public class CourseService {
     }
 
     public Boolean isCourseFull(long courseId){
-        return courseRepository.isCourseFull(courseId);
+        boolean result = courseRepository.isCourseFull(courseId);
+        System.out.println("Course with id:"+courseId+" is "+result);
+
+        return result;
     }
 
     public void update(String courseNumber, Course course ){
+        System.out.println("Course number: "+courseNumber +" id:" +course.getId()+ " is updated.");
         courseRepository.update(courseNumber,course);
     }
 
     public Double getTotalCreditAmount(long studentId){
-        return courseRepository.getTotalCreditAmount(studentId);
+        double totalCredit = courseRepository.getTotalCreditAmount(studentId);
+        System.out.println("Total credit amount of student with id:"+studentId+" is "+totalCredit+" credits");
+        return totalCredit;
     }
 
     public List<Course> getStudentEnrolledCourses(int studentId){
-       return courseRepository.getStudentEnrolledCourses(studentId);
+        List<Course> courses = courseRepository.getStudentEnrolledCourses(studentId);
+        System.out.println("Student Enrolled courses:\n"+ courses);
+       return courses;
     }
 
     public List<Student> getCourseEnrolledStudents(int studentId){
-        return courseRepository.getCourseEnrolledStudents(studentId);
+        List<Student> students = courseRepository.getCourseEnrolledStudents(studentId);
+        System.out.println("Course Enrolled students:\n"+ students);
+        return students;
     }
 
     public Course getCourseWithMostStudents(){
-        return courseRepository.getCourseById(courseRepository.getCourseWithMostStudents());
-        // tek id donduren methodlarda getCourseById() kullanmam dogru mu TODO
+        Course course = courseRepository.getCourseById(courseRepository.getCourseWithMostStudents());
+        System.out.println("Course with most student:\n"+ course);
+        return course;
     }
     public double calculateAverageGradeForCourse(int course_id){
         Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
@@ -68,7 +79,9 @@ public class CourseService {
     }
 
     public List<Course> getAllCourses(){
-        return courseRepository.getAllCourses();
+        ArrayList<Course> courses = courseRepository.getAllCourses();
+        System.out.println(courses);
+        return courses;
     }
 }
 
