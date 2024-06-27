@@ -198,8 +198,7 @@ public class CourseRepository {
         return course;
     }
 
-    public String calculateLetterGradeForStudent(int studentId, int courseId) {
-        String letterGrade = "FFF";
+    public double calculateLetterGradeForStudent(int studentId, int courseId) {
         double grade = -1;
 
         String query = "SELECT grade FROM course_student_mapper WHERE course_id = "+courseId+" AND student_id = "+studentId;
@@ -208,28 +207,12 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
             while(rs.next()) {
                 grade = rs.getDouble("grade");
-
-                if (isBetween(grade, 0, 59)) {
-                    letterGrade = "F";
-                } else if (isBetween(grade, 59, 69)) {
-                    letterGrade = "D";
-                } else if (isBetween(grade, 69, 79)) {
-                    letterGrade = "C";
-                } else if (isBetween(grade, 79, 89)) {
-                    letterGrade = "B";
-                } else if (isBetween(grade, 89, 100)) {
-                    letterGrade = "A";
-                }else{letterGrade = "NaN";};
             }
 //            printResultSet(rs);
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
-        return letterGrade;
+        return grade;
     }
-
-    public boolean isBetween(double value, int min, int max)
-    {
-        return((value >= min) && (value <= max));
-    }
+    //SERVICE EKLENECEK TODO
 }
