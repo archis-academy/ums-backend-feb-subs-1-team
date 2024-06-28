@@ -426,5 +426,33 @@ public class CourseRepository {
         }
         return 0;
     }
+  
+    public List<Course> getAllCourses() {
+        ArrayList<Course> courses = new ArrayList<>();
+        String query = "SELECT * FROM \"courses\" ";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            Course course = new Course();
+            while (rs.next()) {
+                course.setId(rs.getInt("id"));
+                        course.setCourseName(rs.getString("name"));
+                        course.setInstructor(new Instructor(rs.getLong("instructor_id")));
+                        course.setCredit(rs.getLong("credits"));
+                        course.setCourseNumber(rs.getString("number"));
+                        course.setDepartment(rs.getString("department"));
+                        course.setMaxStudents(rs.getInt("max_students"));
+                courses.add(course);
+                //DERSTE LOOPLARDA QUERY CALISTIRAN METHOD KULLANMAYIN DEMISTINIZ
+                // FAKAT KURSA KAYITLI OGRENCILERI QUERY CALISTIRMADAN EKLEYEMEM, NASIL YAPA BILIRIM ?
+                // TODO
+            }
+            //printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return courses;
+    }
 
 }

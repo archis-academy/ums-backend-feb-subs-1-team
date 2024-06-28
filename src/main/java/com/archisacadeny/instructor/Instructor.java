@@ -22,6 +22,10 @@ public class Instructor extends Person {
         this.courses = course;
     }
 
+    public Instructor(long id){
+        setId(id);
+    }
+
     public String getNumber() {return number;}
     public void setNumber(String number) {this.number = number;}
 
