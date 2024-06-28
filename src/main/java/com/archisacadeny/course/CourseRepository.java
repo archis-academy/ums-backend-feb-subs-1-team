@@ -1,6 +1,7 @@
 package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.student.CourseStudentMapper;
@@ -193,14 +194,15 @@ public class CourseRepository {
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
-
+            Instructor instructor = new Instructor();
             while (rs.next()) {
+                instructor.setId(rs.getLong("instructor_id"));
                 courses.add(new Course(rs.getInt("course_id")
                         , rs.getString("name")
-                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
+                        , instructor
                         ,rs.getLong("credits")
                         ,rs.getString("number")
-                        , getCourseEnrolledStudents(rs.getInt("course_id"))
+                        , new ArrayList<>()
                         ,rs.getString("department")
                         ,rs.getInt("max_students")));
             }
