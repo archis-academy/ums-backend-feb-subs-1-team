@@ -65,4 +65,57 @@ public class StudentRepository {
 
         return student;
     }
+
+    public StudentReport generateStudentAchievementReport(int studentId) {
+        String query = """
+        SELECT s.id, s.full_name, csm.course_id, csm.grade
+        FROM students s
+        JOIN course_student_mapper csm ON s.id = csm.student_id
+        WHERE s.id = ?;
+    """;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setInt(1, studentId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    throw new IllegalArgumentException("Student with ID " + studentId + " not found.");
+                }
+
+                long studentIdFromDb = resultSet.getLong("id");
+                String studentName = resultSet.getString("full_name");
+                double totalWeightedGradePoints = 0.0;
+                int totalCredits = 0;
+
+                do {
+                    long courseId = resultSet.getLong("course_id");
+                    int grade = resultSet.getInt("grade");
+                    int courseCredit = getCourseCredit(courseId);
+                    totalWeightedGradePoints += grade * courseCredit;
+                    totalCredits += courseCredit;
+                } while (resultSet.next());
+
+                double gpa = totalCredits > 0 ? totalWeightedGradePoints / totalCredits : 0.0;
+
+                return new StudentReport(studentIdFromDb, studentName, gpa);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error generating student achievement report", e);
+        }
+    }
+
+    private int getCourseCredit(long courseId) throws SQLException {
+        String query = "SELECT Credits FROM courses WHERE Id = ?";
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1, courseId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("Credits");
+                } else {
+                    throw new IllegalArgumentException("Course with ID " + courseId + " not found.");
+                }
+            }
+        }
+    }
+
 }
