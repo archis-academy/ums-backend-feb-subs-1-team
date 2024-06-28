@@ -1,6 +1,8 @@
 package com.archisacadeny.instructor;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.course.Course;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,7 +33,7 @@ public class InstructorRepository {
         }
     }
 
-    public Instructor save (Instructor instructor){
+    public Instructor save(Instructor instructor){
         String query = "INSERT INTO instructors (full_name,number,email,password) VALUES(?,?,?,?)";
        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
            statement.setString(1, instructor.getFullName());
@@ -42,6 +44,62 @@ public class InstructorRepository {
            statement.execute();
            System.out.println("Instructor saved successfully with name: " + instructor.getFullName());
        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return instructor;
+    }
+
+
+    public void deleteInstructor(long instructorId){
+        String query = "DELETE FROM instructors WHERE id = ?";
+        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.setLong(1,instructorId);
+            statement.execute();
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Instructor updateInstructor(Instructor instructor){
+        String query= "UPDATE instructors SET full_name = ?, number =?, email=?, password=? WHERE id = ?";
+        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setString(1,instructor.getFullName());
+            statement.setString(2, instructor.getNumber());
+            statement.setString(3, instructor.getEmail());
+            statement.setString(4, instructor.getPassword());
+            statement.setLong(5,instructor.getId());
+
+            int affectedRows = statement.executeUpdate();
+            if(affectedRows > 0){
+                System.out.println("Instructor updated successfully with id: " + instructor.getId());
+            }else{
+                System.out.println("Instructor update failed! No instructor found with id: "+ instructor.getId());
+            }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return instructor;
+    }
+
+    //Read Method: This method retrieves the instructor's information with the given `instructorId` from the database and assigns it to an `Instructor` object.
+    //Don't forget to check if the object is null!!
+    public Instructor getInstructorById(long instructorId){
+        String query = "SELECT * FROM instructors WHERE id = ?";
+        Instructor instructor = new Instructor();
+        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1,instructorId);
+            try(ResultSet resultSet = statement.executeQuery() ){
+                if( resultSet.next() ){
+                    instructor.setId(resultSet.getLong("id"));
+                    instructor.setFullName(resultSet.getString("full_name"));
+                    instructor.setNumber(resultSet.getString("number"));
+                    instructor.setEmail(resultSet.getString("email"));
+                    instructor.setPassword(resultSet.getString("password"));
+                } else{
+                    throw new RuntimeException("Instructor not found with id: " + instructorId);
+                }
+            }
+        } catch(SQLException e){
             throw new RuntimeException(e);
         }
         return instructor;

@@ -26,13 +26,19 @@ public class Student {
         this.enrolledCourses = enrolledCourses;
     }
 
-    @Override
-    public String toString(){
-        return " "+id+"|"+fullName+"|"+gender+"|"+identityNo+"|"+enrollmentDate+"|"+yearOfStudy+"|"+totalCreditCount+"|"+enrolledCourses+"|";
+    public Student(){
+
     }
 
+    //TODO update this to be more detailed.
+    @Override
+    public String toString(){
+        return "ID:" + this.getId() +"\n"+
+                " Student Name: " + this.getFullName()+"\n"+
+                " Student Gender: " + this.getGender()+"\n"+
+                " Student Number: " + this.getIdentityNo()+"\n";
+    }
 
-    public Student(){}
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
