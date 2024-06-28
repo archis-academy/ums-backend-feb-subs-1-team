@@ -1,8 +1,12 @@
 package com.archisacadeny.instructor;
 
+import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.course.Course;
 import com.archisacadeny.course.CourseRepository;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class InstructorService {
@@ -66,5 +70,17 @@ public class InstructorService {
             System.out.println();
         }
 
+    }
+
+    public int calculateTotalStudentsForInstructor(int instructorId) {
+        List<Course> courses = courseRepository.getCoursesByInstructorId(instructorId);
+        int totalStudents =0;
+
+        for(Course course : courses) {
+            totalStudents += courseRepository.getStudentCountForCourse(course.getId());
+
+        }
+        System.out.println("Total students for instructor with ID " + instructorId + ": " + totalStudents);
+        return totalStudents;
     }
 }

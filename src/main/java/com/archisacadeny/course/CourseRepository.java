@@ -246,6 +246,25 @@ public class CourseRepository {
         // service eklenecek TODO
     }
 
+    public double calculateLetterGradeForStudent(int studentId, int courseId) {
+        double grade = -1;
+
+
+        String query = "SELECT grade FROM course_student_mapper WHERE course_id = "+courseId+" AND student_id = "+studentId;
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while(rs.next()) {
+                grade = rs.getDouble("grade");
+            }
+//            printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return grade;
+    }
+    //SERVICE EKLENECEK TODO
+
 
     public List<Course> getCoursesByInstructorId(long instructorId){
         List <Course> courses = new ArrayList<>();
@@ -269,6 +288,21 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return courses;
+    }
+
+    public int getStudentCountForCourse(long courseId) {
+        String query= "SELECT COUNT (student_id) AS student_count FROM course_student_mapper WHERE course_id = ";
+        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1,courseId);
+            try(ResultSet rs= statement.executeQuery()) {
+                if(rs.next()) {
+                    return rs.getInt("student_count");
+                }
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return 0;
     }
 
 }
