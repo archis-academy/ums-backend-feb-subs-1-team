@@ -234,7 +234,7 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
             printResultSet(rs);
             while (rs.next()) {
-            stats.setId(courseId);
+            stats.setCourseId(courseId);
             stats.setAverageGrade(rs.getDouble("sum"),
                     rs.getInt("num"));
             stats.setHighestGrade(rs.getDouble("max"));

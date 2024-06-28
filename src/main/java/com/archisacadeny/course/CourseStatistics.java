@@ -1,13 +1,13 @@
 package com.archisacadeny.course;
 
 public class CourseStatistics {
-    private long id;
+    private long courseId;
     private double averageGrade;
     private double highestGrade;
     private double lowestGrade;
 
     public CourseStatistics(long id, double averageGrade, double highestGrade, double lowestGrade) {
-        this.id = id;
+        this.courseId = id;
         this.averageGrade = averageGrade;
         this.highestGrade = highestGrade;
         this.lowestGrade = lowestGrade;
@@ -17,12 +17,12 @@ public class CourseStatistics {
 
     }
 
-    public long getId() {
-        return id;
+    public long getCourseId() {
+        return courseId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setCourseId(long id) {
+        this.courseId = id;
     }
 
     public double getAverageGrade() {
