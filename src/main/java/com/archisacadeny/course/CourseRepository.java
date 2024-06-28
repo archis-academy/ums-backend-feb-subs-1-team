@@ -224,6 +224,24 @@ public class CourseRepository {
         return course;
     }
 
+    public double calculateLetterGradeForStudent(int studentId, int courseId) {
+        double grade = -1;
+
+
+        String query = "SELECT grade FROM course_student_mapper WHERE course_id = "+courseId+" AND student_id = "+studentId;
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while(rs.next()) {
+                grade = rs.getDouble("grade");
+            }
+//            printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return grade;
+    }
+    //SERVICE EKLENECEK TODO
 
     public List<Course> getCoursesByInstructorId(long instructorId){
         List <Course> courses = new ArrayList<>();
