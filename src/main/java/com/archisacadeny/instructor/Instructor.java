@@ -11,7 +11,16 @@ public class Instructor extends Person {
     private String number;
     private List<Course> courses;
 
-    public Instructor() {this.courses = new ArrayList<>();}
+    public Instructor() {
+        super();
+        this.courses = new ArrayList<>();
+    }
+
+    public Instructor(long id,String fullName,String email,String password,String num,List<Course> course){
+        super(id,fullName,email,password);
+        this.number = num;
+        this.courses = course;
+    }
 
     public Instructor(long id){
         setId(id);
