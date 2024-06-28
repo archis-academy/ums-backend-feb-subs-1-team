@@ -3,6 +3,7 @@ package com.archisacadeny.course;
 import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.student.CourseStudentMapper;
+import com.archisacadeny.student.Student;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -224,6 +225,27 @@ public class CourseRepository {
         return course;
     }
 
+    public Map<String, Double> calculateAverageSuccessGradeForInstructorCourses(int instructorId) {
+        Map<String,Double> values = new HashMap<>();
+        String query = "SELECT SUM(grade) AS total, COUNT(grade) AS courseCount, courses.instructor_id AS instructor  FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId+
+                " GROUP BY instructor";
+
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                values.put("total",rs.getDouble("total"));
+                values.put("courseCount", (double) rs.getInt("courseCount"));
+            }
+            printResultSet(rs);
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+        return values;
+        // service eklenecek TODO
+    }
+
     public double calculateLetterGradeForStudent(int studentId, int courseId) {
         double grade = -1;
 
@@ -242,6 +264,7 @@ public class CourseRepository {
         return grade;
     }
     //SERVICE EKLENECEK TODO
+
 
     public List<Course> getCoursesByInstructorId(long instructorId){
         List <Course> courses = new ArrayList<>();
