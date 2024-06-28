@@ -249,4 +249,19 @@ public class CourseRepository {
         return courses;
     }
 
+    public int getStudentCountForCourse(long courseId) {
+        String query= "SELECT COUNT (student_id) AS student_count FROM course_student_mapper WHERE course_id = ";
+        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1,courseId);
+            try(ResultSet rs= statement.executeQuery()) {
+                if(rs.next()) {
+                    return rs.getInt("student_count");
+                }
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
 }
