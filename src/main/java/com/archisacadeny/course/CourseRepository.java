@@ -209,16 +209,16 @@ public class CourseRepository {
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
-
+            Course course = new Course();
             while (rs.next()) {
-                courses.add(new Course(rs.getInt("id"),
-                        rs.getString("name")
-                        , new Instructor(rs.getLong("instructor_id"))
-                        ,rs.getLong("credits")
-                        ,rs.getString("number")
-                        , new ArrayList<>()
-                        ,rs.getString("department")
-                        ,rs.getInt("max_students")));
+                course.setId(rs.getInt("id"));
+                        course.setCourseName(rs.getString("name"));
+                        course.setInstructor(new Instructor(rs.getLong("instructor_id")));
+                        course.setCredit(rs.getLong("credits"));
+                        course.setCourseNumber(rs.getString("number"));
+                        course.setDepartment(rs.getString("department"));
+                        course.setMaxStudents(rs.getInt("max_students"));
+                courses.add(course);
                 //DERSTE LOOPLARDA QUERY CALISTIRAN METHOD KULLANMAYIN DEMISTINIZ
                 // FAKAT KURSA KAYITLI OGRENCILERI QUERY CALISTIRMADAN EKLEYEMEM, NASIL YAPA BILIRIM ?
                 // TODO
