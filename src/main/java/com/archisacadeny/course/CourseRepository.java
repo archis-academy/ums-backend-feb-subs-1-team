@@ -9,6 +9,8 @@ import com.archisacadeny.student.CourseStudentMapper;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CourseRepository {
     public static void createCourseTable(){
@@ -211,9 +213,8 @@ public class CourseRepository {
         }
         return courses;
     }
-
-    //BU METHODU getCouseById methodunda kullanacagimiz icin id leri degil LISt<Students> dondurmesi gerekir.
-    public  List<Student> getCourseEnrolledStudents(long courseId){
+  
+  public  List<Student> getCourseEnrolledStudents(long courseId){
         ArrayList<Student> students = new ArrayList<>();
 
         String query = "SELECT course_id, student_id, full_name,gender,identity_no,enrollment_date,year_of_study, total_credit_count FROM \"course_student_mapper\" " +
@@ -243,27 +244,78 @@ public class CourseRepository {
         return students;
     }
 
-    public static Course getCourseById(long courseId){
-        String query = "SELECT * FROM courses WHERE id = "+courseId;
-        Course course = null;
-        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+
+    //BU METHODU getCouseById methodunda kullanacagimiz icin id leri degil LISt<Students> dondurmesi gerekir.
+    
+       public Map<String,Object> calculateAverageGradeForCourse(int courseId) {
+        Map<String, Object> values
+                = new HashMap<>();
+
+        String query = "SELECT SUM(grade) as sum, COUNT(grade) as num  FROM \"course_student_mapper\" " +
+                "WHERE course_id = '" + courseId + "'" ;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
+
             while (rs.next()) {
-                course = new Course(courseId,
-                        rs.getString("name")
-                        , InstructorRepository.getInstructorById( rs.getLong("instructor_id"))
-                        ,rs.getLong("credits")
-                        ,rs.getString("number")
-                        , getCourseEnrolledStudents(courseId)
-                        ,rs.getString("department")
-                        ,rs.getInt("max_students"));
+                values.put("sum_grade",rs.getDouble("sum"));
+                values.put("num_of_students", (double) rs.getInt("num"));
             }
-            //printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+  
+    
+    public Course getCourseById(long courseId){
+      String query = "SELECT * FROM courses WHERE id = "+courseId;
+      Course course = null;
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+          statement.execute();
+          ResultSet rs = statement.getResultSet();
+          Instructor instructor = new Instructor();
+            while (rs.next()) {
+              instructor.setId(rs.getLong("instructor_id"));
+                    course = new Course(courseId,
+                    rs.getString("name")
+                    , instructor
+                    ,rs.getLong("credits")
+                    ,rs.getString("number")
+                    , new ArrayList<>()
+                    ,rs.getString("department")
+                    ,rs.getInt("max_students"));
+        }
+        //printResultSet(rs);
+    }catch(SQLException e){
+        throw new RuntimeException(e);
+    }
+    return course;
+}
+
+    public List<Course> getCoursesByInstructorId(long instructorId){
+        List <Course> courses = new ArrayList<>();
+        String query= "SELECT * FROM courses WHERE instructor_id=?";
+
+        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1, instructorId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                while(resultSet.next()) {
+                    Course course = new Course();
+                    course.setId(resultSet.getLong("id"));
+                    course.setCourseName(resultSet.getString("name"));
+                    course.setCourseNumber(resultSet.getString("number"));
+                    course.setCredit(resultSet.getInt("credits"));
+                    course.setDepartment(resultSet.getString("department"));
+                    course.setMaxStudents(resultSet.getInt("max_students"));
+                    courses.add(course);
+                }
+            }
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
-        return course;
+        return courses;
     }
-
 }
