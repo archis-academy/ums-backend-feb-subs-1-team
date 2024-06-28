@@ -228,7 +228,28 @@ public class CourseRepository {
         return course;
     }
 
-    
+    public CourseStatistics calculateCourseStatistics(int courseId) {
+        String query = "SELECT SUM(grade) as sum, COUNT(grade) as num, MIN(grade) as min, MAX(grade) as max  FROM \"course_student_mapper\" " +
+                "WHERE course_id = '" + courseId + "'" ;
+        CourseStatistics stats = new CourseStatistics();
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            printResultSet(rs);
+            while (rs.next()) {
+            stats.setCourseId(courseId);
+            stats.setAverageGrade(rs.getDouble("sum"),
+                    rs.getInt("num"));
+            stats.setHighestGrade(rs.getDouble("max"));
+            stats.setLowestGrade(rs.getDouble("min"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return stats;
+    }// Service methdou serviceclassi eklendikten sonra yazilacak
+
   public static Student findTopStudentInInstructorCourses(int instructorId) {
         String query = "SELECT student_id, grade, courses.instructor_id, " +
                 "students.id,students.full_name,students.gender,students.identity_no,students.enrollment_date," +
@@ -297,6 +318,7 @@ public class CourseRepository {
         }
         return grade;
     }
+
 
 
     public List<Course> getCoursesByInstructorId(long instructorId){
