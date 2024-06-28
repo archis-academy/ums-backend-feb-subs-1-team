@@ -1,8 +1,10 @@
 package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.instructor.InstructorRepository;
 import com.archisacadeny.student.CourseStudentMapper;
+import com.archisacadeny.student.Student;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -202,20 +204,23 @@ public class CourseRepository {
     }
 
 
-    public static Course getCourseById(long courseId){
+    public Course getCourseById(long courseId){
         String query = "SELECT * FROM courses WHERE id = "+courseId;
         Course course = null;
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
             ResultSet rs = statement.getResultSet();
+            Instructor instructor = new Instructor();
             while (rs.next()) {
-                course = new Course();
-                course.setCourseName(rs.getString("name"));
-                course.setCredit(rs.getLong("credits"));
-                course.setCourseNumber(rs.getString("number"));
-                course.setDepartment(rs.getString("department"));
-                course.setMaxStudents(rs.getInt("max_students"));
-                course.setId(courseId);
+                instructor.setId(rs.getLong("instructor_id"));
+                course = new Course(courseId,
+                        rs.getString("name")
+                        , instructor
+                        ,rs.getLong("credits")
+                        ,rs.getString("number")
+                        , new ArrayList<>()
+                        ,rs.getString("department")
+                        ,rs.getInt("max_students"));
             }
             //printResultSet(rs);
         }catch(SQLException e){
@@ -248,5 +253,67 @@ public class CourseRepository {
         }
         return courses;
     }
+
+    public List<Course> getStudentEnrolledCourses(int studentId) {
+        // RETURNS COURSE ID s FOR NOW
+        String query = "SELECT course_id, name, instructor_id, credits, number,department,max_students FROM \"course_student_mapper\" " +
+                "LEFT JOIN \"courses\" ON course_student_mapper.course_id = \"courses\".\"id\""+
+                "WHERE student_id = '" + studentId + "'" ;
+
+        ArrayList<Course> courses = new ArrayList<>();
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            Instructor instructor = new Instructor();
+            while (rs.next()) {
+                instructor.setId(rs.getLong("instructor_id"));
+                courses.add(new Course(rs.getInt("course_id")
+                        , rs.getString("name")
+                        , instructor
+                        ,rs.getLong("credits")
+                        ,rs.getString("number")
+                        , new ArrayList<>()
+                        ,rs.getString("department")
+                        ,rs.getInt("max_students")));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return courses;
+    }
+
+    //BU METHODU getCouseById methodunda kullanacagimiz icin id leri degil LISt<Students> dondurmesi gerekir.
+    public  List<Student> getCourseEnrolledStudents(long courseId){
+        ArrayList<Student> students = new ArrayList<>();
+
+        String query = "SELECT course_id, student_id, full_name,gender,identity_no,enrollment_date,year_of_study, total_credit_count FROM \"course_student_mapper\" " +
+                "LEFT JOIN \"students\" ON course_student_mapper.student_id = \"students\".\"id\""+
+                "WHERE course_id = '" + courseId + "'" ;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+
+            while (rs.next()) {
+                students.add(new Student(rs.getInt("student_id"),
+                        rs.getString("full_name"),
+                        rs.getString("gender"),
+                        rs.getString("identity_no"),
+                        rs.getTimestamp("enrollment_date"),
+                        rs.getInt("year_of_study"),
+                        rs.getInt("total_credit_count")));
+                // TODO   COURSE STUDENT MAPPERDA BIR EKLEME YAPTIGIMIZDA STUDENTIN TOTAL CREDIT COUNT U GUNCELLEMEMIZ GEREKIYOR. nasil
+            }
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return students;
+    }
+
 
 }
