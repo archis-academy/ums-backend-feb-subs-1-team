@@ -26,6 +26,10 @@ public class Student {
         this.enrolledCourses = enrolledCourses;
     }
 
+    public Student(){
+
+    }
+
     //TODO update this to be more detailed.
     @Override
     public String toString(){

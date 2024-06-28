@@ -206,21 +206,20 @@ public class CourseRepository {
 
     public Course getCourseById(long courseId){
         String query = "SELECT * FROM courses WHERE id = "+courseId;
-        Course course = null;
+        Course course = new Course();
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
             ResultSet rs = statement.getResultSet();
             Instructor instructor = new Instructor();
             while (rs.next()) {
-                instructor.setId(rs.getLong("instructor_id"));
-                course = new Course(courseId,
-                        rs.getString("name")
-                        , instructor
-                        ,rs.getLong("credits")
-                        ,rs.getString("number")
-                        , new ArrayList<>()
-                        ,rs.getString("department")
-                        ,rs.getInt("max_students"));
+                    instructor.setId(rs.getLong("instructor_id"));
+                    course.setId(rs.getInt("id"));
+                    course.setCourseName(rs.getString("name"));
+                    course.setInstructor(instructor);
+                    course.setCredit(rs.getLong("credits"));
+                    course.setCourseNumber(rs.getString("number"));
+                    course.setDepartment(rs.getString("department"));
+                    course.setMaxStudents(rs.getInt("max_students"));
             }
             //printResultSet(rs);
         }catch(SQLException e){
@@ -267,16 +266,18 @@ public class CourseRepository {
             statement.execute();
             ResultSet rs = statement.getResultSet();
             Instructor instructor = new Instructor();
+            Course course = new Course();
             while (rs.next()) {
                 instructor.setId(rs.getLong("instructor_id"));
-                courses.add(new Course(rs.getInt("course_id")
-                        , rs.getString("name")
-                        , instructor
-                        ,rs.getLong("credits")
-                        ,rs.getString("number")
-                        , new ArrayList<>()
-                        ,rs.getString("department")
-                        ,rs.getInt("max_students")));
+                course.setId(rs.getInt("id"));
+                course.setCourseName(rs.getString("name"));
+                course.setInstructor(instructor);
+                course.setCredit(rs.getLong("credits"));
+                course.setCourseNumber(rs.getString("number"));
+                course.setDepartment(rs.getString("department"));
+                course.setMaxStudents(rs.getInt("max_students"));
+
+                courses.add(course);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -296,15 +297,16 @@ public class CourseRepository {
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
-
+            Student student = new Student();
             while (rs.next()) {
-                students.add(new Student(rs.getInt("student_id"),
-                        rs.getString("full_name"),
-                        rs.getString("gender"),
-                        rs.getString("identity_no"),
-                        rs.getTimestamp("enrollment_date"),
-                        rs.getInt("year_of_study"),
-                        rs.getInt("total_credit_count")));
+                        student.setId(rs.getInt("student_id"));
+                        student.setFullName(rs.getString("full_name"));
+                        student.setGender(rs.getString("gender"));
+                        student.setIdentityNo(rs.getString("identity_no"));
+                        student.setEnrollmentDate(rs.getTimestamp("enrollment_date"));
+                        student.setYearOfStudy(rs.getInt("year_of_study"));
+                        student.setTotalCreditCount(rs.getInt("total_credit_count"));
+                        students.add(student);
                 // TODO   COURSE STUDENT MAPPERDA BIR EKLEME YAPTIGIMIZDA STUDENTIN TOTAL CREDIT COUNT U GUNCELLEMEMIZ GEREKIYOR. nasil
             }
 //            printResultSet(rs);
