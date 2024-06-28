@@ -109,16 +109,14 @@ public class StudentRepository {
                 }else {
                     throw new RuntimeException("Student can not be found!!" + studentId);
                 }
-
-
             }
-
-
         }catch (SQLException e){
             throw new RuntimeException(e);
         }
         return student;
     }
+
+
     public Student updateStudentInfo(Student student) {
         String query = "UPDATE students SET full_name = ?, gender = ?, identity_no = ?, enrollment_date = ? WHERE id = ?";
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
@@ -135,22 +133,20 @@ public class StudentRepository {
             } else {
                 throw new RuntimeException("Update has failed!! The Student has not been found!!" + student.getId());
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return student;
-
-
     }
 
-    public List<Student> listAllStudents(Student student){
+
+    public List<Student> listAllStudents(){
         List<Student> students = new ArrayList<>();
         String query = "SELECT * FROM students";
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-            ResultSet resultSet = statement.executeQuery(query);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()){
+                Student student = new Student();
                 student.setId(resultSet.getLong("id"));
                 student.setFullName(resultSet.getString("full_name"));
                 student.setGender(resultSet.getString("gender"));
@@ -160,8 +156,9 @@ public class StudentRepository {
                 student.setYearOfStudy(resultSet.getInt("year_of_study"));
                 students.add(student);
             }
+            return students;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+         e.printStackTrace();
         }
         return students;
     }
