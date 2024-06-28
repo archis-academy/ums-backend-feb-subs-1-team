@@ -25,6 +25,21 @@ public class Student {
         this.totalCreditCount = totalCreditCount;
         this.enrolledCourses = enrolledCourses;
     }
+
+    public Student(){
+
+    }
+
+    //TODO update this to be more detailed.
+    @Override
+    public String toString(){
+        return "ID:" + this.getId() +"\n"+
+                " Student Name: " + this.getFullName()+"\n"+
+                " Student Gender: " + this.getGender()+"\n"+
+                " Student Number: " + this.getIdentityNo()+"\n";
+    }
+
+
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
