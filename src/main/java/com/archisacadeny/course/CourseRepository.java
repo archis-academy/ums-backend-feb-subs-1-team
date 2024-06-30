@@ -27,6 +27,7 @@ public class CourseRepository {
                     "department" VARCHAR(255),
                     "max_students" INTEGER,
                     "instructor_id" INTEGER,
+                    "attendance_limit" INTEGER,
                     CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES "public"."instructors"(id)
                     )
             """;
@@ -39,7 +40,7 @@ public class CourseRepository {
     }
 
     public static Course save(Course course){
-        String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id) VALUES(?,?,?,?,?,?)";
+        String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id,attendance_limit) VALUES(?,?,?,?,?,?,?)";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());

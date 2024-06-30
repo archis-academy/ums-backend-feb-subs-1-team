@@ -15,6 +15,7 @@ public class Course {
     private List<Student> enrolledStudents;
     private String department;
     private int maxStudents;
+    private int attendanceLimit;
 
 
     public Course(long id, String courseName, Instructor instructor, long credits, String courseNumber, List<Student> enrolledStudents, java.lang.String department, int maxStudents) {
@@ -26,6 +27,14 @@ public class Course {
         this.enrolledStudents = enrolledStudents;
         this.department = department;
         this.maxStudents = maxStudents;
+    }
+
+    public int getAttendanceLimit() {
+        return attendanceLimit;
+    }
+
+    public void setAttendanceLimit(int attendanceLimit) {
+        this.attendanceLimit = attendanceLimit;
     }
 
     @Override
