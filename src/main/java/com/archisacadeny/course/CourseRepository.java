@@ -458,7 +458,7 @@ public class CourseRepository {
 
     public static List<Course> listPopularCourses(int topCount) {
         ArrayList<Course> courses = new ArrayList<>();
-        String query = "SELECT name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses "+
+        String query = "SELECT courses.id,name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses "+
                 "LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = \"courses\".\"id\" "+
                 "GROUP BY courses.id " +
                 "ORDER BY student_count DESC LIMIT "+topCount;
@@ -466,16 +466,18 @@ public class CourseRepository {
             statement.execute();
             ResultSet rs = statement.getResultSet();
             Course course = new Course();
-//            while (rs.next()) {
-//                course.setId(rs.getInt("id"));
-//                course.setCourseName(rs.getString("name"));
-//                course.setInstructor(new Instructor(rs.getLong("instructor_id")));
-//                course.setCredit(rs.getLong("credits"));
-//                course.setCourseNumber(rs.getString("number"));
-//                course.setDepartment(rs.getString("department"));
-//                course.setMaxStudents(rs.getInt("max_students"));
-//                courses.add(course);
-//            }
+            Instructor instructor = new Instructor();
+            while (rs.next()) {
+                instructor.setId(rs.getLong("instructor_id"));
+                course.setId(rs.getInt("id"));
+                course.setCourseName(rs.getString("name"));
+                course.setInstructor(instructor);
+                course.setCredit(rs.getLong("credits"));
+                course.setCourseNumber(rs.getString("number"));
+                course.setDepartment(rs.getString("department"));
+                course.setMaxStudents(rs.getInt("max_students"));
+                courses.add(course);
+            }
             printResultSet(rs);
         } catch (SQLException e) {
             throw new RuntimeException(e);
