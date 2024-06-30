@@ -7,7 +7,11 @@ import com.archisacadeny.student.CourseStudentMapper;
 import com.archisacadeny.student.Student;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -453,6 +457,30 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return courses;
+    }
+
+    public ArrayList<Double> calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+        String query = "SELECT instructor_id AS instructor, attended_lessons, " +
+                "TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS week_difference " +
+                "FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId;
+        ArrayList<Double> values = new ArrayList<>();
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                System.out.println(rs.getInt("week_difference") + "- Course week duration");
+                values.add((double)(rs.getInt("attended_lessons")/2) * 100 / rs.getInt("week_difference"));
+                // Hangi veri turu ile ekleye bilirim ? MAP kullaninca valuelar override oluyor, hesaplamayi o yuzden burda yaptim.
+            }
+            System.out.println("Student attendance (input value / divided by number of times course is taught per week)");
+            // su an 2 ile boluyorum, her kurs icin haftada 2 defa attendance aliyor hoca.
+
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
     }
 
 }
