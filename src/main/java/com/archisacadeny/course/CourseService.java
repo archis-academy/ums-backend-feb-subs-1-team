@@ -4,7 +4,11 @@ package com.archisacadeny.course;
 import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,28 +63,37 @@ public class CourseService {
         return course;
     }
     public double calculateAverageGradeForCourse(int course_id){
-        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
-        double grade = values.get("sum_grade");
-        double num = values.get("num_of_students");
+        Map<String, Object> values = courseRepository.calculateAverageGradeForCourse(course_id);
+        double grade = (double) values.get("sum_grade");
+        double num = (double) values.get("num_of_students");
         double average = Math.round((grade/num) * 100.0) / 100.0;
         System.out.println("Average grade of students in this course: " +average);
         return  average;
     }
 
     public CourseStatistics calculateCourseStatistics(int course_id){
-        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
-        double grade = values.get("sum_grade");
-        double num = values.get("num_of_students");
-        double average = Math.round((grade/num) * 100.0) / 100.0;
-        double min = values.get("min_grade");
-        double max = values.get("max_grade");
+        CourseStatistics values = courseRepository.calculateCourseStatistics(course_id);
+        double average = values.getAverageGrade();
+        double min = values.getLowestGrade();
+        double max = values.getHighestGrade();
         System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
-        return new CourseStatistics(course_id,average,max,min);
+        return values;
     }
 
     public List<Course> getAllCourses(){
-        ArrayList<Course> courses = courseRepository.getAllCourses();
+        List<Course> courses = courseRepository.getAllCourses();
         System.out.println(courses);
         return courses;
+    }
+
+    public double calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+        double attendancePercentage = 0;
+        ArrayList<Double> values = courseRepository.calculateInstructorCoursesAttendanceRate(instructorId);
+        for(int i =0; i<values.size();i++){
+            attendancePercentage +=values.get(i);
+            System.out.println("Student attendace percentage: " + values.get(i));
+        }
+
+        return Math.round((attendancePercentage/values.size()) * 100.0) / 100.0 ;
     }
 }
