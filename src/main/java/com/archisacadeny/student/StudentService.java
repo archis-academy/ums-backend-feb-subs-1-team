@@ -21,10 +21,18 @@ public class StudentService {
         Student savedStudent = studentRepository.viewStudentDetails(3);
         return savedStudent;
     }
-    public Student getStudentByID(Long studentId){
+    public Student getStudentByID(long studentId){
         return studentRepository.getStudentByID(studentId);
     }
     public List<Student> getAllStudents(){
         return studentRepository.listAllStudents();
+    }
+
+    public void enrollStudentToCourse(long studentId, long courseId ){
+        studentRepository.enrollStudentToCourse(studentId, courseId);
+    }
+
+    public void unenrollStudentFromCourse(long studentId, long courseId){
+        studentRepository.unenrollStudentFromCourse(studentId, courseId);
     }
 }

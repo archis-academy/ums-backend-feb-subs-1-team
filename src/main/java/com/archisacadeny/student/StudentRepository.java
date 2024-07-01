@@ -91,7 +91,7 @@ public class StudentRepository {
         }
         return student;
     }
-    public Student getStudentByID(Long studentId){
+    public Student getStudentByID(long studentId){
         String query = "SELECT * FROM students WHERE id = ?";
         Student student = new Student();
 
@@ -161,6 +161,51 @@ public class StudentRepository {
          e.printStackTrace();
         }
         return students;
+    }
+
+
+    public void enrollStudentToCourse(long studentId, long courseId){
+
+        String query = "INSER INTO course (id, course_id) VALUES (?, ?)";
+            try (PreparedStatement preparedStatement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+                preparedStatement.setLong(1, studentId);
+                preparedStatement.setLong(2, courseId);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                if (rowsAffected > 0){
+                    System.out.println("Student" + studentId + "successfully enrolled in course" + courseId);
+
+                }else {
+                    System.out.println("Failed to enroll student" + studentId + "in course" + courseId);
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+    }
+
+    public void unenrollStudentFromCourse(long studentId, long courseId){
+
+        String query = "DELETE FROM course WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+
+            preparedStatement.setLong(1, studentId);
+            preparedStatement.setLong(2, courseId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0){
+                System.out.println("Student " + studentId + "Successfully unenrolled from course" + courseId);
+            }else {
+                System.out.println("Failed to unenroll student " + studentId + "from course" +courseId);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
