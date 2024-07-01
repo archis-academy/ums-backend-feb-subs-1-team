@@ -1,7 +1,7 @@
 package com.archisacadeny;
 
-import com.archisacadeny.config.DataBaseConfig;
 import com.archisacadeny.config.DataBaseConnectorConfig;
+
 import com.archisacadeny.course.Course;
 import com.archisacadeny.course.CourseRepository;
 import com.archisacadeny.instructor.Instructor;
@@ -17,6 +17,7 @@ public class Main {
     public static void main(String[] args) {
 
         DataBaseConnectorConfig.setConnection();
+
 
     }
 }
