@@ -455,4 +455,8 @@ public class CourseRepository {
         return courses;
     }
 
+//    public List<String> reportStudentEnrolledCourses(int studentId) {
+//        THIS METHOD IS THE SAME AS getStudentEnrolledCourses()
+//    }
+
 }
