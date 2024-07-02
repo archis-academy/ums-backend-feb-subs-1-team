@@ -103,7 +103,7 @@ public class CourseService {
 
 
         for(int i = 0; i<attendedLessons.size();i++){
-            double percentage = (attendedLessons.get(i) / 2.0) * 100.0 / weekDifference;
+            double percentage = (attendedLessons.get(i) ) * 100.0 / (weekDifference*2);
             attendancePercentage.add( Math.round( percentage * 100.0) / 100.0  );
             missedLessons.add(weekDifference*2 - (attendedLessons.get(i)));
         }
