@@ -87,14 +87,14 @@ public class InstructorService {
 
     public double calculateAverageSuccessGradeForInstructorCourses(long instructorId) {
         double totalGradeSum=0.0;
-        int totalStudents=0; //number of instructor's course
+        int totalStudents=0;
 
         List<Course> courses= courseRepository.getCoursesByInstructorId(instructorId);
         for(Course course : courses) {
 
             Map<String,Object> gradeInfo = courseRepository.calculateAverageGradeForCourse(course.getId());
             double sumGrade = ((Number) gradeInfo.get("sum_grade")).doubleValue();
-            int numStudents = ((Number) gradeInfo.get("num_of_students")).intValue(); //number of students enrolled in a particular course
+            int numStudents = ((Number) gradeInfo.get("num_of_students")).intValue();
 
             totalGradeSum += sumGrade;
             totalStudents += numStudents;
@@ -106,7 +106,7 @@ public class InstructorService {
         }else{
             averageGrade= 0.0;
         }
-        System.out.println("Instructor ID: " + instructorId + "\nTotal grade: " + averageGrade);
+        System.out.println("Instructor ID: " + instructorId + "\nAverage grade: " + averageGrade);
         return averageGrade;
 
     }
