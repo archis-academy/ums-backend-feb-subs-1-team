@@ -38,8 +38,10 @@ public class CourseRepository {
         }
     }
 
-    public static Course save(Course course){
+
+    public Course save(Course course){
         String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id,attendance_limit) VALUES(?,?,?,?,?,?,?)";
+
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
@@ -58,7 +60,7 @@ public class CourseRepository {
     }
 
 
-    public static void deleteCourse(long courseId) {
+    public void deleteCourse(long courseId) {
         String query = "DELETE FROM \"courses\"" +
                 "WHERE id = '"+courseId+"'";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
@@ -69,7 +71,7 @@ public class CourseRepository {
     }
 
 
-    public static boolean isCourseFull(long courseId) {
+    public boolean isCourseFull(long courseId) {
         int studentCount = 0;
         int maxStudents = 0;
 
@@ -114,7 +116,7 @@ public class CourseRepository {
     }
 
 
-    public static void update(String courseNumber, Course course ){
+    public void update(String courseNumber, Course course ){
         String query = String.format(
                 "UPDATE courses SET name= '%1$s'," +
                         " number = '%2$s'," +
@@ -139,7 +141,7 @@ public class CourseRepository {
         }
     }
 
-    public static double getTotalCreditAmount(long studentId) {
+    public double getTotalCreditAmount(long studentId) {
         double count = 0.0;
         String query = "SELECT  student_id , credits  FROM \"course_student_mapper\"" +
                 "LEFT JOIN \"courses\"  ON  course_student_mapper.course_id = \"courses\".\"id\""+
@@ -161,7 +163,7 @@ public class CourseRepository {
         return count;
     }
 
-    public static int getCourseWithMostStudents() {
+    public int getCourseWithMostStudents() {
         // RETURNS COURSE ID FOR NOW
         int courseId = -1;
         String query = "SELECT DISTINCT course_id , COUNT(course_id) as student_count FROM \"course_student_mapper\" " +
@@ -249,7 +251,7 @@ public class CourseRepository {
         return stats;
     }// Service methdou serviceclassi eklendikten sonra yazilacak
 
-  public static Student findTopStudentInInstructorCourses(int instructorId) {
+    public Student findTopStudentInInstructorCourses(int instructorId) {
         String query = "SELECT student_id, grade, courses.instructor_id, " +
                 "students.id,students.full_name,students.gender,students.identity_no,students.enrollment_date," +
                 "students.year_of_study,students.total_credit_count FROM course_student_mapper " +
@@ -454,6 +456,35 @@ public class CourseRepository {
         return courses;
     }
 
+
+    public static List<Course> listPopularCourses(int topCount) {
+        ArrayList<Course> courses = new ArrayList<>();
+        String query = "SELECT courses.id,name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses "+
+                "LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = \"courses\".\"id\" "+
+                "GROUP BY courses.id " +
+                "ORDER BY student_count DESC LIMIT "+topCount;
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            Course course = new Course();
+            Instructor instructor = new Instructor();
+            while (rs.next()) {
+                instructor.setId(rs.getLong("instructor_id"));
+                course.setId(rs.getInt("id"));
+                course.setCourseName(rs.getString("name"));
+                course.setInstructor(instructor);
+                course.setCredit(rs.getLong("credits"));
+                course.setCourseNumber(rs.getString("number"));
+                course.setDepartment(rs.getString("department"));
+                course.setMaxStudents(rs.getInt("max_students"));
+                courses.add(course);
+            }
+            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return courses;
+
     public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate) {
         Map<String,Object> values = new HashMap<>();
 
@@ -484,6 +515,7 @@ public class CourseRepository {
         }
 
         return values;
+
     }
 
 }

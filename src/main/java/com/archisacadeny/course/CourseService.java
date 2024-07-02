@@ -88,6 +88,12 @@ public class CourseService {
         return courses;
     }
 
+    public static List<Course> listPopularCourses(int topCount) {
+        List<Course> a = CourseRepository.listPopularCourses(topCount);
+        return a;
+    }
+
+
     public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate){
         Map<String,Object> values = courseRepository.generateStudentAttendanceReport(studentId,startDate,endDate);
 
@@ -123,4 +129,5 @@ public class CourseService {
 
         return values;
     }
+
 }
