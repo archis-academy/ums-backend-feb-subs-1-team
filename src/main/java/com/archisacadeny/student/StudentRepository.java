@@ -18,6 +18,7 @@ public class StudentRepository {
                     "CREATE TABLE IF NOT EXISTS students(" +
                     "id INTEGER DEFAULT nextval('student_id_seq') PRIMARY KEY," +
                     "full_name VARCHAR(255) NOT NULL," +
+                    "email VARCHAR(255) NOT NULL," +
                     "gender VARCHAR NOT NULL," +
                     "identity_no VARCHAR(11) UNIQUE NOT NULL," +
                     "enrollment_date DATE NOT NULL," +
@@ -50,15 +51,21 @@ public class StudentRepository {
     }
 
     public Student createStudent(Student student) {
-        String query = "INSERT INTO students (full_name, gender, identity_no, enrollment_date, year_of_study, total_credit_count) VALUES (?, ?, ?, ?, ?, ?)";
+        if (!validateEmailDuringStudentRegistration(student.getEmail())) {
+            System.out.println("Email validation failed during student creation.");
+            return student;
+        }
+
+        String query = "INSERT INTO students (full_name, email, gender, identity_no, enrollment_date, year_of_study, total_credit_count) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.setString(1, student.getFullName());
-            statement.setString(2, student.getGender());
-            statement.setString(3, student.getIdentityNo());
-            statement.setTimestamp(4, student.getEnrollmentDate());
-            statement.setInt(5, student.getYearOfStudy());
-            statement.setInt(6, student.getTotalCreditCount());
+            statement.setString(2, student.getEmail());
+            statement.setString(3, student.getGender());
+            statement.setString(4, student.getIdentityNo());
+            statement.setTimestamp(5, student.getEnrollmentDate());
+            statement.setInt(6, student.getYearOfStudy());
+            statement.setInt(7, student.getTotalCreditCount());
 
             statement.executeUpdate();
             System.out.println("Student saved successfully with name: " + student.getFullName());
@@ -69,7 +76,7 @@ public class StudentRepository {
 
         return student;
     }
-
+  
     public List<Map<String, Object>> getStudentAchievementReportData(int studentId) {
         String query = """
             SELECT s.id, s.full_name, csm.course_id, csm.grade
@@ -110,6 +117,34 @@ public class StudentRepository {
                     throw new IllegalArgumentException("Course with ID " + courseId + " not found.");
                 }
             }
+        }
+    }
+  
+    public boolean validateEmailDuringStudentRegistration(String email) {
+
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+        if (!email.matches(emailRegex)) {
+            System.out.println("Invalid email format: " + email);
+            return false;
+        }
+
+        String query = "SELECT * FROM students WHERE email = ?";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+
+            statement.setString(1, email);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    System.out.println("A record was found in the database with this email: " + email);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
