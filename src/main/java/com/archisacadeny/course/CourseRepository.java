@@ -456,4 +456,23 @@ public class CourseRepository {
         return courses;
     }
 
+    public Map<String,Object> generateStudentAttendanceReport(int studentId, Date startDate, Date endDate) {
+        Map<String,Object> values = new HashMap<>();
+
+        String query = "SELECT  FROM course_student_mapper";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+
+            }
+            //printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return values;
+    }
+
 }
