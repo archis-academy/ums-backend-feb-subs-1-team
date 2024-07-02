@@ -4,6 +4,10 @@ import com.archisacadeny.config.DataBaseConnectorConfig;
 import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StudentRepository {
 
@@ -72,7 +76,50 @@ public class StudentRepository {
 
         return student;
     }
+  
+    public List<Map<String, Object>> getStudentAchievementReportData(int studentId) {
+        String query = """
+            SELECT s.id, s.full_name, csm.course_id, csm.grade
+            FROM students s
+            JOIN course_student_mapper csm ON s.id = csm.student_id
+            WHERE s.id = ?;
+        """;
 
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setInt(1, studentId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("id", resultSet.getLong("id"));
+                    row.put("full_name", resultSet.getString("full_name"));
+                    row.put("course_id", resultSet.getLong("course_id"));
+                    row.put("grade", resultSet.getInt("grade"));
+                    results.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving student achievement report data", e);
+        }
+
+        return results;
+    }
+
+    public int getCourseCredit(long courseId) throws SQLException {
+        String query = "SELECT credits FROM courses WHERE Id = ?";
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1, courseId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("credits");
+                } else {
+                    throw new IllegalArgumentException("Course with ID " + courseId + " not found.");
+                }
+            }
+        }
+    }
+  
     public boolean validateEmailDuringStudentRegistration(String email) {
 
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
