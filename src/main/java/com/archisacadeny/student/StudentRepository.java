@@ -4,6 +4,10 @@ import com.archisacadeny.config.DataBaseConnectorConfig;
 import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StudentRepository {
 
@@ -66,56 +70,46 @@ public class StudentRepository {
         return student;
     }
 
-    public StudentReport generateStudentAchievementReport(int studentId) {
+    public List<Map<String, Object>> getStudentAchievementReportData(int studentId) {
         String query = """
-        SELECT s.id, s.full_name, csm.course_id, csm.grade
-        FROM students s
-        JOIN course_student_mapper csm ON s.id = csm.student_id
-        WHERE s.id = ?;
-    """;
+            SELECT s.id, s.full_name, csm.course_id, csm.grade
+            FROM students s
+            JOIN course_student_mapper csm ON s.id = csm.student_id
+            WHERE s.id = ?;
+        """;
+
+        List<Map<String, Object>> results = new ArrayList<>();
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.setInt(1, studentId);
-
             try (ResultSet resultSet = statement.executeQuery()) {
-                if (!resultSet.next()) {
-                    throw new IllegalArgumentException("Student with ID " + studentId + " not found.");
+                while (resultSet.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("id", resultSet.getLong("id"));
+                    row.put("full_name", resultSet.getString("full_name"));
+                    row.put("course_id", resultSet.getLong("course_id"));
+                    row.put("grade", resultSet.getInt("grade"));
+                    results.add(row);
                 }
-
-                long studentIdFromDb = resultSet.getLong("id");
-                String studentName = resultSet.getString("full_name");
-                double totalWeightedGradePoints = 0.0;
-                int totalCredits = 0;
-
-                do {
-                    long courseId = resultSet.getLong("course_id");
-                    int grade = resultSet.getInt("grade");
-                    int courseCredit = getCourseCredit(courseId);
-                    totalWeightedGradePoints += grade * courseCredit;
-                    totalCredits += courseCredit;
-                } while (resultSet.next());
-
-                double gpa = totalCredits > 0 ? totalWeightedGradePoints / totalCredits : 0.0;
-
-                return new StudentReport(studentIdFromDb, studentName, gpa);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error generating student achievement report", e);
+            throw new RuntimeException("Error retrieving student achievement report data", e);
         }
+
+        return results;
     }
 
-    private int getCourseCredit(long courseId) throws SQLException {
-        String query = "SELECT Credits FROM courses WHERE Id = ?";
+    public int getCourseCredit(long courseId) throws SQLException {
+        String query = "SELECT credits FROM courses WHERE Id = ?";
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.setLong(1, courseId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return resultSet.getInt("Credits");
+                    return resultSet.getInt("credits");
                 } else {
                     throw new IllegalArgumentException("Course with ID " + courseId + " not found.");
                 }
             }
         }
     }
-
 }

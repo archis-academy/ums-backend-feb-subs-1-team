@@ -17,7 +17,7 @@ public class CourseStudentMapper {
                             id INTEGER DEFAULT nextval('s_c_mapper_id') PRIMARY KEY NOT NULL,
                             course_id INTEGER NOT NULL,
                             student_id INTEGER NOT NULL,
-                            grade DOUBLE,
+                            grade DOUBLE PRECISION,
                     CONSTRAINT fk_course_id FOREIGN KEY (course_id) REFERENCES "public"."courses"(id),
                     CONSTRAINT fk_student_id FOREIGN KEY (student_id) REFERENCES "public"."persons"(id)
                     );
@@ -30,7 +30,7 @@ public class CourseStudentMapper {
         }
     }
 
-    public static void saveToCourseStudentMapper(int studentID,int courseId, double grade){
+    public void saveToCourseStudentMapper(int studentID,int courseId, double grade){
         String query = "INSERT INTO course_student_mapper(student_id,course_id,grade) VALUES(?,?,?)";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setInt(1,studentID);
