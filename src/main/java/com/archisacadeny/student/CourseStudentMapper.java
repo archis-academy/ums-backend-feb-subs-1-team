@@ -19,7 +19,7 @@ public class CourseStudentMapper {
                             student_id INTEGER NOT NULL,
                             grade DOUBLE PRECISION,
                     CONSTRAINT fk_course_id FOREIGN KEY (course_id) REFERENCES "public"."courses"(id),
-                    CONSTRAINT fk_student_id FOREIGN KEY (student_id) REFERENCES "public"."persons"(id)
+                    CONSTRAINT fk_student_id FOREIGN KEY (student_id) REFERENCES "public"."students"(id)
                     );
                     """;
             statement.execute(query);
@@ -35,8 +35,7 @@ public class CourseStudentMapper {
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setInt(1,studentID);
             statement.setInt(2,courseId);
-            statement.setDouble(3, grade);
-
+            statement.setDouble(3,grade);
             statement.execute();
 
         }catch(SQLException e){
