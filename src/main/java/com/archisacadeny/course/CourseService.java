@@ -83,4 +83,9 @@ public class CourseService {
         System.out.println(courses);
         return courses;
     }
+
+    public boolean checkStudentLeaveStatus(int studentId) {
+
+
+    }
 }

@@ -455,4 +455,25 @@ public class CourseRepository {
         return courses;
     }
 
+
+    public static boolean checkStudentLeaveStatus(int studentId) {
+        ArrayList
+        String query = "SELECT course_id,attendance_limit, " +
+                "TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration, "+
+                "attended_lessons FROM courses "+
+                "LEFT JOIN course_student_mapper ON course_student_mapper.course_id = courses.id WHERE student_id = "+studentId;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+
+            }
+            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
 }
