@@ -59,31 +59,31 @@ public class CourseService {
         return course;
     }
 
-//    public double calculateAverageGradeForCourse(int course_id){
-//        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
-//        double grade = values.get("sum_grade");
-//        double num = values.get("num_of_students");
-//        double average = Math.round((grade/num) * 100.0) / 100.0;
-//        System.out.println("Average grade of students in this course: " +average);
-//        return  average;
-//    }
-//
-//    public CourseStatistics calculateCourseStatistics(int course_id){
-//        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
-//        double grade = values.get("sum_grade");
-//        double num = values.get("num_of_students");
-//        double average = Math.round((grade/num) * 100.0) / 100.0;
-//        double min = values.get("min_grade");
-//        double max = values.get("max_grade");
-//        System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
-//        return new CourseStatistics(course_id,average,max,min);
-//    }
-//
-//    public List<Course> getAllCourses(){
-//        ArrayList<Course> courses = courseRepository.getAllCourses();
-//        System.out.println(courses);
-//        return courses;
-//    }
+    public double calculateAverageGradeForCourse(int course_id){
+        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
+        double grade = values.get("sum_grade");
+        double num = values.get("num_of_students");
+        double average = Math.round((grade/num) * 100.0) / 100.0;
+        System.out.println("Average grade of students in this course: " +average);
+        return  average;
+    }
+
+    public CourseStatistics calculateCourseStatistics(int course_id){
+        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
+        double grade = values.get("sum_grade");
+        double num = values.get("num_of_students");
+        double average = Math.round((grade/num) * 100.0) / 100.0;
+        double min = values.get("min_grade");
+        double max = values.get("max_grade");
+        System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
+        return new CourseStatistics(course_id,average,max,min);
+    }
+
+    public List<Course> getAllCourses(){
+        ArrayList<Course> courses = courseRepository.getAllCourses();
+        System.out.println(courses);
+        return courses;
+    }
 
     public Map<String,Object> generateCourseReport(int courseId) {
         Map<String,Object> values = courseRepository.generateCourseReport(courseId);
@@ -96,9 +96,6 @@ public class CourseService {
                 "\n    Course max student count: "+  values.get("max_students")+
                 "\n    Course Instructor: "+  values.get("instructor_id")+
                         "\n    Course Average: "+  ((double) values.get("total_student_score")/(double)values.get("student_count")));
-        //class java.lang.Integer cannot be cast to class java.lang.Double (java.lang.Integer and java.lang.Double are in module java.base of loader 'bootstrap')
-        // * 1.0 yaptigimda calisti
-        // ADD SUCCESS RATE ***
         return values;
     }
 }
