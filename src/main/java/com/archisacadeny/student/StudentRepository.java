@@ -189,12 +189,11 @@ public class StudentRepository {
 
     public void unEnrollStudentFromCourse(long studentId, long courseId){
 
-        String query = "UPDATE courses SET id = NULL WHERE id = ? AND id = ?";
+        String query = "UPDATE courses SET id = NULL WHERE id = ?";
 
         try (PreparedStatement preparedStatement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
 
-            preparedStatement.setLong(1, studentId);
-            preparedStatement.setLong(2, courseId);
+          preparedStatement.setLong(1, courseId);
 
             int rowsAffected = preparedStatement.executeUpdate();
 
