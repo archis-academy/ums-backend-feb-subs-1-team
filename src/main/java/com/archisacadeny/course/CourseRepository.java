@@ -458,12 +458,8 @@ public class CourseRepository {
     public Map<String,Object> generateCourseReport(int courseId) {
         Map<String,Object> values = new HashMap<>();
         // Professor ( to be added in service ?)
-        // Name + number
-        // Department
-        // Credits
-        // average grade
-        // student count, max students
-        String query = "SELECT name,number,instructor_id,department,credits,max_students, COUNT(course_id) as student_count FROM courses LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = courses.id" +
+        String query = "SELECT name,number,instructor_id,department,credits,max_students, SUM(grade) as total_student_score,COUNT(course_id) as student_count " +
+                "FROM courses LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = courses.id" +
                 " WHERE courses.id = "+courseId+" GROUP BY courses.id ";
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
@@ -474,9 +470,10 @@ public class CourseRepository {
                 values.put("number",rs.getString("number"));
                 values.put("department",rs.getString("department"));
                 values.put("credits",rs.getInt("credits"));
-                values.put("student_count",rs.getInt("student_count"));
+                values.put("student_count",rs.getInt("student_count")*1.0);
                 values.put("max_students",rs.getInt("max_students"));
                 values.put("instructor_id",rs.getInt("instructor_id"));
+                values.put("total_student_score",rs.getDouble("total_student_score"));
             } } catch (SQLException e) {
             throw new RuntimeException(e);
         }

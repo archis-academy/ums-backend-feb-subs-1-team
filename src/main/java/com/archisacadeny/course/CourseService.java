@@ -94,9 +94,11 @@ public class CourseService {
                 "\n    Course credits: "+values.get("credits")+
                 "\n    Course student count: "+  values.get("student_count")+
                 "\n    Course max student count: "+  values.get("max_students")+
-                "\n    Course Instructor: "+  values.get("instructor_id"));
+                "\n    Course Instructor: "+  values.get("instructor_id")+
+                        "\n    Course Average: "+  ((double) values.get("total_student_score")/(double)values.get("student_count")));
+        //class java.lang.Integer cannot be cast to class java.lang.Double (java.lang.Integer and java.lang.Double are in module java.base of loader 'bootstrap')
+        // * 1.0 yaptigimda calisti
         // ADD SUCCESS RATE ***
-
         return values;
     }
 }
