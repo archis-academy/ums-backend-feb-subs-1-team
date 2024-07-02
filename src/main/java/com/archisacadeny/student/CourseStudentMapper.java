@@ -17,6 +17,7 @@ public class CourseStudentMapper {
                      CREATE TABLE IF NOT EXISTS course_student_mapper (
                             id INTEGER DEFAULT nextval('s_c_mapper_id') PRIMARY KEY NOT NULL,
                             student_id INTEGER NOT NULL,
+                            course_id INTEGER NOT NULL,
                             grade DOUBLE PRECISION,
                             course_start_date DATE,
                             course_end_date DATE,
