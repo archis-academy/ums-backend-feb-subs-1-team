@@ -59,25 +59,27 @@ public class CourseService {
         return course;
     }
     public double calculateAverageGradeForCourse(int course_id){
-        Map<String, Object> values = courseRepository.calculateAverageGradeForCourse(course_id);
-        double grade = (double) values.get("sum_grade");
-        double num = (double) values.get("num_of_students");
+        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
+        double grade = values.get("sum_grade");
+        double num = values.get("num_of_students");
         double average = Math.round((grade/num) * 100.0) / 100.0;
         System.out.println("Average grade of students in this course: " +average);
         return  average;
     }
 
     public CourseStatistics calculateCourseStatistics(int course_id){
-        CourseStatistics values = courseRepository.calculateCourseStatistics(course_id);
-        double average = values.getAverageGrade();
-        double min = values.getLowestGrade();
-        double max = values.getHighestGrade();
+        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
+        double grade = values.get("sum_grade");
+        double num = values.get("num_of_students");
+        double average = Math.round((grade/num) * 100.0) / 100.0;
+        double min = values.get("min_grade");
+        double max = values.get("max_grade");
         System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
-        return values;
+        return new CourseStatistics(course_id,average,max,min);
     }
 
     public List<Course> getAllCourses(){
-        List<Course> courses = courseRepository.getAllCourses();
+        ArrayList<Course> courses = courseRepository.getAllCourses();
         System.out.println(courses);
         return courses;
     }
