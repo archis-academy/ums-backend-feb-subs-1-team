@@ -1,6 +1,8 @@
 package com.archisacadeny.student;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.course.Course;
+
 import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -166,7 +168,7 @@ public class StudentRepository {
 
     public void enrollStudentToCourse(long studentId, long courseId){
 
-        String query = "INSER INTO course (id, course_id) VALUES (?, ?)";
+        String query = "UPDATE courses SET id = ? WHERE id = ?";
             try (PreparedStatement preparedStatement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
                 preparedStatement.setLong(1, studentId);
                 preparedStatement.setLong(2, courseId);
@@ -185,9 +187,9 @@ public class StudentRepository {
             }
     }
 
-    public void unenrollStudentFromCourse(long studentId, long courseId){
+    public void unEnrollStudentFromCourse(long studentId, long courseId){
 
-        String query = "DELETE FROM course WHERE id = ?";
+        String query = "UPDATE courses SET id = NULL WHERE id = ? AND id = ?";
 
         try (PreparedStatement preparedStatement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
 
@@ -205,7 +207,6 @@ public class StudentRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
 }
