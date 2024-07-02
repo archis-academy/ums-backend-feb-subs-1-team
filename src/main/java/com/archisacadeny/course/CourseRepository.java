@@ -484,6 +484,7 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return courses;
+    }
 
     public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate) {
         Map<String,Object> values = new HashMap<>();
@@ -516,6 +517,22 @@ public class CourseRepository {
 
         return values;
 
+    }
+
+    public void enrollStudentInCourse(long studentId, long courseId) {
+        String query = "INSERT INTO course_student_mapper (student_id, course_id) VALUES (?, ?)";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+
+            statement.setLong(1, studentId);
+            statement.setLong(2, courseId);
+
+            statement.executeUpdate();
+            System.out.println("Student with ID: " + studentId + " has been enrolled in course with ID: " + courseId);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error enrolling student in course", e);
+        }
     }
 
 }
