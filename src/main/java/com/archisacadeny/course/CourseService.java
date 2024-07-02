@@ -88,12 +88,13 @@ public class CourseService {
 
     public double calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
         double attendancePercentage = 0;
-        ArrayList<Double> values = courseRepository.calculateInstructorCoursesAttendanceRate(instructorId);
-        for(int i =0; i<values.size();i++){
-            attendancePercentage +=values.get(i);
-            System.out.println("Student attendace percentage: " + values.get(i));
+        Map<String,Object> values = courseRepository.calculateInstructorCoursesAttendanceRate(instructorId);
+        ArrayList<Integer> attendedLessons = (ArrayList<Integer>) values.get("attended_lessons");
+        int courseDuration = (int) values.get("course_duration");
+        for(int i =0; i<attendedLessons.size();i++){
+            attendancePercentage += ( (attendedLessons.get(i) * 100.0) / (courseDuration * 2.0) );
         }
-
-        return Math.round((attendancePercentage/values.size()) * 100.0) / 100.0 ;
+        System.out.println(attendancePercentage);
+        return Math.round((attendancePercentage/attendedLessons.size()) * 100.0) / 100.0 ;
     }
 }
