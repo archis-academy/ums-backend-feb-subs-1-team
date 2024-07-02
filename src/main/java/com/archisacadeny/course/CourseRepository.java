@@ -7,6 +7,7 @@ import com.archisacadeny.student.CourseStudentMapper;
 import com.archisacadeny.student.Student;
 
 import java.sql.*;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ public class CourseRepository {
                     "department" VARCHAR(255),
                     "max_students" INTEGER,
                     "instructor_id" INTEGER,
+                    "attendance_limit" INTEGER,
                     CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES "public"."instructors"(id)
                     )
             """;
@@ -37,6 +39,7 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
     }
+
 
    public static Course save(Course course){
         String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id) VALUES(?,?,?,?,?,?)";
@@ -453,6 +456,38 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return courses;
+    }
+
+    public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate) {
+        Map<String,Object> values = new HashMap<>();
+
+        //Mape e attendance yuzdesi arraylistini ekliyorum, ve attendance limitini. Kacirdigi dersleri
+        ArrayList<Integer> attendedLessons = new ArrayList<>();
+        ArrayList<Integer> attendanceLimit = new ArrayList<>();
+        int weekDifference = 0;
+
+        String query = "SELECT student_id , attended_lessons, attendance_limit, " +
+                "TRUNC (DATE_PART('Day', '"+endDate+"'::TIMESTAMP - '"+startDate+"'::TIMESTAMP)/7) AS week_difference " +
+                "FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE student_id = "+studentId;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                attendedLessons.add(rs.getInt("attended_lessons"));
+                attendanceLimit.add(rs.getInt("attendance_limit"));
+                weekDifference = rs.getInt("week_difference");
+            }
+            values.put("attended_lessons",attendedLessons);
+            values.put("attendance_limit",attendanceLimit);
+            values.put("week_difference", weekDifference);
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return values;
     }
 
 }

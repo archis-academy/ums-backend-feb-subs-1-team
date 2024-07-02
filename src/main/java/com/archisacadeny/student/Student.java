@@ -8,6 +8,7 @@ import java.util.List;
 public class Student {
     private long id;
     private String fullName;
+    private String email;
     private String gender;
     private String identityNo;
     private Timestamp enrollmentDate;
@@ -15,9 +16,10 @@ public class Student {
     private int yearOfStudy;
     private int totalCreditCount;
 
-    public Student(long id, String fullName, String gender, String identityNo, Timestamp enrollmentDate, int yearOfStudy, int totalCreditCount) {
+    public Student(long id, String fullName, String email, String gender, String identityNo, Timestamp enrollmentDate, int yearOfStudy, int totalCreditCount) {
         this.id = id;
         this.fullName = fullName;
+        this.email = email;
         this.gender = gender;
         this.identityNo = identityNo;
         this.enrollmentDate = enrollmentDate;
@@ -35,6 +37,9 @@ public class Student {
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }
