@@ -56,9 +56,7 @@ public class StudentRepository {
 
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.setString(1, student.getFullName());
-            if (validateEmailDuringStudentRegistration(student.getEmail())){
-                statement.setString(2, student.getEmail());
-            }
+            statement.setString(2, student.getEmail());
             statement.setString(3, student.getGender());
             statement.setString(4, student.getIdentityNo());
             statement.setTimestamp(5, student.getEnrollmentDate());
