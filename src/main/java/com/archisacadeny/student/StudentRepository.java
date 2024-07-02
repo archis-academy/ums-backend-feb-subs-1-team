@@ -189,7 +189,8 @@ public class StudentRepository {
 
     public void unEnrollStudentFromCourse(long studentId, long courseId){
 
-        String query = "UPDATE courses SET id = NULL WHERE id = ?";
+        String query = "UPDATE courses SET id = NULL WHERE id = ?"; // course ve student tableleri içerisinde id kolonlarının isimleri aynı olduğu içi
+                                                                    // çalışmamaktadır tableler içerisindeki id kolonlarını güncellersem düzelir mi?
 
         try (PreparedStatement preparedStatement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
 
