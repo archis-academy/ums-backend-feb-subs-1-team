@@ -62,54 +62,48 @@ public class CourseService {
         System.out.println("Course with most student:\n"+ course);
         return course;
     }
-//    public double calculateAverageGradeForCourse(int course_id){
-//        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
-//        double grade = values.get("sum_grade");
-//        double num = values.get("num_of_students");
-//        double average = Math.round((grade/num) * 100.0) / 100.0;
-//        System.out.println("Average grade of students in this course: " +average);
-//        return  average;
-//    }
-//
-//    public CourseStatistics calculateCourseStatistics(int course_id){
-//        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
-//        double grade = values.get("sum_grade");
-//        double num = values.get("num_of_students");
-//        double average = Math.round((grade/num) * 100.0) / 100.0;
-//        double min = values.get("min_grade");
-//        double max = values.get("max_grade");
-//        System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
-//        return new CourseStatistics(course_id,average,max,min);
-//    }
-//
-//    public List<Course> getAllCourses(){
-//        ArrayList<Course> courses = courseRepository.getAllCourses();
-//        System.out.println(courses);
-//        return courses;
-//    }
+    public double calculateAverageGradeForCourse(int course_id){
+        Map<String, Object> values = courseRepository.calculateAverageGradeForCourse(course_id);
+        double grade = (double) values.get("sum_grade");
+        double num = (double) values.get("num_of_students");
+        double average = Math.round((grade/num) * 100.0) / 100.0;
+        System.out.println("Average grade of students in this course: " +average);
+        return  average;
+    }
+
+    public CourseStatistics calculateCourseStatistics(int course_id){
+        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
+        double grade = values.get("sum_grade");
+        double num = values.get("num_of_students");
+        double average = Math.round((grade/num) * 100.0) / 100.0;
+        double min = values.get("min_grade");
+        double max = values.get("max_grade");
+        System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
+        return new CourseStatistics(course_id,average,max,min);
+    }
+
+    public List<Course> getAllCourses(){
+        ArrayList<Course> courses = courseRepository.getAllCourses();
+        System.out.println(courses);
+        return courses;
+    }
 
     public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate){
         Map<String,Object> values = courseRepository.generateStudentAttendanceReport(studentId,startDate,endDate);
-//        System.out.println(values.get("attended_lessons"));
-//        System.out.println(values.get("attendance_limit"));
-//        System.out.println(values.get("week_difference"));
 
         ArrayList<Integer> attendedLessons = (ArrayList<Integer>) values.get("attended_lessons");
         int weekDifference = (int) values.get("week_difference");
-        ArrayList<Integer> missedLessons = new ArrayList<>();
         ArrayList<Integer> attendanceLimit = (ArrayList<Integer>) values.get("attendance_limit");
 
         ArrayList<Double> attendancePercentage = new ArrayList<>();
-
+        ArrayList<Integer> missedLessons = new ArrayList<>();
 
         for(int i = 0; i<attendedLessons.size();i++){
             double percentage = (attendedLessons.get(i) ) * 100.0 / (weekDifference*2);
             attendancePercentage.add( Math.round( percentage * 100.0) / 100.0  );
             missedLessons.add(weekDifference*2 - (attendedLessons.get(i)));
         }
-//        System.out.println(attendancePercentage);
-//        System.out.println(missedLessons);
-//        System.out.println(values.get("attendance_limit"));
+
           System.out.println("Student course attendance rate:");
           System.out.println(attendancePercentage);
 
@@ -126,9 +120,6 @@ public class CourseService {
               }else{System.out.print("PASS,");}
           }
           System.out.println("]");
-
-
-
 
         return values;
     }
