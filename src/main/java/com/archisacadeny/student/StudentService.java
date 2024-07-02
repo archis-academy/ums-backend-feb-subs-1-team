@@ -29,10 +29,5 @@ public class StudentService {
     }
 
     public void enrollStudentToCourse(long studentId, long courseId ){
-        studentRepository.enrollStudentToCourse(studentId, courseId);
-    }
 
-    public void unenrollStudentFromCourse(long studentId, long courseId){
-        studentRepository.unenrollStudentFromCourse(studentId, courseId);
-    }
 }

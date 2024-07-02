@@ -165,48 +165,4 @@ public class StudentRepository {
         return students;
     }
 
-
-    public void enrollStudentToCourse(long studentId, long courseId){
-
-        String query = "UPDATE courses SET id = ? WHERE id = ?";
-            try (PreparedStatement preparedStatement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-                preparedStatement.setLong(1, studentId);
-                preparedStatement.setLong(2, courseId);
-
-                int rowsAffected = preparedStatement.executeUpdate();
-
-                if (rowsAffected > 0){
-                    System.out.println("Student" + studentId + "successfully enrolled in course" + courseId);
-
-                }else {
-                    System.out.println("Failed to enroll student" + studentId + "in course" + courseId);
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-    }
-
-    public void unEnrollStudentFromCourse(long studentId, long courseId){
-
-        String query = "UPDATE courses SET id = NULL WHERE id = ?"; // course ve student tableleri içerisinde id kolonlarının isimleri aynı olduğu içi
-                                                                    // çalışmamaktadır tableler içerisindeki id kolonlarını güncellersem düzelir mi?
-
-        try (PreparedStatement preparedStatement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-
-          preparedStatement.setLong(1, courseId);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected > 0){
-                System.out.println("Student " + studentId + "Successfully unenrolled from course" + courseId);
-            }else {
-                System.out.println("Failed to unenroll student " + studentId + "from course" +courseId);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
