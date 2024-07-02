@@ -2,8 +2,6 @@ package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.Instructor;
-import com.archisacadeny.instructor.InstructorRepository;
-import com.archisacadeny.student.CourseStudentMapper;
 import com.archisacadeny.student.Student;
 
 import java.sql.*;
@@ -181,9 +179,8 @@ public class CourseRepository {
         return courseId;
     }
 
-    public Map<String,Object> calculateAverageGradeForCourse(int courseId) {
-        Map<String, Object> values
-                = new HashMap<>();
+    public Map<String,Object> calculateAverageGradeForCourse(long courseId) {
+        Map<String, Object> values = new HashMap<>();
 
         String query = "SELECT SUM(grade) as sum, COUNT(grade) as num  FROM \"course_student_mapper\" " +
                 "WHERE course_id = '" + courseId + "'" ;

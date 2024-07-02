@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public class InstructorService {
     private final InstructorRepository instructorRepository;
@@ -72,7 +73,7 @@ public class InstructorService {
 
     }
 
-    public int calculateTotalStudentsForInstructor(int instructorId) {
+    public int calculateTotalStudentsForInstructor(long instructorId) {
         List<Course> courses = courseRepository.getCoursesByInstructorId(instructorId);
         int totalStudents =0;
 
@@ -82,5 +83,31 @@ public class InstructorService {
         }
         System.out.println("Total students for instructor with ID " + instructorId + ": " + totalStudents);
         return totalStudents;
+    }
+
+    public double calculateAverageSuccessGradeForInstructorCourses(long instructorId) {
+        double totalGradeSum=0.0;
+        int totalStudents=0; //number of instructor's course
+
+        List<Course> courses= courseRepository.getCoursesByInstructorId(instructorId);
+        for(Course course : courses) {
+
+            Map<String,Object> gradeInfo = courseRepository.calculateAverageGradeForCourse(course.getId());
+            double sumGrade = ((Number) gradeInfo.get("sum_grade")).doubleValue();
+            int numStudents = ((Number) gradeInfo.get("num_of_students")).intValue(); //number of students enrolled in a particular course
+
+            totalGradeSum += sumGrade;
+            totalStudents += numStudents;
+        }
+
+        double averageGrade;
+        if(totalStudents > 0){
+            averageGrade= totalGradeSum / totalStudents;
+        }else{
+            averageGrade= 0.0;
+        }
+        System.out.println("Instructor ID: " + instructorId + "\nTotal grade: " + averageGrade);
+        return averageGrade;
+
     }
 }
