@@ -2,16 +2,16 @@ package com.archisacadeny.course;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.Instructor;
-import com.archisacadeny.instructor.InstructorRepository;
-import com.archisacadeny.student.CourseStudentMapper;
 import com.archisacadeny.student.Student;
 
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
+import java.sql.*;
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +31,7 @@ public class CourseRepository {
                     "department" VARCHAR(255),
                     "max_students" INTEGER,
                     "instructor_id" INTEGER,
+                    "attendance_limit" INTEGER,
                     CONSTRAINT fk_instructor_id FOREIGN KEY (instructor_id) REFERENCES "public"."instructors"(id)
                     )
             """;
@@ -42,8 +43,10 @@ public class CourseRepository {
         }
     }
 
-    public static Course save(Course course){
-        String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id) VALUES(?,?,?,?,?,?)";
+
+    public Course save(Course course){
+        String query = "INSERT INTO courses(name,number,credits,department,max_students,instructor_id,attendance_limit) VALUES(?,?,?,?,?,?,?)";
+
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setString(1,course.getCourseName());
             statement.setString(2,course.getCourseNumber());
@@ -62,7 +65,7 @@ public class CourseRepository {
     }
 
 
-    public static void deleteCourse(long courseId) {
+    public void deleteCourse(long courseId) {
         String query = "DELETE FROM \"courses\"" +
                 "WHERE id = '"+courseId+"'";
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
@@ -73,7 +76,7 @@ public class CourseRepository {
     }
 
 
-    public static boolean isCourseFull(long courseId) {
+    public boolean isCourseFull(long courseId) {
         int studentCount = 0;
         int maxStudents = 0;
 
@@ -118,7 +121,7 @@ public class CourseRepository {
     }
 
 
-    public static void update(String courseNumber, Course course ){
+    public void update(String courseNumber, Course course ){
         String query = String.format(
                 "UPDATE courses SET name= '%1$s'," +
                         " number = '%2$s'," +
@@ -143,7 +146,7 @@ public class CourseRepository {
         }
     }
 
-    public static double getTotalCreditAmount(long studentId) {
+    public double getTotalCreditAmount(long studentId) {
         double count = 0.0;
         String query = "SELECT  student_id , credits  FROM \"course_student_mapper\"" +
                 "LEFT JOIN \"courses\"  ON  course_student_mapper.course_id = \"courses\".\"id\""+
@@ -165,7 +168,7 @@ public class CourseRepository {
         return count;
     }
 
-    public static int getCourseWithMostStudents() {
+    public int getCourseWithMostStudents() {
         // RETURNS COURSE ID FOR NOW
         int courseId = -1;
         String query = "SELECT DISTINCT course_id , COUNT(course_id) as student_count FROM \"course_student_mapper\" " +
@@ -185,9 +188,8 @@ public class CourseRepository {
         return courseId;
     }
 
-    public Map<String,Object> calculateAverageGradeForCourse(int courseId) {
-        Map<String, Object> values
-                = new HashMap<>();
+    public Map<String,Object> calculateAverageGradeForCourse(long courseId) {
+        Map<String, Object> values = new HashMap<>();
 
         String query = "SELECT SUM(grade) as sum, COUNT(grade) as num  FROM \"course_student_mapper\" " +
                 "WHERE course_id = '" + courseId + "'" ;
@@ -254,7 +256,7 @@ public class CourseRepository {
         return stats;
     }// Service methdou serviceclassi eklendikten sonra yazilacak
 
-  public static Student findTopStudentInInstructorCourses(int instructorId) {
+    public Student findTopStudentInInstructorCourses(int instructorId) {
         String query = "SELECT student_id, grade, courses.instructor_id, " +
                 "students.id,students.full_name,students.gender,students.identity_no,students.enrollment_date," +
                 "students.year_of_study,students.total_credit_count FROM course_student_mapper " +
@@ -459,7 +461,94 @@ public class CourseRepository {
         return courses;
     }
 
-    public Map<String,Object> calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+
+    public static List<Course> listPopularCourses(int topCount) {
+        ArrayList<Course> courses = new ArrayList<>();
+        String query = "SELECT courses.id,name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses "+
+                "LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = \"courses\".\"id\" "+
+                "GROUP BY courses.id " +
+                "ORDER BY student_count DESC LIMIT "+topCount;
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            Course course = new Course();
+            Instructor instructor = new Instructor();
+            while (rs.next()) {
+                instructor.setId(rs.getLong("instructor_id"));
+                course.setId(rs.getInt("id"));
+                course.setCourseName(rs.getString("name"));
+                course.setInstructor(instructor);
+                course.setCredit(rs.getLong("credits"));
+                course.setCourseNumber(rs.getString("number"));
+                course.setDepartment(rs.getString("department"));
+                course.setMaxStudents(rs.getInt("max_students"));
+                courses.add(course);
+            }
+            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return courses;
+
+    public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate) {
+        Map<String,Object> values = new HashMap<>();
+
+        //Mape e attendance yuzdesi arraylistini ekliyorum, ve attendance limitini. Kacirdigi dersleri
+        ArrayList<Integer> attendedLessons = new ArrayList<>();
+        ArrayList<Integer> attendanceLimit = new ArrayList<>();
+        int weekDifference = 0;
+
+        String query = "SELECT student_id , attended_lessons, attendance_limit, " +
+                "TRUNC (DATE_PART('Day', '"+endDate+"'::TIMESTAMP - '"+startDate+"'::TIMESTAMP)/7) AS week_difference " +
+                "FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE student_id = "+studentId;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                attendedLessons.add(rs.getInt("attended_lessons"));
+                attendanceLimit.add(rs.getInt("attendance_limit"));
+                weekDifference = rs.getInt("week_difference");
+            }
+            values.put("attended_lessons",attendedLessons);
+            values.put("attendance_limit",attendanceLimit);
+            values.put("week_difference", weekDifference);
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return values;
+
+    }
+      
+    public Map<String,Object> generateCourseReport(int courseId) {
+        Map<String,Object> values = new HashMap<>();
+        // Professor ( to be added in service ?)
+        String query = "SELECT name,number,instructor_id,department,credits,max_students, SUM(grade) as total_student_score,COUNT(course_id) as student_count " +
+                "FROM courses LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = courses.id" +
+                " WHERE courses.id = "+courseId+" GROUP BY courses.id ";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                values.put("name",rs.getString("name"));
+                values.put("number",rs.getString("number"));
+                values.put("department",rs.getString("department"));
+                values.put("credits",rs.getInt("credits"));
+                values.put("student_count",rs.getInt("student_count")*1.0);
+                values.put("max_students",rs.getInt("max_students"));
+                values.put("instructor_id",rs.getInt("instructor_id"));
+                values.put("total_student_score",rs.getDouble("total_student_score"));
+            } } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+      
+      public Map<String,Object> calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
         String query = "SELECT instructor_id AS instructor, attended_lessons, " +
                 "TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration " +
                 "FROM course_student_mapper " +
@@ -486,5 +575,6 @@ public class CourseRepository {
         }
         return values;
     }
+
 
 }
