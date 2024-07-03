@@ -1,5 +1,7 @@
 package com.archisacadeny.student;
 
+import com.archisacadeny.course.Course;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -54,5 +56,22 @@ public class StudentService {
         System.out.println("Student ID: " + report.getStudentId());
         System.out.println("Full Name: " + report.getFullName());
         System.out.println("GPA: " + report.getGpa());
+    }
+
+    public void listRecommendedCoursesForStudent(long studentId) {
+        List<Course> recommendedCourses = studentRepository.listRecommendedCoursesForStudent(studentId);
+
+        if (recommendedCourses.isEmpty()) {
+            System.out.println("No recommended courses found for student with ID: " + studentId);
+        } else {
+            System.out.println("---------------");
+            System.out.println("Recommended Courses for Student with ID " + studentId + ":");
+            for (Course course : recommendedCourses) {
+                System.out.println("Course Name: " + course.getCourseName());
+                System.out.println("Department: " + course.getDepartment());
+                System.out.println("Course's credit: " + course.getCredit());
+            }
+            System.out.println("---------------");
+        }
     }
 }

@@ -54,6 +54,7 @@ public class CourseRepository {
             statement.setString(4,course.getDepartment());
             statement.setLong(5,course.getMaxStudents());
             statement.setLong(6,course.getInstructor().getId());
+            statement.setLong(7,course.getAttendanceLimit());;
 
             statement.execute();
             System.out.println("Course has been saved successfully with name: "+course.getCourseName());
