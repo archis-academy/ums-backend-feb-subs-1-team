@@ -5,6 +5,11 @@ import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.sql.*;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -538,6 +543,34 @@ public class CourseRepository {
                 values.put("instructor_id",rs.getInt("instructor_id"));
                 values.put("total_student_score",rs.getDouble("total_student_score"));
             } } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+      
+      public Map<String,Object> calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+        String query = "SELECT instructor_id AS instructor, attended_lessons, " +
+                "TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration " +
+                "FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId;
+        Map<String,Object> values = new HashMap<>();
+        ArrayList<Integer> attendedLessons = new ArrayList<>();
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                attendedLessons.add(rs.getInt("attended_lessons"));
+                values.put("course_duration",rs.getInt("course_duration"));
+                // Hangi veri turu ile ekleye bilirim ? MAP kullaninca valuelar override oluyor, hesaplamayi o yuzden burda yaptim.
+            }
+            values.put("attended_lessons",attendedLessons);
+
+            System.out.println("Student attendance (input value / divided by number of times course is taught per week)");
+            // su an 2 ile boluyorum, her kurs icin haftada 2 defa attendance aliyor hoca.
+
+//            printResultSet(rs);
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return values;
