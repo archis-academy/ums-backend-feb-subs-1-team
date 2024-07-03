@@ -129,5 +129,19 @@ public class CourseService {
 
         return values;
     }
+  
+      public Map<String,Object> generateCourseReport(int courseId) {
+        Map<String,Object> values = courseRepository.generateCourseReport(courseId);
+        System.out.println("Course report generated succesfully! \n " +
+                "   Course name: "+values.get("name")+
+                "\n    Course number: "+values.get("number")+
+                "\n    Course department: "+values.get("department")+
+                "\n    Course credits: "+values.get("credits")+
+                "\n    Course student count: "+  values.get("student_count")+
+                "\n    Course max student count: "+  values.get("max_students")+
+                "\n    Course Instructor: "+  values.get("instructor_id")+
+                        "\n    Course Average: "+  ((double) values.get("total_student_score")/(double)values.get("student_count")));
+        return values;
+    }
 
 }
