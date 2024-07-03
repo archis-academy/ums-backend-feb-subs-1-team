@@ -4,6 +4,10 @@ package com.archisacadeny.course;
 import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 
+import java.sql.Array;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,11 +62,10 @@ public class CourseService {
         System.out.println("Course with most student:\n"+ course);
         return course;
     }
-
     public double calculateAverageGradeForCourse(int course_id){
-        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
-        double grade = values.get("sum_grade");
-        double num = values.get("num_of_students");
+        Map<String, Object> values = courseRepository.calculateAverageGradeForCourse(course_id);
+        double grade = (double) values.get("sum_grade");
+        double num = (double) values.get("num_of_students");
         double average = Math.round((grade/num) * 100.0) / 100.0;
         System.out.println("Average grade of students in this course: " +average);
         return  average;
@@ -85,7 +88,49 @@ public class CourseService {
         return courses;
     }
 
-    public Map<String,Object> generateCourseReport(int courseId) {
+    public static List<Course> listPopularCourses(int topCount) {
+        List<Course> a = CourseRepository.listPopularCourses(topCount);
+        return a;
+    }
+
+
+    public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate){
+        Map<String,Object> values = courseRepository.generateStudentAttendanceReport(studentId,startDate,endDate);
+
+        ArrayList<Integer> attendedLessons = (ArrayList<Integer>) values.get("attended_lessons");
+        int weekDifference = (int) values.get("week_difference");
+        ArrayList<Integer> attendanceLimit = (ArrayList<Integer>) values.get("attendance_limit");
+
+        ArrayList<Double> attendancePercentage = new ArrayList<>();
+        ArrayList<Integer> missedLessons = new ArrayList<>();
+
+        for(int i = 0; i<attendedLessons.size();i++){
+            double percentage = (attendedLessons.get(i) ) * 100.0 / (weekDifference*2);
+            attendancePercentage.add( Math.round( percentage * 100.0) / 100.0  );
+            missedLessons.add(weekDifference*2 - (attendedLessons.get(i)));
+        }
+
+          System.out.println("Student course attendance rate:");
+          System.out.println(attendancePercentage);
+
+          System.out.println("\nLessons missed");
+          System.out.println(missedLessons);
+
+          System.out.println("\nAttendance Limit for the courses");
+          System.out.println(attendanceLimit);
+
+          System.out.print("\nFAIL or PASS \n[");
+          for(int i = 0; i<missedLessons.size();i++){
+              if(missedLessons.get(i)>attendanceLimit.get(i)){
+                  System.out.print("FAIL,");
+              }else{System.out.print("PASS,");}
+          }
+          System.out.println("]");
+
+        return values;
+    }
+  
+      public Map<String,Object> generateCourseReport(int courseId) {
         Map<String,Object> values = courseRepository.generateCourseReport(courseId);
         System.out.println("Course report generated succesfully! \n " +
                 "   Course name: "+values.get("name")+
@@ -98,4 +143,5 @@ public class CourseService {
                         "\n    Course Average: "+  ((double) values.get("total_student_score")/(double)values.get("student_count")));
         return values;
     }
+
 }
