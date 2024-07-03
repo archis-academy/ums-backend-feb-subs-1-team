@@ -53,39 +53,57 @@ public class CourseService {
         return students;
     }
 
-    public Course getCourseWithMostStudents(){
-        Course course = courseRepository.getCourseById(courseRepository.getCourseWithMostStudents());
-        System.out.println("Course with most student:\n"+ course);
-        return course;
-    }
-    public double calculateAverageGradeForCourse(int course_id){
-        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
-        double grade = values.get("sum_grade");
-        double num = values.get("num_of_students");
-        double average = Math.round((grade/num) * 100.0) / 100.0;
-        System.out.println("Average grade of students in this course: " +average);
-        return  average;
-    }
+//    public Course getCourseWithMostStudents(){
+//        Course course = courseRepository.getCourseById(courseRepository.getCourseWithMostStudents());
+//        System.out.println("Course with most student:\n"+ course);
+//        return course;
+//    }
+//    public double calculateAverageGradeForCourse(int course_id){
+//        Map<String,Double> values = courseRepository.calculateAverageGradeForCourse(course_id);
+//        double grade = values.get("sum_grade");
+//        double num = values.get("num_of_students");
+//        double average = Math.round((grade/num) * 100.0) / 100.0;
+//        System.out.println("Average grade of students in this course: " +average);
+//        return  average;
+//    }
+//
+//    public CourseStatistics calculateCourseStatistics(int course_id){
+//        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
+//        double grade = values.get("sum_grade");
+//        double num = values.get("num_of_students");
+//        double average = Math.round((grade/num) * 100.0) / 100.0;
+//        double min = values.get("min_grade");
+//        double max = values.get("max_grade");
+//        System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
+//        return new CourseStatistics(course_id,average,max,min);
+//    }
+//
+//    public List<Course> getAllCourses(){
+//        ArrayList<Course> courses = courseRepository.getAllCourses();
+//        System.out.println(courses);
+//        return courses;
+//    }
 
-    public CourseStatistics calculateCourseStatistics(int course_id){
-        Map<String,Double> values = courseRepository.calculateCourseStatistics(course_id);
-        double grade = values.get("sum_grade");
-        double num = values.get("num_of_students");
-        double average = Math.round((grade/num) * 100.0) / 100.0;
-        double min = values.get("min_grade");
-        double max = values.get("max_grade");
-        System.out.println("Course id: "+course_id +" | Average grade: " +average+ " | Max Grade: "+max+" | Min grade "+min);
-        return new CourseStatistics(course_id,average,max,min);
-    }
+    public ArrayList<Boolean> checkStudentAttendance(int studentId) {
+        Map<String,Object> values = courseRepository.checkStudentAttendance(studentId);
 
-    public List<Course> getAllCourses(){
-        ArrayList<Course> courses = courseRepository.getAllCourses();
-        System.out.println(courses);
-        return courses;
-    }
+        ArrayList<Integer> attendedLessons = (ArrayList<Integer>) values.get("attended_lessons");
+        int courseDuration = (int) values.get("week_difference");
+        ArrayList<Integer> attendanceLimit = (ArrayList<Integer>) values.get("attendance_limit");
 
-    public boolean checkStudentLeaveStatus(int studentId) {
+        ArrayList<Boolean> results = new ArrayList<>();
 
+        System.out.println("ATTENDANCE LIMIT:     8     ");
+        for(int i = 0; i<attendanceLimit.size();i++){
+            System.out.print("Num of lessons  "+courseDuration*2+"  |  ");
+            System.out.println(attendedLessons.get(i) + "  Num of lessons ATTENDED");
+            if((courseDuration*2 - (attendedLessons.get(i))) >= attendanceLimit.get(i)){
+                results.add(false);
+            }else { results.add(true); }
 
+        }
+        // TRUE means student has failed, or has no chances to miss
+        // FALSE means he can still miss
+        return results;
     }
 }
