@@ -535,4 +535,26 @@ public class CourseRepository {
         }
     }
 
+    public void unenrollStudentFromCourse(long studentId, long courseId){
+
+        String query = "DELETE FROM course_student_mapper WHERE student_id = ? AND course_id = ?";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+
+        statement.setLong(1, studentId);
+        statement.setLong(2, courseId);
+
+        int rowsAffected = statement.executeUpdate();
+
+        if (rowsAffected > 0){
+            System.out.println("Student with ID:" + studentId + "has been unenrolled from course with ID:" + courseId);
+        }else {
+            System.out.println("No enrollment found for student with ID:" + studentId + "in course with ID" + courseId);
+        }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error unenrolling student from course", e);
+        }
+    }
+
 }
