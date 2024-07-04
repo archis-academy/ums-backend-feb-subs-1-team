@@ -47,7 +47,6 @@ public class CourseStudentMapper {
             statement.setTimestamp(5,end);
             statement.setInt(6,attendedLessons);
             statement.setInt(7,missedLessons);
-          
             statement.execute();
 
         }catch(SQLException e){
