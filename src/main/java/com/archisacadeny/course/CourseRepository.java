@@ -4,6 +4,7 @@ import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 
+import java.security.Key;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -577,5 +578,48 @@ public class CourseRepository {
         return values;
     }
 
+    public List<Course> advancedSearchAndFilters(String searchCriteria, Map<String, String> filters){
 
+        List<Course> courses = new ArrayList<>();
+
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM courses WHERE name ILIKE ? AND credits = ?");
+
+        for (String key : filters.keySet()){
+            if (key.equals("credits")){
+                queryBuilder.append("AND credits = ?");
+            } else {
+                queryBuilder.append(" AND ").append(key).append(" = ?");
+            }
+        }
+
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(queryBuilder.toString())){
+            int parameterIndex = 1;
+            statement.setString(parameterIndex++, "%" + searchCriteria + "%");
+
+            for (String key : filters.keySet()){
+                if (key.equals("credits") || key.equals("mathematics") ){
+                    statement.setString(parameterIndex++, filters.get(key));
+                }else {
+                    statement.setString(parameterIndex++, filters.get(key));
+                }
+            }
+
+            System.out.println("Generated Query: " + queryBuilder.toString());
+            System.out.println("Search criteria (name ILIKE): % " + searchCriteria + "%");
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                Course course = new Course();
+                course.setId(resultSet.getLong("id"));
+                course.setCourseName(resultSet.getString("name"));
+                course.setCredits(resultSet.getLong("credits"));
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error performing advanced search and filters", e);
+        }
+        return courses;
+    }
 }
