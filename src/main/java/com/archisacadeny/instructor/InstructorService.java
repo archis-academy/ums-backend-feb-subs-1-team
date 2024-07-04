@@ -110,4 +110,19 @@ public class InstructorService {
         return averageGrade;
 
     }
+    public List<Course> listMostRecommendedCoursesForInstructor(long instructorId, int topCount) {
+        List<Course> recommendedCourses = instructorRepository.getMostRecommendedCoursesForInstructor(instructorId, topCount);
+
+        for (Course course : recommendedCourses) {
+            System.out.println("Course Name: " + course.getCourseName());
+            System.out.println("Course Number: " + course.getCourseNumber());
+            System.out.println("Credits: " + course.getCredits());
+            System.out.println("Department: " + course.getDepartment());
+            System.out.println("Max Students: " + course.getMaxStudents());
+            System.out.println();
+        }
+        System.out.println(recommendedCourses);
+
+        return recommendedCourses;
+    }
 }
