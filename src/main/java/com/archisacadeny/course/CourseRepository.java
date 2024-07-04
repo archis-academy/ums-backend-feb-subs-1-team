@@ -577,5 +577,38 @@ public class CourseRepository {
         return values;
     }
 
+    public List<Course> listCoursesOrderedByStudentAverageGrade() {
+        ArrayList<Course> courses = new ArrayList<>();
+
+        String query = "SELECT course_id, AVG(grade):: NUMERIC(10, 2) as average, courses.name,courses.number,credits,department,max_students,instructor_id,attendance_limit " +
+                "FROM course_student_mapper " +
+                "LEFT JOIN courses ON course_student_mapper.course_id = courses.id GROUP BY " +
+                " course_id ,courses.name, courses.number,courses.credits,courses.department,courses.max_students,courses.instructor_id,courses.attendance_limit  ORDER BY average DESC ";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                Course course = new Course();
+                Instructor instructor = new Instructor();
+                instructor.setId(rs.getLong("instructor_id"));
+                course.setId(rs.getInt("course_id"));
+                course.setCourseName(rs.getString("name"));
+                course.setInstructor(instructor);
+                course.setCredit(rs.getLong("credits"));
+                course.setCourseNumber(rs.getString("number"));
+                course.setDepartment(rs.getString("department"));
+                course.setMaxStudents(rs.getInt("max_students"));
+                course.setAttendanceLimit(rs.getInt("attendance_limit"));
+                courses.add(course);
+            }
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return courses;
+    }
+
 
 }
