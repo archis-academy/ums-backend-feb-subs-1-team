@@ -101,8 +101,8 @@ public class CourseService {
         return Math.round((attendancePercentage/attendedLessons.size()) * 100.0) / 100.0 ;
     }
 
-    public static List<Course> listPopularCourses(int topCount) {
-        List<Course> a = CourseRepository.listPopularCourses(topCount);
+    public List<Course> listPopularCourses(int topCount) {
+        List<Course> a = courseRepository.listPopularCourses(topCount);
         return a;
     }
 
@@ -155,6 +155,29 @@ public class CourseService {
                 "\n    Course Instructor: "+  values.get("instructor_id")+
                         "\n    Course Average: "+  ((double) values.get("total_student_score")/(double)values.get("student_count")));
         return values;
+    }
+
+    public void createCourseSchedule(long student_id) {
+        ArrayList<Course> courses = (ArrayList<Course>) courseRepository.createCourseSchedule(student_id);
+        // i represents days of the week, in our Uni, we had lessons max 6 days a week including labs and lessons.
+        String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"};
+        for(int i = 0; i < 6;i++){
+            System.out.println("Courses on "+weekDays[i] + "\n");
+            for(int b = 0; b < 2;b++){
+                if(b == 0){
+                    System.out.println("   Lesson Time: 10:00 AM \n");
+                }else{
+                    System.out.println("   ____________________\n   Lesson Time: 1:30 PM \n");
+                }
+                System.out.println(
+                        "   Course name: "+courses.get(i).getCourseName()+"\n"+
+                        "   Course number: "+courses.get(i).getCourseNumber()+"\n"
+                );
+
+
+            }
+        }
+
     }
 
 }
