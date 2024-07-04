@@ -173,7 +173,8 @@ public class CourseService {
                         "   Course name: "+courses.get(i).getCourseName()+"\n"+
                         "   Course number: "+courses.get(i).getCourseNumber()+"\n"
                 );
-
+                // THIS SCHEDULE PRINTS THE SAME LESSON TWICE THE SAME DAY
+                // COULD VE BEEN BETTER, TIME SCRAMBLE
 
             }
         }
