@@ -1,7 +1,6 @@
 package com.archisacadeny.student;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,10 +10,15 @@ public class StudentService {
     public StudentService(StudentRepository studentRepository){
         this.studentRepository=studentRepository;
     }
+
     public void createStudentTable(){
         StudentRepository.createStudentTable();
     }
+
     public Student createStudent(Student student){
+        if (!validateEmailDuringStudentRegistration(student.getEmail())){
+            return student;
+        }
         return studentRepository.createStudent(student);
     }
 
@@ -54,5 +58,16 @@ public class StudentService {
         System.out.println("Student ID: " + report.getStudentId());
         System.out.println("Full Name: " + report.getFullName());
         System.out.println("GPA: " + report.getGpa());
+    }
+
+    public boolean validateEmailDuringStudentRegistration(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+        if (!email.matches(emailRegex)) {
+            System.out.println("Invalid email format: " + email);
+            return false;
+        }
+
+        return studentRepository.validateEmailDuringStudentRegistration(email);
     }
 }
