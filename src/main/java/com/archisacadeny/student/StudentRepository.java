@@ -1,12 +1,13 @@
 package com.archisacadeny.student;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
-
 import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StudentRepository {
 
@@ -76,78 +77,50 @@ public class StudentRepository {
         return student;
     }
 
-    public Student viewStudentDetails(long studentid) {
-        String query = "SELECT * FROM students WHERE id = ?";
-        Student student = new Student();
+    public List<Map<String, Object>> getStudentAchievementReportData(int studentId) {
+        String query = """
+            SELECT s.id, s.full_name, csm.course_id, csm.grade
+            FROM students s
+            JOIN course_student_mapper csm ON s.id = csm.student_id
+            WHERE s.id = ?;
+        """;
+
+        List<Map<String, Object>> results = new ArrayList<>();
+
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
-            statement.setLong(1, studentid);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                student.setFullName(resultSet.getString("full_name"));
-                student.setGender(resultSet.getString("gender"));
-                student.setIdentityNo(resultSet.getString("identity_no"));
-                student.setEnrollmentDate(resultSet.getTimestamp("enrollment_date"));
-                student.setYearOfStudy(resultSet.getInt("year_of_study"));
-                student.setTotalCreditCount(resultSet.getInt("total_credit_count"));
-            }
-            resultSet.close();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return student;
-    }
-
-    public Student getStudentByID(long studentId){
-        String query = "SELECT * FROM students WHERE id = ?";
-        Student student = new Student();
-
-        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-            statement.setLong(1,studentId);
-            try(ResultSet resultSet = statement.executeQuery()){
-                if (resultSet.next()){
-                    student.setId(resultSet.getLong("id"));
-                    student.setFullName(resultSet.getString("full_name"));
-                    student.setGender(resultSet.getString("gender"));
-                    student.setEnrollmentDate(resultSet.getTimestamp("enrollment_date"));
-                    student.setIdentityNo(resultSet.getString("identity_no"));
-                    student.setYearOfStudy(resultSet.getInt("year_of_study"));
-                    student.setTotalCreditCount(resultSet.getInt("total_credit_count"));
-                }else {
-                    throw new RuntimeException("Student can not be found!!" + studentId);
+            statement.setInt(1, studentId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("id", resultSet.getLong("id"));
+                    row.put("full_name", resultSet.getString("full_name"));
+                    row.put("course_id", resultSet.getLong("course_id"));
+                    row.put("grade", resultSet.getInt("grade"));
+                    results.add(row);
                 }
             }
-        }catch (SQLException e){
-            throw new RuntimeException(e);
-        }
-        return student;
-    }
-
-    public Student updateStudentInfo(Student student) {
-        String query = "UPDATE students SET full_name = ?, gender = ?, identity_no = ?, enrollment_date = ? WHERE id = ?";
-        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
-
-            statement.setString(1, student.getFullName());
-            statement.setString(2, student.getGender());
-            statement.setString(3, student.getIdentityNo());
-            statement.setTimestamp(4, student.getEnrollmentDate());
-            statement.setLong(5, student.getId());
-
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("The Student you have reach by id has been update" + student.getId());
-            } else {
-                throw new RuntimeException("Update has failed!! The Student has not been found!!" + student.getId());
-            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error retrieving student achievement report data", e);
         }
 
-        return student;
+        return results;
     }
 
-   public boolean validateEmailDuringStudentRegistration(String email) {
+    public int getCourseCredit(long courseId) throws SQLException {
+        String query = "SELECT credits FROM courses WHERE Id = ?";
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1, courseId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("credits");
+                } else {
+                    throw new IllegalArgumentException("Course with ID " + courseId + " not found.");
+                }
+            }
+        }
+    }
+
+    public boolean validateEmailDuringStudentRegistration(String email) {
 
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
@@ -169,34 +142,9 @@ public class StudentRepository {
                 } else {
                     return true;
                 }
-
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
-    public List<Student> listAllStudents(){
-        List<Student> students = new ArrayList<>();
-        String query = "SELECT * FROM students";
-        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
-                Student student = new Student();
-                student.setId(resultSet.getLong("id"));
-                student.setFullName(resultSet.getString("full_name"));
-                student.setGender(resultSet.getString("gender"));
-                student.setIdentityNo(resultSet.getString("identity_no"));
-                student.setEnrollmentDate(resultSet.getTimestamp("enrollment_date"));
-                student.setTotalCreditCount(resultSet.getInt("total_credit_count"));
-                student.setYearOfStudy(resultSet.getInt("year_of_study"));
-                students.add(student);
-            }
-            return students;
-        } catch (SQLException e) {
-         e.printStackTrace();
-        }
-        return students;
-    }
-
 }
