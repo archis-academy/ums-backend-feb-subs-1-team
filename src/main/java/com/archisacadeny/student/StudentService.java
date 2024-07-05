@@ -14,8 +14,17 @@ public class StudentService {
     public void createStudentTable(){
         StudentRepository.createStudentTable();
     }
-    public Student createStudent(Student student){
-        return studentRepository.createStudent(student);
+    public void createStudent(Student student){
+        Student newStudent = studentRepository.createStudent(student);
+
+        System.out.println("The student has been created with ID: " + newStudent.getId());
+        System.out.println("Full Name: " + newStudent.getFullName());
+        System.out.println("Email: " + newStudent.getEmail());
+        System.out.println("Gender: " + newStudent.getGender());
+        System.out.println("Identity No: " + newStudent.getGender());
+        System.out.println("Enrollment Date: " + newStudent.getEnrollmentDate());
+        System.out.println("Year of Study: " + newStudent.getYearOfStudy());
+        System.out.println("Total credit: " + newStudent.getTotalCreditCount());
     }
 
     public StudentReport generateStudentAchievementReport(int studentId) {
@@ -56,8 +65,14 @@ public class StudentService {
         System.out.println("GPA: " + report.getGpa());
     }
 
-    public Student updateStudentInfo(Student student) {
-        return studentRepository.updateStudentInfo(student);
+    public void updateStudentInfo(Student student) {
+        Student newStudent = studentRepository.updateStudentInfo(student);
+
+        System.out.println("The student has been updated with ID: " + student.getId());
+        System.out.println("New Full Name: " + newStudent.getFullName());
+        System.out.println("New Gender: " + newStudent.getGender());
+        System.out.println("New Identity Number: " + newStudent.getIdentityNo());
+        System.out.println("New Enrollment Date: " + newStudent.getEnrollmentDate());
     }
 
     public Student viewStudentDetails(Long studentId) {
