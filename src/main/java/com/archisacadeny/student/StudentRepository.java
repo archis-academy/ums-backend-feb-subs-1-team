@@ -1,7 +1,6 @@
 package com.archisacadeny.student;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
-import com.archisacadeny.course.Course;
 
 import java.sql.*;
 import java.sql.PreparedStatement;
@@ -33,7 +32,6 @@ public class StudentRepository {
             throw new RuntimeException(e);
         }
     }
-
 
     public void deleteStudent(int studentId) {
         String query = "DELETE FROM students WHERE id = ?";
@@ -78,7 +76,6 @@ public class StudentRepository {
         return student;
     }
 
-
     public Student viewStudentDetails(long studentid) {
         String query = "SELECT * FROM students WHERE id = ?";
         Student student = new Student();
@@ -101,6 +98,7 @@ public class StudentRepository {
         }
         return student;
     }
+
     public Student getStudentByID(long studentId){
         String query = "SELECT * FROM students WHERE id = ?";
         Student student = new Student();
@@ -126,7 +124,6 @@ public class StudentRepository {
         return student;
     }
 
-
     public Student updateStudentInfo(Student student) {
         String query = "UPDATE students SET full_name = ?, gender = ?, identity_no = ?, enrollment_date = ? WHERE id = ?";
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
@@ -142,6 +139,14 @@ public class StudentRepository {
                 System.out.println("The Student you have reach by id has been update" + student.getId());
             } else {
                 throw new RuntimeException("Update has failed!! The Student has not been found!!" + student.getId());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return student;
+    }
+
    public boolean validateEmailDuringStudentRegistration(String email) {
 
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
@@ -169,10 +174,7 @@ public class StudentRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        return student;
     }
-
 
     public List<Student> listAllStudents(){
         List<Student> students = new ArrayList<>();
@@ -195,9 +197,6 @@ public class StudentRepository {
          e.printStackTrace();
         }
         return students;
-    }
-
-
     }
 
 }
