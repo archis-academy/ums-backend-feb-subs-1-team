@@ -21,7 +21,15 @@ public class StudentService {
 
     public Student viewStudentDetails(Long studentId) {
 
-        Student savedStudent = studentRepository.viewStudentDetails(3);
+       Student savedStudent = studentRepository.viewStudentDetails(studentId);
+        System.out.println(savedStudent.getFullName());
+        System.out.println(savedStudent.getId());
+        System.out.println(savedStudent.getGender());
+        System.out.println(savedStudent.getIdentityNo());
+        System.out.println(savedStudent.getYearOfStudy());
+        System.out.println(savedStudent.getEnrollmentDate());
+
+
         return savedStudent;
     }
 
