@@ -21,7 +21,7 @@ public class StudentService {
 
     public Student viewStudentDetails(Long studentId) {
 
-       Student savedStudent = studentRepository.viewStudentDetails(studentId);
+        Student savedStudent = studentRepository.viewStudentDetails(studentId);
         System.out.println(savedStudent.getFullName());
         System.out.println(savedStudent.getId());
         System.out.println(savedStudent.getGender());
@@ -38,10 +38,15 @@ public class StudentService {
     }
 
     public List<Student> getAllStudents() {
-        return studentRepository.listAllStudents();
-    }
 
-    public void enrollStudentToCourse(long studentId, long courseId) {
+        List<Student> students = studentRepository.listAllStudents();
+        for (Student student : students) {
+            System.out.println(student.getFullName());
+            System.out.println(student.getId());
+            System.out.println(student.getEnrollmentDate());
+            System.out.println(student.getIdentityNo());
+        }
 
+        return students;
     }
 }
