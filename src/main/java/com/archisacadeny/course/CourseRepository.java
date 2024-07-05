@@ -54,9 +54,10 @@ public class CourseRepository {
             statement.setString(4,course.getDepartment());
             statement.setLong(5,course.getMaxStudents());
             statement.setLong(6,course.getInstructor().getId());
+            statement.setInt(7,course.getAttendanceLimit());
 
             statement.execute();
-            System.out.println("Course has been saved successfully with name: "+course.getCourseName());
+            System.out.println("Course " +course.getCourseName() +" has been saved successfully to the database.");
 
         }catch(SQLException e){
             throw new RuntimeException(e);
@@ -91,7 +92,7 @@ public class CourseRepository {
             while (rs.next()) {
                 studentCount = rs.getInt("n_of_students");
                 maxStudents = rs.getInt("max_students");
-                System.out.println(studentCount + "A"+maxStudents);
+                System.out.println("Student count: "+studentCount + " ||| "+maxStudents + " Student limit");
             }
             printResultSet(rs);
             //PRINTLENMIYOR, rs.next() bittikten sonra.
@@ -107,7 +108,7 @@ public class CourseRepository {
         }
     }
 
-    public static void printResultSet(ResultSet rs) throws SQLException
+    public void printResultSet(ResultSet rs) throws SQLException
     {
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnsNumber = rsmd.getColumnCount();
@@ -123,24 +124,26 @@ public class CourseRepository {
 
     public void update(String courseNumber, Course course ){
         String query = String.format(
-                "UPDATE courses SET name= '%1$s'," +
-                        " number = '%2$s'," +
-                        " instructor_id = '%3$s' " +
-                        " credits = '%4$s' " +
-                        " department = '%5$s' "+
-                        " max_students = '%6$s'"+
-
+                "UPDATE courses SET name= '%1$s', " +
+                        " number = '%2$s', " +
+                        " instructor_id = '%3$s'," +
+                        " credits = '%4$s' ," +
+                        " department = '%5$s', "+
+                        " max_students = '%6$s',"+
+                        " attendance_limit = '%7$s' "+
                         "WHERE number= '"+courseNumber+"'",
                 course.getCourseName(),
                 course.getCourseNumber(),
                 course.getInstructor().getId(),
                 course.getCredits(),
                 course.getDepartment(),
-                course.getMaxStudents()
+                course.getMaxStudents(),
+                course.getAttendanceLimit()
                 );
-        System.out.println(query);
+
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
+            System.out.println("Updated Successfully");
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
@@ -216,13 +219,14 @@ public class CourseRepository {
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
             ResultSet rs = statement.getResultSet();
-            Instructor instructor = new Instructor();
             while (rs.next()) {
+                    course = new Course();
+                    Instructor instructor = new Instructor();
                     instructor.setId(rs.getLong("instructor_id"));
                     course.setId(rs.getInt("id"));
                     course.setCourseName(rs.getString("name"));
                     course.setInstructor(instructor);
-                    course.setCredit(rs.getLong("credits"));
+                    course.setCredit(rs.getInt("credits"));
                     course.setCourseNumber(rs.getString("number"));
                     course.setDepartment(rs.getString("department"));
                     course.setMaxStudents(rs.getInt("max_students"));
@@ -242,7 +246,7 @@ public class CourseRepository {
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
-            printResultSet(rs);
+//            printResultSet(rs);
             while (rs.next()) {
             stats.setCourseId(courseId);
             stats.setAverageGrade(rs.getDouble("sum"),
@@ -310,7 +314,6 @@ public class CourseRepository {
     public double calculateLetterGradeForStudent(int studentId, int courseId) {
         double grade = -1;
 
-
         String query = "SELECT grade FROM course_student_mapper WHERE course_id = "+courseId+" AND student_id = "+studentId;
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
@@ -354,7 +357,7 @@ public class CourseRepository {
 
     public List<Course> getStudentEnrolledCourses(int studentId) {
         // RETURNS COURSE ID s FOR NOW
-        String query = "SELECT course_id, name, instructor_id, credits, number,department,max_students FROM \"course_student_mapper\" " +
+        String query = "SELECT course_id, student_id, name, instructor_id, credits, number,department,max_students FROM \"course_student_mapper\" " +
                 "LEFT JOIN \"courses\" ON course_student_mapper.course_id = \"courses\".\"id\""+
                 "WHERE student_id = '" + studentId + "'" ;
 
@@ -364,14 +367,14 @@ public class CourseRepository {
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
-            Instructor instructor = new Instructor();
-            Course course = new Course();
             while (rs.next()) {
+                Instructor instructor = new Instructor();
+                Course course = new Course();
                 instructor.setId(rs.getLong("instructor_id"));
-                course.setId(rs.getInt("id"));
+                course.setId(rs.getInt("course_id"));
                 course.setCourseName(rs.getString("name"));
                 course.setInstructor(instructor);
-                course.setCredit(rs.getLong("credits"));
+                course.setCredit(rs.getInt("credits"));
                 course.setCourseNumber(rs.getString("number"));
                 course.setDepartment(rs.getString("department"));
                 course.setMaxStudents(rs.getInt("max_students"));
@@ -384,7 +387,6 @@ public class CourseRepository {
         return courses;
     }
 
-    //BU METHODU getCouseById methodunda kullanacagimiz icin id leri degil LISt<Students> dondurmesi gerekir.
     public  List<Student> getCourseEnrolledStudents(long courseId){
         ArrayList<Student> students = new ArrayList<>();
 
@@ -396,8 +398,9 @@ public class CourseRepository {
                 ResultSet.CONCUR_UPDATABLE)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
-            Student student = new Student();
+            Student student;
             while (rs.next()) {
+                        student = new Student();
                         student.setId(rs.getInt("student_id"));
                         student.setFullName(rs.getString("full_name"));
                         student.setGender(rs.getString("gender"));
@@ -440,12 +443,13 @@ public class CourseRepository {
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
-            Course course = new Course();
+            Course course;
             while (rs.next()) {
+                course = new Course();
                 course.setId(rs.getInt("id"));
                         course.setCourseName(rs.getString("name"));
                         course.setInstructor(new Instructor(rs.getLong("instructor_id")));
-                        course.setCredit(rs.getLong("credits"));
+                        course.setCredit(rs.getInt("credits"));
                         course.setCourseNumber(rs.getString("number"));
                         course.setDepartment(rs.getString("department"));
                         course.setMaxStudents(rs.getInt("max_students"));
@@ -471,20 +475,20 @@ public class CourseRepository {
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
-            Course course = new Course();
-            Instructor instructor = new Instructor();
             while (rs.next()) {
+                Course course = new Course();
+                Instructor instructor = new Instructor();
                 instructor.setId(rs.getLong("instructor_id"));
                 course.setId(rs.getInt("id"));
                 course.setCourseName(rs.getString("name"));
                 course.setInstructor(instructor);
-                course.setCredit(rs.getLong("credits"));
+                course.setCredit(rs.getInt("credits"));
                 course.setCourseNumber(rs.getString("number"));
                 course.setDepartment(rs.getString("department"));
                 course.setMaxStudents(rs.getInt("max_students"));
                 courses.add(course);
             }
-            printResultSet(rs);
+//            printResultSet(rs);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -566,8 +570,6 @@ public class CourseRepository {
                 // Hangi veri turu ile ekleye bilirim ? MAP kullaninca valuelar override oluyor, hesaplamayi o yuzden burda yaptim.
             }
             values.put("attended_lessons",attendedLessons);
-
-            System.out.println("Student attendance (input value / divided by number of times course is taught per week)");
             // su an 2 ile boluyorum, her kurs icin haftada 2 defa attendance aliyor hoca.
 
 //            printResultSet(rs);

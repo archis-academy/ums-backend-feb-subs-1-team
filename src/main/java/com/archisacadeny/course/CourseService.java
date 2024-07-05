@@ -23,22 +23,26 @@ public class CourseService {
     }
 
     public Course createCourse(Course course) {
+        System.out.println("Course "+ course.getCourseName() +" has been created");
         return courseRepository.save(course);
     }
 
     public void deleteCourse(long courseId){
+        System.out.println("Couse has been deleted successfully");
         courseRepository.deleteCourse(courseId);
     }
 
     public Boolean isCourseFull(long courseId){
         boolean result = courseRepository.isCourseFull(courseId);
-        System.out.println("Course with id:"+courseId+" is "+result);
+        String message = "NOT full";
+        if(result == true){message = "FULL";}
+        System.out.println("Course with id:"+courseId+" is "+message);
 
         return result;
     }
 
     public void update(String courseNumber, Course course ){
-        System.out.println("Course number: "+courseNumber +" id:" +course.getId()+ " is updated.");
+        System.out.println("Course number: "+courseNumber + " is updated.");
         courseRepository.update(courseNumber,course);
     }
 
@@ -70,7 +74,8 @@ public class CourseService {
         double grade = (double) values.get("sum_grade");
         double num = (double) values.get("num_of_students");
         double average = Math.round((grade/num) * 100.0) / 100.0;
-        System.out.println("Average grade of students in this course: " +average);
+        if(average == -1){System.out.println("This course has not been graded yet");}
+        else{System.out.println("Average grade of students in this course: " +average);}
         return  average;
     }
 
@@ -90,20 +95,25 @@ public class CourseService {
     }
 
     public double calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+        double finalAttendanceRate = 0;
         double attendancePercentage = 0;
         Map<String,Object> values = courseRepository.calculateInstructorCoursesAttendanceRate(instructorId);
         ArrayList<Integer> attendedLessons = (ArrayList<Integer>) values.get("attended_lessons");
         int courseDuration = (int) values.get("course_duration");
+        System.out.println( "Courses attendance rate:\n");
         for(int i =0; i<attendedLessons.size();i++){
             attendancePercentage += ( (attendedLessons.get(i) * 100.0) / (courseDuration * 2.0) );
+            System.out.println( "   Course number "+i+"-"+( (attendedLessons.get(i) * 100.0) / (courseDuration * 2.0) ));
         }
-        System.out.println(attendancePercentage);
-        return Math.round((attendancePercentage/attendedLessons.size()) * 100.0) / 100.0 ;
+        finalAttendanceRate = Math.round((attendancePercentage/attendedLessons.size()) * 100.0) / 100.0;
+        System.out.println("OVERALL ATTENDANCE RATE FOR INSTRUCTOR: - "+finalAttendanceRate);
+        return finalAttendanceRate;
     }
 
-    public static List<Course> listPopularCourses(int topCount) {
-        List<Course> a = CourseRepository.listPopularCourses(topCount);
-        return a;
+    public List<Course> listPopularCourses(int topCount) {
+        List<Course> courses = CourseRepository.listPopularCourses(topCount);
+        System.out.println("TOP "+topCount+" courses: \n"+courses);
+        return courses;
     }
 
 
@@ -156,5 +166,56 @@ public class CourseService {
                         "\n    Course Average: "+  ((double) values.get("total_student_score")/(double)values.get("student_count")));
         return values;
     }
+
+    public Student findTopStudentInInstructorCourses(int instructorId){
+        Student student = courseRepository.findTopStudentInInstructorCourses(instructorId);
+        System.out.println("Top student in instructor id: "+instructorId+ " 's classes:\n"+student);
+        return student;
+    }
+
+    public double calculateAverageSuccessGradeForInstructorCourses(int instructorId){
+        Map<String,Double> values = courseRepository.calculateAverageSuccessGradeForInstructorCourses(instructorId);
+        double result = Math.round((values.get("total") / values.get("courseCount"))* 100.0) / 100.0;
+        System.out.println("Average success rate for instructor id "+instructorId+" is " +result);
+        return result;
+    }
+
+    public String calculateLetterGradeForStudent(int studentId, int courseId) {
+        double grade = courseRepository.calculateLetterGradeForStudent(studentId,courseId);
+        String letterGrade;
+        if (isBetween(grade, 0, 59)) {
+            letterGrade = "F";
+        } else if (isBetween(grade, 59, 69)) {
+            letterGrade = "D";
+        } else if (isBetween(grade, 69, 79)) {
+            letterGrade = "C";
+        } else if (isBetween(grade, 79, 89)) {
+            letterGrade = "B";
+        } else if (isBetween(grade, 89, 100)) {
+            letterGrade = "A";
+        }else{letterGrade = "NaN";};
+        System.out.println("Student final grade is -  "+letterGrade + " "+grade);
+
+        return letterGrade;
+    }
+
+
+    public boolean isBetween(double value, int min, int max)
+    {
+        return((value >= min) && (value <= max));
+    }
+
+    public List<Course> getCoursesByInstructorId(long instructorId){
+        List<Course> courses = courseRepository.getCoursesByInstructorId(instructorId);
+        System.out.println("Here are the instructors courses \n"+courses);
+        return courses;
+    }
+
+    public int getStudentCountForCourse(long courseId) {
+        int count = courseRepository.getStudentCountForCourse(courseId);
+        System.out.println("Student count for course with id: "+courseId+" is - "+count);
+        return count;
+    }
+
 
 }
