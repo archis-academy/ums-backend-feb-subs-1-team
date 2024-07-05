@@ -147,4 +147,99 @@ public class StudentRepository {
             throw new RuntimeException(e);
         }
     }
+
+    public Student viewStudentDetails(long studentid) {
+        String query = "SELECT * FROM students WHERE id = ?";
+        Student student = new Student();
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.setLong(1, studentid);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                student.setFullName(resultSet.getString("full_name"));
+                student.setGender(resultSet.getString("gender"));
+                student.setIdentityNo(resultSet.getString("identity_no"));
+                student.setEnrollmentDate(resultSet.getTimestamp("enrollment_date"));
+                student.setYearOfStudy(resultSet.getInt("year_of_study"));
+                student.setTotalCreditCount(resultSet.getInt("total_credit_count"));
+            }
+            resultSet.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return student;
+    }
+
+    public Student getStudentByID(long studentId){
+        String query = "SELECT * FROM students WHERE id = ?";
+        Student student = new Student();
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            statement.setLong(1,studentId);
+            try(ResultSet resultSet = statement.executeQuery()){
+                if (resultSet.next()){
+                    student.setId(resultSet.getLong("id"));
+                    student.setFullName(resultSet.getString("full_name"));
+                    student.setGender(resultSet.getString("gender"));
+                    student.setEnrollmentDate(resultSet.getTimestamp("enrollment_date"));
+                    student.setIdentityNo(resultSet.getString("identity_no"));
+                    student.setYearOfStudy(resultSet.getInt("year_of_study"));
+                    student.setTotalCreditCount(resultSet.getInt("total_credit_count"));
+                }else {
+                    throw new RuntimeException("Student can not be found!!" + studentId);
+                }
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return student;
+    }
+
+    public Student updateStudentInfo(Student student) {
+        String query = "UPDATE students SET full_name = ?, gender = ?, identity_no = ?, enrollment_date = ? WHERE id = ?";
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+
+            statement.setString(1, student.getFullName());
+            statement.setString(2, student.getGender());
+            statement.setString(3, student.getIdentityNo());
+            statement.setTimestamp(4, student.getEnrollmentDate());
+            statement.setLong(5, student.getId());
+
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("The Student you have reach by id has been update" + student.getId());
+            } else {
+                throw new RuntimeException("Update has failed!! The Student has not been found!!" + student.getId());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return student;
+    }
+
+    public List<Student> listAllStudents(){
+        List<Student> students = new ArrayList<>();
+        String query = "SELECT * FROM students";
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                Student student = new Student();
+                student.setId(resultSet.getLong("id"));
+                student.setFullName(resultSet.getString("full_name"));
+                student.setGender(resultSet.getString("gender"));
+                student.setIdentityNo(resultSet.getString("identity_no"));
+                student.setEnrollmentDate(resultSet.getTimestamp("enrollment_date"));
+                student.setTotalCreditCount(resultSet.getInt("total_credit_count"));
+                student.setYearOfStudy(resultSet.getInt("year_of_study"));
+                students.add(student);
+            }
+            return students;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return students;
+    }
+
 }
