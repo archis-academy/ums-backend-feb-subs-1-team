@@ -136,7 +136,7 @@ public class CourseRepository {
                 course.getCredits(),
                 course.getDepartment(),
                 course.getMaxStudents()
-                );
+        );
         System.out.println(query);
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.execute();
@@ -217,14 +217,14 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
             Instructor instructor = new Instructor();
             while (rs.next()) {
-                    instructor.setId(rs.getLong("instructor_id"));
-                    course.setId(rs.getInt("id"));
-                    course.setCourseName(rs.getString("name"));
-                    course.setInstructor(instructor);
-                    course.setCredit(rs.getLong("credits"));
-                    course.setCourseNumber(rs.getString("number"));
-                    course.setDepartment(rs.getString("department"));
-                    course.setMaxStudents(rs.getInt("max_students"));
+                instructor.setId(rs.getLong("instructor_id"));
+                course.setId(rs.getInt("id"));
+                course.setCourseName(rs.getString("name"));
+                course.setInstructor(instructor);
+                course.setCredit(rs.getLong("credits"));
+                course.setCourseNumber(rs.getString("number"));
+                course.setDepartment(rs.getString("department"));
+                course.setMaxStudents(rs.getInt("max_students"));
             }
             //printResultSet(rs);
         }catch(SQLException e){
@@ -243,11 +243,11 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
             printResultSet(rs);
             while (rs.next()) {
-            stats.setCourseId(courseId);
-            stats.setAverageGrade(rs.getDouble("sum"),
-                    rs.getInt("num"));
-            stats.setHighestGrade(rs.getDouble("max"));
-            stats.setLowestGrade(rs.getDouble("min"));
+                stats.setCourseId(courseId);
+                stats.setAverageGrade(rs.getDouble("sum"),
+                        rs.getInt("num"));
+                stats.setHighestGrade(rs.getDouble("max"));
+                stats.setLowestGrade(rs.getDouble("min"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -282,8 +282,8 @@ public class CourseRepository {
         }
         return student;
     }//servise eklenilecek
-  
-  
+
+
     public Map<String, Double> calculateAverageSuccessGradeForInstructorCourses(int instructorId) {
         Map<String,Double> values = new HashMap<>();
         String query = "SELECT SUM(grade) AS total, COUNT(grade) AS courseCount, courses.instructor_id AS instructor  FROM course_student_mapper " +
@@ -397,14 +397,14 @@ public class CourseRepository {
             ResultSet rs = statement.getResultSet();
             Student student = new Student();
             while (rs.next()) {
-                        student.setId(rs.getInt("student_id"));
-                        student.setFullName(rs.getString("full_name"));
-                        student.setGender(rs.getString("gender"));
-                        student.setIdentityNo(rs.getString("identity_no"));
-                        student.setEnrollmentDate(rs.getTimestamp("enrollment_date"));
-                        student.setYearOfStudy(rs.getInt("year_of_study"));
-                        student.setTotalCreditCount(rs.getInt("total_credit_count"));
-                        students.add(student);
+                student.setId(rs.getInt("student_id"));
+                student.setFullName(rs.getString("full_name"));
+                student.setGender(rs.getString("gender"));
+                student.setIdentityNo(rs.getString("identity_no"));
+                student.setEnrollmentDate(rs.getTimestamp("enrollment_date"));
+                student.setYearOfStudy(rs.getInt("year_of_study"));
+                student.setTotalCreditCount(rs.getInt("total_credit_count"));
+                students.add(student);
                 // TODO   COURSE STUDENT MAPPERDA BIR EKLEME YAPTIGIMIZDA STUDENTIN TOTAL CREDIT COUNT U GUNCELLEMEMIZ GEREKIYOR. nasil
             }
 //            printResultSet(rs);
@@ -431,7 +431,7 @@ public class CourseRepository {
         }
         return 0;
     }
-  
+
     public List<Course> getAllCourses() {
         ArrayList<Course> courses = new ArrayList<>();
         String query = "SELECT * FROM \"courses\" ";
@@ -442,12 +442,12 @@ public class CourseRepository {
             Course course = new Course();
             while (rs.next()) {
                 course.setId(rs.getInt("id"));
-                        course.setCourseName(rs.getString("name"));
-                        course.setInstructor(new Instructor(rs.getLong("instructor_id")));
-                        course.setCredit(rs.getLong("credits"));
-                        course.setCourseNumber(rs.getString("number"));
-                        course.setDepartment(rs.getString("department"));
-                        course.setMaxStudents(rs.getInt("max_students"));
+                course.setCourseName(rs.getString("name"));
+                course.setInstructor(new Instructor(rs.getLong("instructor_id")));
+                course.setCredit(rs.getLong("credits"));
+                course.setCourseNumber(rs.getString("number"));
+                course.setDepartment(rs.getString("department"));
+                course.setMaxStudents(rs.getInt("max_students"));
                 courses.add(course);
                 //DERSTE LOOPLARDA QUERY CALISTIRAN METHOD KULLANMAYIN DEMISTINIZ
                 // FAKAT KURSA KAYITLI OGRENCILERI QUERY CALISTIRMADAN EKLEYEMEM, NASIL YAPA BILIRIM ?
@@ -461,7 +461,7 @@ public class CourseRepository {
     }
 
 
-    public static List<Course> listPopularCourses(int topCount) {
+    public List<Course> listPopularCourses(int topCount) {
         ArrayList<Course> courses = new ArrayList<>();
         String query = "SELECT courses.id,name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses " +
                 "LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = \"courses\".\"id\" " +
@@ -548,7 +548,8 @@ public class CourseRepository {
         return values;
     }
 
-      public Map<String,Object> calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+    public Map<String,Object> calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+
         String query = "SELECT instructor_id AS instructor, attended_lessons, " +
                 "TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration " +
                 "FROM course_student_mapper " +
@@ -576,6 +577,37 @@ public class CourseRepository {
         return values;
     }
 
+    public Map<String,Object> checkStudentAttendance(int studentId) {
+
+        Map<String,Object> values = new HashMap<>();
+
+        ArrayList<Integer> attendedLessons = new ArrayList<>();
+        ArrayList<Integer> attendanceLimit = new ArrayList<>();
+        int courseDuration = 0;
+        String query = "SELECT course_id,attendance_limit, " +
+                " TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration , " +
+                " attended_lessons FROM courses "+
+                "LEFT JOIN course_student_mapper ON course_student_mapper.course_id = courses.id WHERE student_id = "+studentId;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                attendedLessons.add(rs.getInt("attended_lessons"));
+                attendanceLimit.add(rs.getInt("attendance_limit"));
+                courseDuration = rs.getInt("course_duration");
+            }
+            values.put("attended_lessons",attendedLessons);
+            values.put("attendance_limit",attendanceLimit);
+            values.put("week_difference", courseDuration);
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+
+
     public List<Course> advancedSearchAndFilters(String searchCriteria){
 
         List<Course> courses = new ArrayList<>();
@@ -599,6 +631,39 @@ public class CourseRepository {
 
         } catch (SQLException e) {
             throw new RuntimeException("Error performing advanced search and filters" ,e);
+        }
+
+        return courses;
+    }
+
+    public List<Course> createCourseSchedule(long student_id) {
+        ArrayList<Course> courses = new ArrayList<>();
+
+        String query = "SELECT student_id, course_id," +
+                " courses.name,courses.number,credits,department,max_students,instructor_id,attendance_limit " +
+                "FROM course_student_mapper " +
+                "LEFT JOIN courses ON course_student_mapper.course_id = courses.id WHERE student_id= "+student_id;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                Course course = new Course();
+                Instructor instructor = new Instructor();
+                instructor.setId(rs.getLong("instructor_id"));
+                course.setId(rs.getInt("course_id"));
+                course.setCourseName(rs.getString("name"));
+                course.setInstructor(instructor);
+                course.setCredit(rs.getLong("credits"));
+                course.setCourseNumber(rs.getString("number"));
+                course.setDepartment(rs.getString("department"));
+                course.setMaxStudents(rs.getInt("max_students"));
+                course.setAttendanceLimit(rs.getInt("attendance_limit"));
+                courses.add(course);
+            }
+            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         return courses;

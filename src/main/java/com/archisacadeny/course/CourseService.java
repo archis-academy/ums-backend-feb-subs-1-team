@@ -1,25 +1,21 @@
 package com.archisacadeny.course;
 
 
-import com.archisacadeny.instructor.Instructor;
+import com.archisacadeny.student.CourseStudentMapper;
 import com.archisacadeny.student.Student;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.sql.Array;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final CourseStudentMapper courseStudentMapper;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, CourseStudentMapper courseStudentMapper) {
         this.courseRepository = courseRepository;
+        this.courseStudentMapper = courseStudentMapper;
     }
 
     public Course createCourse(Course course) {
@@ -102,8 +98,8 @@ public class CourseService {
         return Math.round((attendancePercentage / attendedLessons.size()) * 100.0) / 100.0;
     }
 
-    public static List<Course> listPopularCourses(int topCount) {
-        List<Course> a = CourseRepository.listPopularCourses(topCount);
+    public List<Course> listPopularCourses(int topCount) {
+        List<Course> a = courseRepository.listPopularCourses(topCount);
         return a;
     }
 
@@ -160,6 +156,76 @@ public class CourseService {
         return values;
     }
 
+    public void createCourseSchedule(long student_id) {
+        List<Course> courses = courseRepository.createCourseSchedule(student_id);
+        // i represents days of the week, in our Uni, we had lessons max 6 days a week including labs and lessons.
+        String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        for (int i = 0; i < 6; i++) {
+            System.out.println("Courses on " + weekDays[i] + "\n");
+            for (int b = 0; b < 2; b++) {
+                if (b == 0) {
+                    System.out.println("   Lesson Time: 10:00 AM \n");
+                } else {
+                    System.out.println("   ____________________\n   Lesson Time: 1:30 PM \n");
+                }
+                System.out.println(
+                        "   Course name: " + courses.get(i).getCourseName() + "\n" +
+                                "   Course number: " + courses.get(i).getCourseNumber() + "\n"
+                );
+                // THIS SCHEDULE PRINTS THE SAME LESSON TWICE THE SAME DAY
+                // COULD VE BEEN BETTER, TIME SCRAMBLE
+
+            }
+        }
+    }
+
+    public void processStudentApplication(Student student, List<Course> selectedCourses) {
+        Date date = new Date();
+        Timestamp startDate = new Timestamp(date.getTime());
+        // START DATE IS TODAY
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 5);
+        Date endDate = cal.getTime();
+
+        Timestamp finishDate = new Timestamp(endDate.getTime());
+        System.out.println(endDate);
+        //END DATE IS TODAY + 5 MONTHS, DURATION OF 1 SEMESTER.
+
+        for(int i =0; i<selectedCourses.size();i++)
+        {
+            Course course = selectedCourses.get(i);
+            courseStudentMapper.saveToCourseStudentMapper(student.getId() ,
+                    course.getId(), -1, startDate ,
+                    finishDate, 0, 0 );
+            // attended lessons = 0, missedLessons = 0, grade = -1( not graded)
+        }
+
+    }
+
+    public ArrayList<Boolean> checkStudentAttendance(int studentId) {
+        Map<String,Object> values = courseRepository.checkStudentAttendance(studentId);
+
+        ArrayList<Integer> attendedLessons = (ArrayList<Integer>) values.get("attended_lessons");
+        int courseDuration = (int) values.get("week_difference");
+        ArrayList<Integer> attendanceLimit = (ArrayList<Integer>) values.get("attendance_limit");
+
+        ArrayList<Boolean> results = new ArrayList<>();
+
+        System.out.println("ATTENDANCE LIMIT:     8     ");
+        for(int i = 0; i<attendanceLimit.size();i++){
+            System.out.print("Num of lessons  "+courseDuration*2+"  |  ");
+            System.out.println(attendedLessons.get(i) + "  Num of lessons ATTENDED");
+            if((courseDuration*2 - (attendedLessons.get(i))) >= attendanceLimit.get(i)){
+                results.add(false);
+            }else { results.add(true); }
+
+        }
+        // TRUE means student has failed, or has no chances to miss
+        // FALSE means he can still miss
+        return results;
+    }
+
     public List<Course> searchAndFilter(String searchCriteria) {
         searchCriteria = "mathematics";
         List<Course> courses = courseRepository.advancedSearchAndFilters(searchCriteria);
@@ -174,3 +240,5 @@ public class CourseService {
     }
 
 }
+
+
