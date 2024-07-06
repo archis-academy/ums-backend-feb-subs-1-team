@@ -184,8 +184,6 @@ public class CourseService {
         return results;
     }
 
-}
-
     public List<Course> searchAndFilter(String searchCriteria) {
         searchCriteria = "mathematics";
         List<Course> courses = courseRepository.advancedSearchAndFilters(searchCriteria);
