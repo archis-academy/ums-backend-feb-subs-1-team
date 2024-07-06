@@ -22,8 +22,7 @@ public class CourseStudentMapper {
                             course_start_date DATE,
                             course_end_date DATE,
                             attended_lessons INTEGER,
-                            missed_lessons INTEGER,
-
+                            
                     CONSTRAINT fk_course_id FOREIGN KEY (course_id) REFERENCES "public"."courses"(id),
                     CONSTRAINT fk_student_id FOREIGN KEY (student_id) REFERENCES "public"."students"(id)
                     );
@@ -36,8 +35,8 @@ public class CourseStudentMapper {
         }
     }
 
-    public void saveToCourseStudentMapper(long studentID, long courseId, double grade, Timestamp start, Timestamp end, int attendedLessons, int missedLessons ){
-        String query = "INSERT INTO course_student_mapper(student_id,course_id,grade,course_start_date,course_end_date,attended_lessons,missed_lessons) VALUES(?,?,?,?,?,?,?)";
+    public void saveToCourseStudentMapper(int studentID, int courseId, double grade, Timestamp start, Timestamp end, int attendedLessons ){
+        String query = "INSERT INTO course_student_mapper(student_id,course_id,grade,course_start_date,course_end_date,attended_lessons,missed_lessons) VALUES(?,?,?,?,?,?)";
 
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
             statement.setLong(1,studentID);
@@ -46,7 +45,6 @@ public class CourseStudentMapper {
             statement.setTimestamp(4,start);
             statement.setTimestamp(5,end);
             statement.setInt(6,attendedLessons);
-            statement.setInt(7,missedLessons);
             statement.execute();
 
         }catch(SQLException e){
