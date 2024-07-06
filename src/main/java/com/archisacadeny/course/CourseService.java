@@ -180,7 +180,7 @@ public class CourseService {
 
     }
 
-}
+
 
 
     public ArrayList<Boolean> checkStudentAttendance(int studentId) {
