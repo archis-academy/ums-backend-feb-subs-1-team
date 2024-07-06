@@ -4,6 +4,12 @@ import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 
+import java.security.Key;
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import java.sql.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -459,10 +465,10 @@ public class CourseRepository {
 
     public static List<Course> listPopularCourses(int topCount) {
         ArrayList<Course> courses = new ArrayList<>();
-        String query = "SELECT courses.id,name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses "+
-                "LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = \"courses\".\"id\" "+
+        String query = "SELECT courses.id,name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses " +
+                "LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = \"courses\".\"id\" " +
                 "GROUP BY courses.id " +
-                "ORDER BY student_count DESC LIMIT "+topCount;
+                "ORDER BY student_count DESC LIMIT " + topCount;
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
@@ -518,6 +524,97 @@ public class CourseRepository {
         return values;
 
     }
+      
+    public Map<String,Object> generateCourseReport(int courseId) {
+        Map<String,Object> values = new HashMap<>();
+        // Professor ( to be added in service ?)
+        String query = "SELECT name,number,instructor_id,department,credits,max_students, SUM(grade) as total_student_score,COUNT(course_id) as student_count " +
+                "FROM courses LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = courses.id" +
+                " WHERE courses.id = "+courseId+" GROUP BY courses.id ";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                values.put("name",rs.getString("name"));
+                values.put("number",rs.getString("number"));
+                values.put("department",rs.getString("department"));
+                values.put("credits",rs.getInt("credits"));
+                values.put("student_count",rs.getInt("student_count")*1.0);
+                values.put("max_students",rs.getInt("max_students"));
+                values.put("instructor_id",rs.getInt("instructor_id"));
+                values.put("total_student_score",rs.getDouble("total_student_score"));
+            } } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+      
+      public Map<String,Object> calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+        String query = "SELECT instructor_id AS instructor, attended_lessons, " +
+                "TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration " +
+                "FROM course_student_mapper " +
+                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE courses.instructor_id = "+instructorId;
+        Map<String,Object> values = new HashMap<>();
+        ArrayList<Integer> attendedLessons = new ArrayList<>();
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                attendedLessons.add(rs.getInt("attended_lessons"));
+                values.put("course_duration",rs.getInt("course_duration"));
+                // Hangi veri turu ile ekleye bilirim ? MAP kullaninca valuelar override oluyor, hesaplamayi o yuzden burda yaptim.
+            }
+            values.put("attended_lessons",attendedLessons);
+
+            System.out.println("Student attendance (input value / divided by number of times course is taught per week)");
+            // su an 2 ile boluyorum, her kurs icin haftada 2 defa attendance aliyor hoca.
+
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+
+    public Map<String,Object> checkStudentAttendance(int studentId) {
+
+        Map<String,Object> values = new HashMap<>();
+
+        ArrayList<Integer> attendedLessons = new ArrayList<>();
+        ArrayList<Integer> attendanceLimit = new ArrayList<>();
+        int courseDuration = 0;
+        String query = "SELECT course_id,attendance_limit, " +
+                " TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration , " +
+                " attended_lessons FROM courses "+
+                "LEFT JOIN course_student_mapper ON course_student_mapper.course_id = courses.id WHERE student_id = "+studentId;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                attendedLessons.add(rs.getInt("attended_lessons"));
+                attendanceLimit.add(rs.getInt("attendance_limit"));
+                courseDuration = rs.getInt("course_duration");
+            }
+            values.put("attended_lessons",attendedLessons);
+            values.put("attendance_limit",attendanceLimit);
+            values.put("week_difference", courseDuration);
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+
+
+    public List<Course> advancedSearchAndFilters(String searchCriteria){
+
+        List<Course> courses = new ArrayList<>();
+
+        String query = "SELECT * FROM courses WHERE name ILIKE ? ";
+        System.out.println("Genereted Query: " +query);
 
     public void enrollStudentInCourse(long studentId, long courseId) {
         String query = "INSERT INTO course_student_mapper (student_id, course_id) VALUES (?, ?)";
@@ -555,6 +652,28 @@ public class CourseRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Error unenrolling student from course", e);
         }
+    }
+
+
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+
+            statement.setString(1, "%" + searchCriteria + "%");
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                Course course = new Course();
+                course.setId(resultSet.getLong("id"));
+                course.setCourseName(resultSet.getString("name"));
+                course.setCredits(resultSet.getLong("credits"));
+                courses.add(course);
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error performing advanced search and filters" ,e);
+        }
+
+        return courses;
     }
 
 }
