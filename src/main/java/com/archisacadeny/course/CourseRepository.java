@@ -4,6 +4,7 @@ import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 
+import java.security.Key;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -575,5 +576,31 @@ public class CourseRepository {
         return values;
     }
 
+    public List<Course> advancedSearchAndFilters(String searchCriteria){
 
+        List<Course> courses = new ArrayList<>();
+
+        String query = "SELECT * FROM courses WHERE name ILIKE ? ";
+        System.out.println("Genereted Query: " +query);
+
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+
+            statement.setString(1, "%" + searchCriteria + "%");
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                Course course = new Course();
+                course.setId(resultSet.getLong("id"));
+                course.setCourseName(resultSet.getString("name"));
+                course.setCredits(resultSet.getLong("credits"));
+                courses.add(course);
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error performing advanced search and filters" ,e);
+        }
+
+        return courses;
+    }
 }
