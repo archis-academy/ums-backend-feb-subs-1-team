@@ -578,6 +578,37 @@ public class CourseRepository {
         return values;
     }
 
+    public Map<String,Object> checkStudentAttendance(int studentId) {
+
+        Map<String,Object> values = new HashMap<>();
+
+        ArrayList<Integer> attendedLessons = new ArrayList<>();
+        ArrayList<Integer> attendanceLimit = new ArrayList<>();
+        int courseDuration = 0;
+        String query = "SELECT course_id,attendance_limit, " +
+                " TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration , " +
+                " attended_lessons FROM courses "+
+                "LEFT JOIN course_student_mapper ON course_student_mapper.course_id = courses.id WHERE student_id = "+studentId;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                attendedLessons.add(rs.getInt("attended_lessons"));
+                attendanceLimit.add(rs.getInt("attendance_limit"));
+                courseDuration = rs.getInt("course_duration");
+            }
+            values.put("attended_lessons",attendedLessons);
+            values.put("attendance_limit",attendanceLimit);
+            values.put("week_difference", courseDuration);
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+
+
     public List<Course> advancedSearchAndFilters(String searchCriteria){
 
         List<Course> courses = new ArrayList<>();

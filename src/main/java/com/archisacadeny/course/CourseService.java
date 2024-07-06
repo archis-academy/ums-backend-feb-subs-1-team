@@ -160,6 +160,32 @@ public class CourseService {
         return values;
     }
 
+
+    public ArrayList<Boolean> checkStudentAttendance(int studentId) {
+        Map<String,Object> values = courseRepository.checkStudentAttendance(studentId);
+
+        ArrayList<Integer> attendedLessons = (ArrayList<Integer>) values.get("attended_lessons");
+        int courseDuration = (int) values.get("week_difference");
+        ArrayList<Integer> attendanceLimit = (ArrayList<Integer>) values.get("attendance_limit");
+
+        ArrayList<Boolean> results = new ArrayList<>();
+
+        System.out.println("ATTENDANCE LIMIT:     8     ");
+        for(int i = 0; i<attendanceLimit.size();i++){
+            System.out.print("Num of lessons  "+courseDuration*2+"  |  ");
+            System.out.println(attendedLessons.get(i) + "  Num of lessons ATTENDED");
+            if((courseDuration*2 - (attendedLessons.get(i))) >= attendanceLimit.get(i)){
+                results.add(false);
+            }else { results.add(true); }
+
+        }
+        // TRUE means student has failed, or has no chances to miss
+        // FALSE means he can still miss
+        return results;
+    }
+
+}
+
     public List<Course> searchAndFilter(String searchCriteria) {
         searchCriteria = "mathematics";
         List<Course> courses = courseRepository.advancedSearchAndFilters(searchCriteria);
@@ -174,3 +200,4 @@ public class CourseService {
     }
 
 }
+
