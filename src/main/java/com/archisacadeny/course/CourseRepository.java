@@ -4,6 +4,7 @@ import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.instructor.Instructor;
 import com.archisacadeny.student.Student;
 
+import java.security.Key;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -465,10 +466,10 @@ public class CourseRepository {
 
     public static List<Course> listPopularCourses(int topCount) {
         ArrayList<Course> courses = new ArrayList<>();
-        String query = "SELECT courses.id,name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses "+
-                "LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = \"courses\".\"id\" "+
+        String query = "SELECT courses.id,name,number,credits,department,max_students,instructor_id, COUNT(course_id) as student_count FROM courses " +
+                "LEFT JOIN \"course_student_mapper\" ON course_student_mapper.course_id = \"courses\".\"id\" " +
                 "GROUP BY courses.id " +
-                "ORDER BY student_count DESC LIMIT "+topCount;
+                "ORDER BY student_count DESC LIMIT " + topCount;
         try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
             statement.execute();
             ResultSet rs = statement.getResultSet();
@@ -490,6 +491,7 @@ public class CourseRepository {
             throw new RuntimeException(e);
         }
         return courses;
+    }
 
     public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate) {
         Map<String,Object> values = new HashMap<>();
@@ -577,5 +579,62 @@ public class CourseRepository {
         return values;
     }
 
+    public Map<String,Object> checkStudentAttendance(int studentId) {
 
+        Map<String,Object> values = new HashMap<>();
+
+        ArrayList<Integer> attendedLessons = new ArrayList<>();
+        ArrayList<Integer> attendanceLimit = new ArrayList<>();
+        int courseDuration = 0;
+        String query = "SELECT course_id,attendance_limit, " +
+                " TRUNC(DATE_PART('Day', course_end_date::TIMESTAMP - course_start_date::TIMESTAMP)/7) AS course_duration , " +
+                " attended_lessons FROM courses "+
+                "LEFT JOIN course_student_mapper ON course_student_mapper.course_id = courses.id WHERE student_id = "+studentId;
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+            statement.execute();
+            ResultSet rs = statement.getResultSet();
+            while (rs.next()) {
+                attendedLessons.add(rs.getInt("attended_lessons"));
+                attendanceLimit.add(rs.getInt("attendance_limit"));
+                courseDuration = rs.getInt("course_duration");
+            }
+            values.put("attended_lessons",attendedLessons);
+            values.put("attendance_limit",attendanceLimit);
+            values.put("week_difference", courseDuration);
+//            printResultSet(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return values;
+    }
+
+
+    public List<Course> advancedSearchAndFilters(String searchCriteria){
+
+        List<Course> courses = new ArrayList<>();
+
+        String query = "SELECT * FROM courses WHERE name ILIKE ? ";
+        System.out.println("Genereted Query: " +query);
+
+        try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+
+            statement.setString(1, "%" + searchCriteria + "%");
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                Course course = new Course();
+                course.setId(resultSet.getLong("id"));
+                course.setCourseName(resultSet.getString("name"));
+                course.setCredits(resultSet.getLong("credits"));
+                courses.add(course);
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error performing advanced search and filters" ,e);
+        }
+
+        return courses;
+    }
 }

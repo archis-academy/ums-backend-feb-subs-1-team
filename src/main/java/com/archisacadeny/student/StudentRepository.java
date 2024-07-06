@@ -50,10 +50,6 @@ public class StudentRepository {
     }
 
     public Student createStudent(Student student) {
-        if (!validateEmailDuringStudentRegistration(student.getEmail())) {
-            System.out.println("Email validation failed during student creation.");
-            return student;
-        }
 
         String query = "INSERT INTO students (full_name, email, gender, identity_no, enrollment_date, year_of_study, total_credit_count) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -120,13 +116,6 @@ public class StudentRepository {
     }
   
     public boolean validateEmailDuringStudentRegistration(String email) {
-
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-
-        if (!email.matches(emailRegex)) {
-            System.out.println("Invalid email format: " + email);
-            return false;
-        }
 
         String query = "SELECT * FROM students WHERE email = ?";
 
