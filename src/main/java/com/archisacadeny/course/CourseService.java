@@ -301,7 +301,15 @@ public class CourseService {
         }
         return courses;
     }
+  
+  public List<Course> listCoursesOrderedByStudentAverageGrade() {
+        List<Course> courses = courseRepository.listCoursesOrderedByStudentAverageGrade();
+
+        for (Course course : courses) {
+            System.out.println(course);
+        }
+        return courses;
+    }
+
 
 }
-
-
