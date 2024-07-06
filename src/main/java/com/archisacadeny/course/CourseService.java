@@ -158,7 +158,7 @@ public class CourseService {
     }
 
     public void createCourseSchedule(long student_id) {
-        ArrayList<Course> courses = (ArrayList<Course>) courseRepository.createCourseSchedule(student_id);
+        List<Course> courses = courseRepository.createCourseSchedule(student_id);
         // i represents days of the week, in our Uni, we had lessons max 6 days a week including labs and lessons.
         String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"};
         for(int i = 0; i < 6;i++){
