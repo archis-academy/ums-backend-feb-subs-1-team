@@ -1,25 +1,21 @@
 package com.archisacadeny.course;
 
 
-import com.archisacadeny.instructor.Instructor;
+import com.archisacadeny.student.CourseStudentMapper;
 import com.archisacadeny.student.Student;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.sql.Array;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final CourseStudentMapper courseStudentMapper;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, CourseStudentMapper courseStudentMapper) {
         this.courseRepository = courseRepository;
+        this.courseStudentMapper = courseStudentMapper;
     }
 
     public Course createCourse(Course course) {
@@ -159,6 +155,32 @@ public class CourseService {
                 "\n    Course Average: " + ((double) values.get("total_student_score") / (double) values.get("student_count")));
         return values;
     }
+
+    public void processStudentApplication(Student student, List<Course> selectedCourses) {
+        Date date = new Date();
+        Timestamp startDate = new Timestamp(date.getTime());
+        // START DATE IS TODAY
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 5);
+        Date endDate = cal.getTime();
+
+        Timestamp finishDate = new Timestamp(endDate.getTime());
+        System.out.println(endDate);
+        //END DATE IS TODAY + 5 MONTHS, DURATION OF 1 SEMESTER.
+
+        for(int i =0; i<selectedCourses.size();i++)
+        {
+            Course course = selectedCourses.get(i);
+            courseStudentMapper.saveToCourseStudentMapper(student.getId() ,
+                                 course.getId(), -1, startDate ,
+                                 finishDate, 0, 0 );
+            // attended lessons = 0, missedLessons = 0, grade = -1( not graded)
+        }
+
+    }
+
+}
 
 
     public ArrayList<Boolean> checkStudentAttendance(int studentId) {
