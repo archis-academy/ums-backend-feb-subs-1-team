@@ -10,7 +10,7 @@ public class Course {
     private long id;
     private String courseName;
     private Instructor instructor;
-    private long credit;
+    private int credit;
     private String courseNumber;
     private List<Student> enrolledStudents;
     private String department;
@@ -18,7 +18,7 @@ public class Course {
     private int attendanceLimit;
 
 
-    public Course(long id, String courseName, Instructor instructor, long credits, String courseNumber, List<Student> enrolledStudents, java.lang.String department, int maxStudents) {
+    public Course(long id, String courseName, Instructor instructor, int credits, String courseNumber, List<Student> enrolledStudents, java.lang.String department, int maxStudents) {
         this.id = id;
         this.courseName = courseName;
         this.instructor = instructor;
@@ -39,13 +39,21 @@ public class Course {
 
     @Override
     public String toString(){
-        return  "ID:" + this.getId() +"\n"+
+        String result = "";
+        result =  "ID:" + this.getId() +"\n"+
                 " Course Name: " + this.getCourseName()+"\n"+
                 " Course Number: " + this.getCourseNumber()+"\n"+
                 " Course Department: " + this.getDepartment()+"\n"+
-                " Course Instructor: " + this.getInstructor().getFullName()+"\n"+
                 " Course Credit: " + this.getCredit()+"\n"+
                 " Course Max Student Limit: " + this.getMaxStudents()+"\n";
+        if(this.getInstructor() != null) {
+            result += " Course Instructor Name: " + this.getInstructor().getFullName() + "\n" +
+                    " Instructor ID: " + this.getInstructor().getId() + "\n";
+        }else{
+            result += " CANNOT PROVIDE INSTRUCTOR INFORMATION BECAUSE IT IS NULL \n";
+        }
+
+        return result;
     }
 
     public Course() {
@@ -71,7 +79,7 @@ public class Course {
         return credit;
     }
 
-    public void setCredits(long credit) {
+    public void setCredits(int credit) {
         this.credit = credit;
     }
 
@@ -119,7 +127,7 @@ public class Course {
         return credit;
     }
 
-    public void setCredit(long credit) {
+    public void setCredit(int credit) {
         this.credit = credit;
     }
 }
