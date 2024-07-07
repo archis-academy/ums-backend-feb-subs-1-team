@@ -22,6 +22,10 @@ public class StudentService {
         return studentRepository.createStudent(student);
     }
 
+    public void deleteStudent(int studentId) {
+        studentRepository.deleteStudent(studentId);
+    }
+
     public StudentReport generateStudentAchievementReport(int studentId) {
         List<Map<String, Object>> resultSet = studentRepository.getStudentAchievementReportData(studentId);
 
