@@ -1,45 +1,46 @@
 package com.archisacadeny.course;
 
 
-import com.archisacadeny.instructor.Instructor;
+import com.archisacadeny.student.CourseStudentMapper;
 import com.archisacadeny.student.Student;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.sql.Array;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final CourseStudentMapper courseStudentMapper;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, CourseStudentMapper courseStudentMapper) {
         this.courseRepository = courseRepository;
+        this.courseStudentMapper = courseStudentMapper;
     }
 
     public Course createCourse(Course course) {
+        System.out.println("Course "+ course.getCourseName() +" has been created");
         return courseRepository.save(course);
     }
 
-    public void deleteCourse(long courseId) {
+
+    public void deleteCourse(long courseId){
+        System.out.println("Couse has been deleted successfully");
         courseRepository.deleteCourse(courseId);
     }
 
     public Boolean isCourseFull(long courseId) {
         boolean result = courseRepository.isCourseFull(courseId);
-        System.out.println("Course with id:" + courseId + " is " + result);
-
+        String message = "NOT full";
+        if(result == true){message = "FULL";}
+        System.out.println("Course with id:"+courseId+" is "+message);
+      
         return result;
     }
 
-    public void update(String courseNumber, Course course) {
-        System.out.println("Course number: " + courseNumber + " id:" + course.getId() + " is updated.");
-        courseRepository.update(courseNumber, course);
+    public void update(String courseNumber, Course course ){
+        System.out.println("Course number: "+courseNumber + " is updated.");
+        courseRepository.update(courseNumber,course);
     }
 
     public Double getTotalCreditAmount(long studentId) {
@@ -70,9 +71,11 @@ public class CourseService {
         Map<String, Object> values = courseRepository.calculateAverageGradeForCourse(course_id);
         double grade = (double) values.get("sum_grade");
         double num = (double) values.get("num_of_students");
-        double average = Math.round((grade / num) * 100.0) / 100.0;
-        System.out.println("Average grade of students in this course: " + average);
-        return average;
+        double average = Math.round((grade/num) * 100.0) / 100.0;
+        if(average == -1){System.out.println("This course has not been graded yet");}
+        else{System.out.println("Average grade of students in this course: " +average);}
+      
+        return  average;
     }
 
     public CourseStatistics calculateCourseStatistics(int course_id) {
@@ -91,20 +94,26 @@ public class CourseService {
     }
 
     public double calculateInstructorCoursesAttendanceRate(int instructorId) throws ParseException {
+        double finalAttendanceRate = 0;
         double attendancePercentage = 0;
         Map<String, Object> values = courseRepository.calculateInstructorCoursesAttendanceRate(instructorId);
         ArrayList<Integer> attendedLessons = (ArrayList<Integer>) values.get("attended_lessons");
         int courseDuration = (int) values.get("course_duration");
-        for (int i = 0; i < attendedLessons.size(); i++) {
-            attendancePercentage += ((attendedLessons.get(i) * 100.0) / (courseDuration * 2.0));
+      
+        System.out.println( "Courses attendance rate:\n");
+        for(int i =0; i<attendedLessons.size();i++){
+            attendancePercentage += ( (attendedLessons.get(i) * 100.0) / (courseDuration * 2.0) );
+            System.out.println( "   Course number "+i+"-"+( (attendedLessons.get(i) * 100.0) / (courseDuration * 2.0) ));
         }
-        System.out.println(attendancePercentage);
-        return Math.round((attendancePercentage / attendedLessons.size()) * 100.0) / 100.0;
+        finalAttendanceRate = Math.round((attendancePercentage/attendedLessons.size()) * 100.0) / 100.0;
+        System.out.println("OVERALL ATTENDANCE RATE FOR INSTRUCTOR: - "+finalAttendanceRate);
+        return finalAttendanceRate;
     }
 
-    public static List<Course> listPopularCourses(int topCount) {
-        List<Course> a = CourseRepository.listPopularCourses(topCount);
-        return a;
+    public List<Course> listPopularCourses(int topCount) {
+        List<Course> courses = CourseRepository.listPopularCourses(topCount);
+        System.out.println("TOP "+topCount+" courses: \n"+courses);
+        return courses;
     }
 
 
@@ -160,6 +169,102 @@ public class CourseService {
         return values;
     }
 
+    public Student findTopStudentInInstructorCourses(int instructorId){
+        Student student = courseRepository.findTopStudentInInstructorCourses(instructorId);
+        System.out.println("Top student in instructor id: "+instructorId+ " 's classes:\n"+student);
+        return student;
+    }
+
+    public double calculateAverageSuccessGradeForInstructorCourses(int instructorId){
+        Map<String,Double> values = courseRepository.calculateAverageSuccessGradeForInstructorCourses(instructorId);
+        double result = Math.round((values.get("total") / values.get("courseCount"))* 100.0) / 100.0;
+        System.out.println("Average success rate for instructor id "+instructorId+" is " +result);
+        return result;
+    }
+
+    public String calculateLetterGradeForStudent(int studentId, int courseId) {
+        double grade = courseRepository.calculateLetterGradeForStudent(studentId,courseId);
+        String letterGrade;
+        if (isBetween(grade, 0, 59)) {
+            letterGrade = "F";
+        } else if (isBetween(grade, 59, 69)) {
+            letterGrade = "D";
+        } else if (isBetween(grade, 69, 79)) {
+            letterGrade = "C";
+        } else if (isBetween(grade, 79, 89)) {
+            letterGrade = "B";
+        } else if (isBetween(grade, 89, 100)) {
+            letterGrade = "A";
+        }else{letterGrade = "NaN";};
+        System.out.println("Student final grade is -  "+letterGrade + " "+grade);
+
+        return letterGrade;
+    }
+
+
+    public boolean isBetween(double value, int min, int max)
+    {
+        return((value >= min) && (value <= max));
+    }
+
+    public List<Course> getCoursesByInstructorId(long instructorId){
+        List<Course> courses = courseRepository.getCoursesByInstructorId(instructorId);
+        System.out.println("Here are the instructors courses \n"+courses);
+        return courses;
+    }
+
+    public int getStudentCountForCourse(long courseId) {
+        int count = courseRepository.getStudentCountForCourse(courseId);
+        System.out.println("Student count for course with id: "+courseId+" is - "+count);
+        return count;
+    }
+
+    public void createCourseSchedule(long student_id) {
+        List<Course> courses = courseRepository.createCourseSchedule(student_id);
+        // i represents days of the week, in our Uni, we had lessons max 6 days a week including labs and lessons.
+        String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        for (int i = 0; i < 6; i++) {
+            System.out.println("Courses on " + weekDays[i] + "\n");
+            for (int b = 0; b < 2; b++) {
+                if (b == 0) {
+                    System.out.println("   Lesson Time: 10:00 AM \n");
+                } else {
+                    System.out.println("   ____________________\n   Lesson Time: 1:30 PM \n");
+                }
+                System.out.println(
+                        "   Course name: " + courses.get(i).getCourseName() + "\n" +
+                                "   Course number: " + courses.get(i).getCourseNumber() + "\n"
+                );
+                // THIS SCHEDULE PRINTS THE SAME LESSON TWICE THE SAME DAY
+                // COULD VE BEEN BETTER, TIME SCRAMBLE
+
+            }
+        }
+    }
+
+    public void processStudentApplication(Student student, List<Course> selectedCourses) {
+        Date date = new Date();
+        Timestamp startDate = new Timestamp(date.getTime());
+        // START DATE IS TODAY
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 5);
+        Date endDate = cal.getTime();
+
+        Timestamp finishDate = new Timestamp(endDate.getTime());
+        System.out.println(endDate);
+        //END DATE IS TODAY + 5 MONTHS, DURATION OF 1 SEMESTER.
+
+        for(int i =0; i<selectedCourses.size();i++)
+        {
+            Course course = selectedCourses.get(i);
+            courseStudentMapper.saveToCourseStudentMapper(student.getId() ,
+                    course.getId(), -1, startDate ,
+                    finishDate, 0, 0 );
+            // attended lessons = 0, missedLessons = 0, grade = -1( not graded)
+        }
+
+    }
 
     public ArrayList<Boolean> checkStudentAttendance(int studentId) {
         Map<String,Object> values = courseRepository.checkStudentAttendance(studentId);
@@ -184,8 +289,6 @@ public class CourseService {
         return results;
     }
 
-}
-
     public List<Course> searchAndFilter(String searchCriteria) {
         searchCriteria = "mathematics";
         List<Course> courses = courseRepository.advancedSearchAndFilters(searchCriteria);
@@ -198,6 +301,15 @@ public class CourseService {
         }
         return courses;
     }
+  
+  public List<Course> listCoursesOrderedByStudentAverageGrade() {
+        List<Course> courses = courseRepository.listCoursesOrderedByStudentAverageGrade();
+
+        for (Course course : courses) {
+            System.out.println(course);
+        }
+        return courses;
+    }
+
 
 }
-
