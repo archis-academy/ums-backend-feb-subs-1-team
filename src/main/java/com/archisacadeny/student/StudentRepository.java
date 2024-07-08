@@ -1,13 +1,12 @@
 package com.archisacadeny.student;
 
 import com.archisacadeny.config.DataBaseConnectorConfig;
+import com.archisacadeny.course.Course;
+
 import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StudentRepository {
 
@@ -135,5 +134,64 @@ public class StudentRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<String> getCourseNameById(long studentId) {
+        List<String> courseNames = new ArrayList<>();
+        String query = "SELECT c.name " +
+                "FROM course_student_mapper m " +
+                "JOIN courses c ON m.course_id = c.id " +
+                "WHERE m.student_id = ?";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query))
+        {
+
+            statement.setLong(1, studentId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    courseNames.add(resultSet.getString("name"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving recommended courses for student", e);
+        }
+
+        return courseNames;
+    }
+
+    public List<Course> listRecommendedCoursesForStudent(long studentId) {
+        List<Course> recommendedCourses = new ArrayList<>();
+        List<String> courseNames = getCourseNameById(studentId);
+
+        StringJoiner joiner = new StringJoiner(",", "'", "'");
+        for (String name : courseNames) {
+            joiner.add(name);
+        }
+
+        String query = "SELECT * FROM courses WHERE name IN (";
+        query += String.join(",", courseNames.stream().map(name -> "?").toArray(String[]::new)) + ")";
+
+        try (Connection connection = DataBaseConnectorConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            for (int i = 0; i < courseNames.size(); i++) {
+                statement.setString(i + 1, courseNames.get(i));
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Course course = new Course();
+                    course.setCourseName(resultSet.getString("name"));
+                    course.setDepartment(resultSet.getString("department"));
+                    course.setCredit(resultSet.getLong("credits"));
+                    recommendedCourses.add(course);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving recommended courses", e);
+        }
+
+        return recommendedCourses;
     }
 }
