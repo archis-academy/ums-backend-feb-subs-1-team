@@ -619,6 +619,45 @@ public class CourseRepository {
         String query = "SELECT * FROM courses WHERE name ILIKE ? ";
         System.out.println("Genereted Query: " +query);
 
+    public void enrollStudentInCourse(long studentId, long courseId) {
+        String query = "INSERT INTO course_student_mapper (student_id, course_id) VALUES (?, ?)";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+
+            statement.setLong(1, studentId);
+            statement.setLong(2, courseId);
+
+            statement.executeUpdate();
+            System.out.println("Student with ID: " + studentId + " has been enrolled in course with ID: " + courseId);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error enrolling student in course", e);
+        }
+    }
+
+    public void unenrollStudentFromCourse(long studentId, long courseId){
+
+        String query = "DELETE FROM course_student_mapper WHERE student_id = ? AND course_id = ?";
+
+        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
+
+        statement.setLong(1, studentId);
+        statement.setLong(2, courseId);
+
+        int rowsAffected = statement.executeUpdate();
+
+        if (rowsAffected > 0){
+            System.out.println("Student with ID:" + studentId + "has been unenrolled from course with ID:" + courseId);
+        }else {
+            System.out.println("No enrollment found for student with ID:" + studentId + "in course with ID" + courseId);
+        }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error unenrolling student from course", e);
+        }
+    }
+
+
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){
 
             statement.setString(1, "%" + searchCriteria + "%");
@@ -626,7 +665,7 @@ public class CourseRepository {
 
             while (resultSet.next()){
                 Course course = new Course();
-                course.setId(resultSet.getLong("id"));
+                co<<<<<<<urse.setId(resultSet.getLong("id"));
                 course.setCourseName(resultSet.getString("name"));
                 course.setCredits((int) resultSet.getLong("credits"));
                 courses.add(course);
@@ -639,6 +678,7 @@ public class CourseRepository {
 
         return courses;
     }
+
 
     public List<Course> createCourseSchedule(long student_id) {
         ArrayList<Course> courses = new ArrayList<>();
@@ -707,3 +747,4 @@ public class CourseRepository {
     }
 
 }
+
