@@ -496,37 +496,39 @@ public class CourseRepository {
         return courses;
     }
 
-    public Map<String,Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate) {
-        Map<String,Object> values = new HashMap<>();
+        public Map<String, Object> generateStudentAttendanceReport ( int studentId, Timestamp startDate, Timestamp
+        endDate){
+            Map<String, Object> values = new HashMap<>();
 
-        //Mape e attendance yuzdesi arraylistini ekliyorum, ve attendance limitini. Kacirdigi dersleri
-        ArrayList<Integer> attendedLessons = new ArrayList<>();
-        ArrayList<Integer> attendanceLimit = new ArrayList<>();
-        int weekDifference = 0;
+            //Mape e attendance yuzdesi arraylistini ekliyorum, ve attendance limitini. Kacirdigi dersleri
+            ArrayList<Integer> attendedLessons = new ArrayList<>();
+            ArrayList<Integer> attendanceLimit = new ArrayList<>();
+            int weekDifference = 0;
 
-        String query = "SELECT student_id , attended_lessons, attendance_limit, " +
-                "TRUNC (DATE_PART('Day', '"+endDate+"'::TIMESTAMP - '"+startDate+"'::TIMESTAMP)/7) AS week_difference " +
-                "FROM course_student_mapper " +
-                "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE student_id = "+studentId;
+            String query = "SELECT student_id , attended_lessons, attendance_limit, " +
+                    "TRUNC (DATE_PART('Day', '" + endDate + "'::TIMESTAMP - '" + startDate + "'::TIMESTAMP)/7) AS week_difference " +
+                    "FROM course_student_mapper " +
+                    "INNER JOIN courses ON course_student_mapper.course_id = courses.id WHERE student_id = " + studentId;
 
-        try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
-            statement.execute();
-            ResultSet rs = statement.getResultSet();
-            while (rs.next()) {
-                attendedLessons.add(rs.getInt("attended_lessons"));
-                attendanceLimit.add(rs.getInt("attendance_limit"));
-                weekDifference = rs.getInt("week_difference");
-            }
-            values.put("attended_lessons",attendedLessons);
-            values.put("attendance_limit",attendanceLimit);
-            values.put("week_difference", weekDifference);
+            try (PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)) {
+                statement.execute();
+                ResultSet rs = statement.getResultSet();
+                while (rs.next()) {
+                    attendedLessons.add(rs.getInt("attended_lessons"));
+                    attendanceLimit.add(rs.getInt("attendance_limit"));
+                    weekDifference = rs.getInt("week_difference");
+                }
+                values.put("attended_lessons", attendedLessons);
+                values.put("attendance_limit", attendanceLimit);
+                values.put("week_difference", weekDifference);
 //            printResultSet(rs);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            return values;
+
         }
-
-        return values;
-
     }
 
     public Map<String,Object> generateCourseReport(int courseId) {

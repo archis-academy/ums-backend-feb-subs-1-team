@@ -60,16 +60,7 @@ public class InstructorService {
     public void viewInstructorTaughtCourses(long instructorId) {
         Instructor instructor = null ;
         List<Course> courses = courseRepository.getCoursesByInstructorId(instructorId);
-
-        for (Course course : courses) {
-            System.out.println("Course Name: " + course.getCourseName());
-            System.out.println("Course Number: " + course.getCourseNumber());
-            System.out.println("Credits: " + course.getCredits());
-            System.out.println("Department: " + course.getDepartment());
-            System.out.println("Max Students: " + course.getMaxStudents());
-            System.out.println("Instructor: " + course.getInstructor().getFullName());
-            System.out.println();
-        }
+        printCourseDetails(courses);
 
     }
 
@@ -109,5 +100,23 @@ public class InstructorService {
         System.out.println("Instructor ID: " + instructorId + "\nAverage grade: " + averageGrade);
         return averageGrade;
 
+    }
+    public void listMostRecommendedCoursesForInstructor(long instructorId, int topCount) {
+        List<Course> recommendedCourses = instructorRepository.getMostRecommendedCoursesForInstructor(instructorId, topCount);
+        printCourseDetails(recommendedCourses);
+
+    }
+
+    private void printCourseDetails(List<Course> courses) {
+
+        for (Course course : courses) {
+            System.out.println("Course Name: " + course.getCourseName());
+            System.out.println("Course Number: " + course.getCourseNumber());
+            System.out.println("Credits: " + course.getCredits());
+            System.out.println("Department: " + course.getDepartment());
+            System.out.println("Max Students: " + course.getMaxStudents());
+            System.out.println("Instructor: " + course.getInstructor().getFullName());
+            System.out.println();
+        }
     }
 }

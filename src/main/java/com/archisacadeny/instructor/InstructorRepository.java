@@ -126,4 +126,41 @@ public class InstructorRepository {
         return instructors;
     }
 
+    public List<Course> getMostRecommendedCoursesForInstructor(long instructorId,int topCount) {
+
+        String query= """
+                SELECT c.id, c.name, c.number, c.credits, c.department, c.max_students
+                FROM courses c
+                JOIN course_student_mapper csm ON c.id= csm.course_id
+                JOIN instructors i ON i.id= c.instructor_id
+                WHERE i.id=? AND csm.grade > 50
+                GROUP BY c.id, c.name, c.number, c.credits, c.department, c.max_students
+                ORDER BY COUNT(csm.grade) DESC 
+                LIMIT ?;
+                """;
+        List<Course> courses = new ArrayList<>();
+
+        try(PreparedStatement statement= DataBaseConnectorConfig.getConnection().prepareStatement(query) ){
+            statement.setLong(1,instructorId);
+            statement.setInt(2,topCount);
+
+            try(ResultSet resultSet= statement.executeQuery() ){
+                while( resultSet.next() ){
+                    Course course = new Course();
+                    course.setId(resultSet.getLong("id"));
+                    course.setCourseName(resultSet.getString("name"));
+                    course.setCourseNumber(resultSet.getString("number"));
+                    course.setCredits(resultSet.getInt("credits"));
+                    course.setDepartment(resultSet.getString("department"));
+                    course.setMaxStudents(resultSet.getInt("max_students"));
+                    courses.add(course);
+                }
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException("Error retrieving most recommended courses",e);
+        }
+
+        return courses;
+    }
+
 }
