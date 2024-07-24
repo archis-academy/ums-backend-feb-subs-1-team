@@ -35,7 +35,7 @@ public class CourseStudentMapper {
         }
     }
 
-    public void saveToCourseStudentMapper(int studentID, int courseId, double grade, Timestamp start, Timestamp end, int attendedLessons ){
+    public void saveToCourseStudentMapper(long studentID, long courseId, double grade, Timestamp start, Timestamp end, int attendedLessons ){
         String query = "INSERT INTO course_student_mapper(student_id,course_id,grade,course_start_date,course_end_date,attended_lessons,missed_lessons) VALUES(?,?,?,?,?,?)";
 
         try(PreparedStatement statement = DataBaseConnectorConfig.getConnection().prepareStatement(query)){

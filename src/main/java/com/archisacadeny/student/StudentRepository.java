@@ -184,7 +184,7 @@ public class StudentRepository {
                     Course course = new Course();
                     course.setCourseName(resultSet.getString("name"));
                     course.setDepartment(resultSet.getString("department"));
-                    course.setCredit(resultSet.getLong("credits"));
+                    course.setCredit(resultSet.getInt("credits"));
                     recommendedCourses.add(course);
                 }
             }
