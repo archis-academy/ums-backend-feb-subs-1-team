@@ -1,12 +1,8 @@
 package com.archisacadeny.instructor;
 
-import com.archisacadeny.config.DataBaseConnectorConfig;
 import com.archisacadeny.course.Course;
 import com.archisacadeny.course.CourseRepository;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 

@@ -66,7 +66,6 @@ public class StudentService {
         System.out.println("GPA: " + report.getGpa());
     }
 
-
     public void listRecommendedCoursesForStudent(long studentId) {
         List<Course> recommendedCourses = studentRepository.listRecommendedCoursesForStudent(studentId);
 
@@ -82,6 +81,7 @@ public class StudentService {
             }
             System.out.println("---------------");
         }
+    }
 
     public boolean validateEmailDuringStudentRegistration(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";

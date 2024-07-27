@@ -6,7 +6,6 @@ import com.archisacadeny.student.Student;
 
 import java.text.ParseException;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.*;
 
 public class CourseService {
@@ -111,7 +110,8 @@ public class CourseService {
     }
 
     public List<Course> listPopularCourses(int topCount) {
-        List<Course> courses = CourseRepository.listPopularCourses(topCount);
+        CourseRepository repository = new CourseRepository();
+        List<Course> courses = repository.listPopularCourses(topCount);
         System.out.println("TOP "+topCount+" courses: \n"+courses);
         return courses;
     }
@@ -258,9 +258,9 @@ public class CourseService {
         for(int i =0; i<selectedCourses.size();i++)
         {
             Course course = selectedCourses.get(i);
-            courseStudentMapper.saveToCourseStudentMapper(student.getId() ,
+            courseStudentMapper.saveToCourseStudentMapper(student.getId(),
                     course.getId(), -1, startDate ,
-                    finishDate, 0, 0 );
+                    finishDate, 0);
             // attended lessons = 0, missedLessons = 0, grade = -1( not graded)
         }
 
@@ -302,7 +302,7 @@ public class CourseService {
         return courses;
     }
   
-  public List<Course> listCoursesOrderedByStudentAverageGrade() {
+    public List<Course> listCoursesOrderedByStudentAverageGrade() {
         List<Course> courses = courseRepository.listCoursesOrderedByStudentAverageGrade();
 
         for (Course course : courses) {
@@ -310,6 +310,5 @@ public class CourseService {
         }
         return courses;
     }
-
 
 }
