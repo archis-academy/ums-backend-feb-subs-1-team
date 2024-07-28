@@ -17,11 +17,14 @@ public class CourseService {
         this.courseStudentMapper = courseStudentMapper;
     }
 
+    public static void createCourseTable() {
+        CourseRepository.createCourseTable();
+    }
+
     public Course createCourse(Course course) {
         System.out.println("Course "+ course.getCourseName() +" has been created");
         return courseRepository.save(course);
     }
-
 
     public void deleteCourse(long courseId){
         System.out.println("Couse has been deleted successfully");
@@ -116,7 +119,6 @@ public class CourseService {
         return courses;
     }
 
-
     public Map<String, Object> generateStudentAttendanceReport(int studentId, Timestamp startDate, Timestamp endDate) {
         Map<String, Object> values = courseRepository.generateStudentAttendanceReport(studentId, startDate, endDate);
 
@@ -200,7 +202,6 @@ public class CourseService {
 
         return letterGrade;
     }
-
 
     public boolean isBetween(double value, int min, int max)
     {
@@ -311,4 +312,11 @@ public class CourseService {
         return courses;
     }
 
+    public void enrollStudentInCourse(long studentId, long courseId) {
+        courseRepository.enrollStudentInCourse(studentId, courseId);
+    }
+
+    public void unenrollStudentFromCourse(long studentId, long courseId) {
+        courseRepository.unenrollStudentFromCourse(studentId, courseId);
+    }
 }
