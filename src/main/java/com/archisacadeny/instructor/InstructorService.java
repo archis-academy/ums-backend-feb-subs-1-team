@@ -15,6 +15,10 @@ public class InstructorService {
         this.courseRepository = courseRepository;
     }
 
+    public static void createInstructorTable() {
+        InstructorRepository.createInstructorTable();
+    }
+
     public Instructor createInstructor(Instructor instructor) {
         if(instructor== null){
             throw new RuntimeException("instructor is null");
@@ -97,6 +101,7 @@ public class InstructorService {
         return averageGrade;
 
     }
+
     public void listMostRecommendedCoursesForInstructor(long instructorId, int topCount) {
         List<Course> recommendedCourses = instructorRepository.getMostRecommendedCoursesForInstructor(instructorId, topCount);
         printCourseDetails(recommendedCourses);
